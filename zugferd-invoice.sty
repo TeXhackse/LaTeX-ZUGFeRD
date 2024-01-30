@@ -1,0 +1,204 @@
+\ProvidesExplPackage{zugferd-invoice}{2024-01-15}{0.1}{Invoice wrapper for the factur-x to create ZUGFerD invoices}
+
+\keys_define:nn {zugferd/invoice}{
+	default-vat .tl_set:N =  \defaultVAT,
+	default-vat .initial:n = 19,
+}
+
+\ProcessKeyOptions[zugferd/invoice]
+
+\RequirePackage{scrletter}
+\RequirePackage{ragged2e}
+\RequirePackage[format=xrechnung2.3]{zugferd}
+\RequirePackage{xltabular}
+\RequirePackage{booktabs}
+
+\newcounter{invoiceitem}
+\seq_new:N  \g__ptxcd_VAT_rates_seq 
+
+\NewDocumentCommand{\InitVAT}{omO{S}}{
+	\seq_gput_right:Nn \g__ptxcd_VAT_rates_seq {#2}
+	\fp_new:c {g__ptxcd_invoice_sum_vat#2_fp}
+	\fp_new:c {g__ptxcd_invoice_base_vat#2_fp}
+	\cs_new:cn {__ptxcd_invoice_type_code#2:} {#3}
+}
+
+%%initialisierung auf 5,7,16 oder 19 % Mwst
+\InitVAT{16}
+\InitVAT{19}
+\InitVAT{5}
+\InitVAT{7}
+
+\newcommand*{\SetDefaultVAT}[1]{\def\defaultVAT{#1}}
+
+
+\seq_new:N \l__ptxcd_invoice_items_seq
+
+\newcommand*{\AddInvoiceItem}[4][\defaultVAT]{%
+	\seq_put_right:Nn \l__ptxcd_invoice_items_seq {
+		{#1}{#2}{#3}{#4}
+	}
+}
+
+
+	%\sisetup{parse-numbers=true,round-mode=places,round-precision=#1,round-pad = false,group-digits=false,minimum-decimal-digits=#1}
+\newcolumntype{P}{r<{\PrintTableCurrency}}
+
+\fp_new:N \g__ptxcd_invoice_sum_fp
+\fp_new:N \g__ptxcd_invoice_total_fp
+\fp_new:N \g__ptxcd_tax_total_fp
+\fp_new:N \g__ptxcd_invoice_item_fp
+\fp_new:N  \g__ptxcd_invoice_item_vat_fp
+\fp_new:N \g__ptxcd_invoice_sum_vat_fp
+
+
+\newcommand*{\PrintInvoiceTabular}{
+\bool_gset_true:N \g_ptxcd_first_run_bool
+\startWritingZUGFeRDxml
+
+	\__zugferd_insert_Header:
+	\__zugferd_insert_FrontMatter:
+
+%	\seq_map_inline:Nn  \g__ptxcd_VAT_rates_seq  {
+%		\fp_gzero:c  {g__ptxcd_invoice_vat##1_fp}
+%		\fp_gzero:c {g__ptxcd_invoice_base_vat##1_fp}
+%	}
+%	\fp_gzero:N \g__ptxcd_invoice_sum_fp
+	
+	\cs_gset_eq:NN \__ptxcd_write_TradeLineItem:nnnnnn  \__zugferd_insert_TradeLineItem:nnnnnn
+	\cs_gset:Nn 	\__ptxcd_PrintInvoiceSummation:nnnnnnnn {
+		\__zugferd_SpecifiedTradePaymentTerms:
+		\__zugferd_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {##1} {##2} {##3} {##4} {##5} {##6} {##7} {##8}
+	}
+	\cs_gset:Nn \__ptxcd_write_HeaderTradeAgreement: {
+		\__zugferd_ApplicableHeaderTradeAgreement:
+		\__zugferd_ApplicableHeaderTradeSettlement_start:
+		\__zugferd_SpecifiedTradeSettlementPaymentMeans:
+	}
+	% ApplicableTradeTax CategoryCode Rate BaseAmount Result
+	\cs_gset:Nn \__ptxcd_PrintTradeTax:nnn {
+		 \__zugferd_ApplicableTradeTax:nnnn {\use:c {__ptxcd_invoice_type_code##1:}}{##1}{##2}{##3}
+	}
+	
+	\sisetup{round-precision=2,round-mode=places,round-pad=false,table-number-alignment=right,minimum-decimal-digits=2,mode=text}
+	\begin{xltabular}{\linewidth}{@{}rS[round-precision=1,table-format=2.1]>{\RaggedRight}XPP@{}}
+	\toprule[\lightrulewidth]
+	\noalign{\global\let\PrintTableCurrency\relax}%
+	\small\emph{Pos.}&\small\emph{Std.}&\small\emph{Beschreibung}&\small\emph{Einzelpreis}&\small\emph{Gesamtpreis}\\\midrule[\heavyrulewidth]
+	\noalign{\global\let\PrintTableCurrency\TableCurrency}%
+	\endhead
+	\bottomrule[\lightrulewidth]\multicolumn{5}{@{}p{\textwidth}@{}}{\strut\hspace*{\fill}\footnotesize Fortsetzung auf der nächsten Seite}\endfoot
+	\bottomrule\endlastfoot
+%    \end{macrocode}
+% Only write xml for the first run of the tabular.
+%    \begin{macrocode}
+	\fp_compare:nNnF {\g__ptxcd_invoice_sum_fp} = {\c_zero_dim} {
+		\fp_gzero:N \g__ptxcd_invoice_sum_fp
+		\cs_gset_eq:NN 	\__ptxcd_write_TradeLineItem:nnnnnn  \use_none:nnnnnn
+		\cs_gset_eq:NN 	\__ptxcd_PrintInvoiceSummation:nnnnnnnn \use_none:nnnnnnnn
+		\cs_gset_eq:NN \__ptxcd_PrintTradeTax:nnn  \use_none:nnn
+		\cs_gset_eq:NN \__ptxcd_write_HeaderTradeAgreement: \prg_do_nothing:
+	}
+	\seq_map_inline:Nn  \g__ptxcd_VAT_rates_seq  {
+		\fp_gzero:c  {g__ptxcd_invoice_sum_vat##1_fp}
+		\fp_gzero:c {g__ptxcd_invoice_base_vat##1_fp}
+	}
+	\fp_gzero:N \g__ptxcd_invoice_sum_fp
+	\seq_map_inline:Nn \l__ptxcd_invoice_items_seq {
+		 \PrintInvoiceItem##1
+	}
+	\__ptxcd_write_HeaderTradeAgreement:\tabularnewline
+	\noalign{\skip_vertical:n {-\ht\strutbox-\dp\strutbox}}%offset for extra empty row of mapping
+	\midrule[\heavyrulewidth]
+	\PrintInvoiceTotal
+\end{xltabular}
+	\__zugferd_ApplicableHeaderTradeSettlement_stop:
+	\__zugferd_insert_Footer:
+	\stopWritingZUGFeRDxml
+}
+
+\newcommand*{\PrintInvoiceTotal}{
+	\fp_gset:Nn \g__ptxcd_invoice_total_fp { \g__ptxcd_invoice_sum_fp}
+	\fp_gzero:N \g__ptxcd_tax_total_fp
+	\PrintInvoiceSum{netto}{\fp_use:N  \g__ptxcd_invoice_sum_fp}
+	\seq_map_inline:Nn \g__ptxcd_VAT_rates_seq  {
+		\fp_compare:nNnF {\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}} = {0} {
+			\__ptxcd_PrintTradeTax:nnn {##1} {\fp_use:c {g__ptxcd_invoice_base_vat##1_fp}} {\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}}
+			\fp_gadd:Nn \g__ptxcd_tax_total_fp {\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}}
+			\PrintVatSum[{\fp_use:c {g__ptxcd_invoice_base_vat##1_fp}}]{##1 }{\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}}
+		}
+	}
+	\PrintInvoiceSum{brutto}{\fp_eval:n {\g__ptxcd_tax_total_fp +  \g__ptxcd_invoice_total_fp }}
+	% TODO add support for allowance, chargeTotal, and prepaid
+%	\noalign{
+%	\use:c {@bsphack}
+	\__ptxcd_PrintInvoiceSummation:nnnnnnnn
+		{\fp_use:N  \g__ptxcd_invoice_sum_fp}% LineTotalAmount
+		{0} %ChargeTotalAmount
+		{0} %AllowanceTotalAmount
+		{\fp_use:N  \g__ptxcd_invoice_sum_fp} %TaxBasisTotalAmount
+		{\fp_use:N \g__ptxcd_tax_total_fp} %TaxBasisTotalAmount
+		{\fp_eval:n {\g__ptxcd_tax_total_fp +  \g__ptxcd_invoice_total_fp }} %GrandTotalAmount
+		{0} % TotalPrepaidAmount
+		{\fp_eval:n {\g__ptxcd_tax_total_fp +  \g__ptxcd_invoice_total_fp }} %DuePayableAmount = GrandTotalAmount - TotalPrepaidAmount
+%	\use:c {@esphack}
+%	}
+}
+
+%Ausgabe der einzelnen Rechnungspositionen
+\newcommand*{\PrintInvoiceItem}[4]{%
+	\stepcounter{invoiceitem}%
+	\theinvoiceitem%Positionsnummer
+	\fp_gset:Nn \g__ptxcd_invoice_item_vat_fp  {#2 * (#1/100) * #4}
+	\fp_gset:Nn \g__ptxcd_invoice_item_fp  {#2 * #4}
+%	\fp_gadd:Nn \g__ptxcd_invoice_sum_vat_fp 
+	\fp_gadd:cn {g__ptxcd_invoice_base_vat#1_fp} {\g__ptxcd_invoice_item_fp}
+	\fp_gadd:cn {g__ptxcd_invoice_sum_vat#1_fp} {\g__ptxcd_invoice_item_vat_fp}
+	\fp_gadd:Nn \g__ptxcd_invoice_sum_fp {\g__ptxcd_invoice_item_fp}
+	
+	% position nummer name einzel-preis anzahl gesamtpreis	
+	\__ptxcd_write_TradeLineItem:nnnnnn {\theinvoiceitem} {} {#3} {#4} {#2} {\fp_use:N \g__ptxcd_invoice_item_fp}
+	
+	&#2% Anzahl
+	&#3\space(\printVAT{#1}~MwSt.)% Beschreibung mit Angabe der MwSt, in Klammern
+	&\num{#4}%\num[round-mode=places,output-decimal-marker={,},round-pad = false]{#4}\tl_show:n {#4}%Einzelpreis
+	&\exp_args:Nx \num{\fp_use:N \g__ptxcd_invoice_item_fp}
+	\tabularnewline
+}
+
+
+
+\newcommand*{\PrintInvoiceSum}[2]{
+	\PrintSum{\csname invoicesum#1name\endcsname}{#2}
+}
+
+\newcommand*{\PrintVatSum}[3][]{
+	\PrintSum{\invoicesumvatname[#1]{#2}}{#3}
+}
+
+\newcommand*{\invoicesumvatname}[2][]{MwSt.~\printVAT{#2}\tl_if_empty:nF {#1} {\space(\num[round-precision=2]{#1}\TableCurrency)}}
+\renewcommand*{\theinvoiceitem}{\int_compare:nNnT {\value{invoiceitem}}<{10}{0}\arabic{invoiceitem}}
+
+\newcommand*{\PrintSum}[2]{
+	&&\multicolumn{1}{r}{#1\invoicesumseparator}&\multicolumn{1}{l}{}&\exp_args:Nx \num {#2}\tabularnewline
+}
+
+\ExplSyntaxOff
+
+\newcommand*{\invoicesumnettoname}{Summe (Netto)}
+\newcommand*{\invoicesumbruttoname}{Summe (Brutto)}
+\newcommand*{\invoicesumseparator}{:\space}
+
+\newcommand*{\TableCurrency}{\,€}
+\newcommand*{\printVAT}[1]{\num[round-precision=0]{#1}\,\%}
+
+
+
+\newcommand*{\PrintPositionenVAT}[5]{%
+	\stepcounter{invoiceitem}%
+	\theinvoiceitem&#1&#2\space(\printVAT{#3})&#4&#5\tabularnewline
+}
+	
+
+
+\endinput

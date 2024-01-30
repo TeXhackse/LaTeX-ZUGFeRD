@@ -1,0 +1,867 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2024 Marei Peischl <marei@peitex.de>
+% ---------------------------------------------------------
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008-05-04 or later.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{skeleton.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
+%<package>\ProvidesExplPackage{zugferd}{2024-01-30}{0.1}{ZUGFerd Invoice and Faktur-X}
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{zugferd}[2024-01-30]
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{zugferd.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v1.0}{2024/01/30}{Initial public version}
+%
+% \GetFileInfo{zugferd.dtx}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+%
+% \title{The \textsf{zugferd} package\thanks{This document
+%   corresponds to \textsf{zugferd}~\fileversion, dated \filedate.}}
+% \author{Marei Peischl \\ \texttt{marei@peitex.de}}
+%
+% \maketitle
+%
+% tbd
+% 
+% \MaybeStop{}
+%
+% \section{Implementation}
+%
+%<*package>
+%<@@=zugferd>
+% Define formats
+\str_new:N \g_@@_format_str
+\bool_new:N \g_@@_writeTradeContact_bool
+\bool_new:N \g_@@_writePaymentMeans_bool
+\str_new:N \g_@@_conformance_level_str
+\char_set_catcode_other:N \#%
+\keys_define:nn {zugferd} {
+	format .choice:,
+	format / xrechnung2.3 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3}\bool_gset_true:N \g_@@_writeTradeContact_bool\bool_gset_true:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG},
+	format  / basic .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic}\bool_gset_false:N \g_@@_writeTradeContact_bool\bool_gset_false:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {BASIC},
+	format .initial:n = basic,
+	format .usage:n = load
+}
+\char_set_catcode_parameter:N \#%
+
+\ProcessKeyOptions[zugferd]
+
+% module to write zugferd xml
+\iow_new:N \_@@_xml_writer_iow
+
+% based on experiments for l3pdfmeta from ulrike fischer
+\pdfmeta_xmp_xmlns_new:nn{fx}{urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
+
+\cs_generate_variant:Nn \__pdfmeta_xmp_schema_new:nnn {nne}
+\__pdfmeta_xmp_schema_new:nne
+	  {Factur-X~PDFA~Extension~Schema}
+	  {fx}
+	  {urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
+
+\__pdfmeta_xmp_property_new:nnnnn
+	  {fx}
+	  {DocumentFileName}
+	  {Text}
+	  {external}
+	  {name~of~the~embedded~XML~invoice~file}
+
+\__pdfmeta_xmp_property_new:nnnnn
+	  {fx}
+	  {DocumentType}
+	  {Text}
+	  {external}
+	  {INVOICE}
+
+\__pdfmeta_xmp_property_new:nnnnn
+	  {fx}
+	  {Version}
+	  {Text}
+	  {external}
+	  {The~actual~version~of~the~factur-x~schema}
+
+\__pdfmeta_xmp_property_new:nnnnn
+	  {fx}
+	  {ConformanceLevel}
+	  {Text}
+	  {external}
+	  {The~conformance~level~of~the~factur-x~data}
+
+\exp_args:Ne \pdfmeta_xmp_add:n {
+	% fix INVOICE
+	<fx:DocumentType>INVOICE</fx:DocumentType>\iow_newline:
+	% fix factur-x.xml
+	<fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>\iow_newline:
+	% fix schema version
+	<fx:Version>1.0</fx:Version>\iow_newline:
+	% variable (zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG)
+	<fx:ConformanceLevel>
+	\g_@@_conformance_level_str</fx:ConformanceLevel>\iow_newline:
+	%
+ }
+
+\newcommand*{\startWritingZUGFeRDxml}{\iow_open:Nn  \_@@_xml_writer_iow {\jobname _zugferd.xml}}
+
+% The metadata elements are taken from Ulrike Fischers faktur-x experiments
+% https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
+\newcommand*{\stopWritingZUGFeRDxml}{
+	\iow_close:N  \_@@_xml_writer_iow
+	\group_begin:
+	\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative} %or /Source in some cases
+	\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
+	\pdffile_embed_file:nnn {\jobname _zugferd.xml}{factur-x.xml}{zugferd/rechnung}
+	\group_end:
+	\pdfmanagement_add:nnx
+		  {Catalog/Names}
+		  {EmbeddedFiles}
+		  {\pdf_object_ref:n{zugferd/rechnung}}
+		% steht in der docu ist aber pdf 2.0 ....
+	\pdfmanagement_add:nnx{Catalog}{AF}{\pdf_object_ref:n{zugferd/rechnung}}
+}
+
+\cs_new:Nn \_@@_write_xml:n {
+	\tl_if_head_eq_charcode:nNTF {#1} \^^M {
+		\iow_now:Nn \_@@_xml_writer_iow {#1}
+	} {
+		\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: \exp_not:n {#1}}
+	}
+}
+
+\cs_generate_variant:Nn \_@@_write_xml:n {e}
+
+% Auxiliary functions
+
+\RequirePackage{siunitx}
+
+\tl_new:N \l_@@_tmp_tl
+
+\cs_new:Nn \_@@_number_format:nNn {
+	\sisetup{parse-numbers=true,round-mode=places,round-precision=#1,round-pad = false,group-digits=false,minimum-decimal-digits=#1,output-decimal-marker=.}
+	\siunitx_number_format:nN {#3} #2
+}
+
+\cs_generate_variant:Nn  \_@@_number_format:nNn  {nNe}
+
+\cs_new:Nn  \_@@__write_xml_number_round:nnnn {
+	\_@@_number_format:nNe {#1} \l_@@_tmp_tl {#4}
+	\_@@_write_xml:e {<ram:#2#3>\l_@@_tmp_tl</ram:#2>}
+}
+
+\cs_new:Nn  \_@@__write_xml_number_round:nnn {
+	 \_@@__write_xml_number_round:nnnn {#1} {#2} {} {#3}
+}
+
+\int_new:N \l_@@_xml_indent_int
+\cs_new:Nn \_@@_xml_indent: {
+	\space\space
+}
+
+\cs_new:Nn \_@@_xml_auto_indent: {
+	\prg_replicate:nn {\l_@@_xml_indent_int} {\_@@_xml_indent:}
+}
+
+\cs_new:Nn \_@@_xml_add_indent: {
+	\prg_replicate:nn {\l_@@_xml_indent_int} {\_@@_xml_indent:}
+	\space\space
+}
+
+%setup for xml indentation
+\cs_new:Nn \_@@_xml_newline_indent: {\iow_newline: \_@@_xml_auto_indent:}
+\char_set_active_eq:nN {13} \_@@_xml_newline_indent:%
+
+% unit codes
+
+% need to use /UN/CEFACT Common Codes
+% source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
+\keys_define:nn { zugferd } {
+	unit .choices:nn = {HUR,DAY,C62,H87} {
+		\tl_set_eq:NN \l_@@_unit_code_tl \l_keys_choice_tl
+	},
+	% hour = HUR
+	unit / hour .meta:n = {unit=HUR},
+%	unit / hur .meta:n = {unit=HUR},
+	%day = DAY
+	unit / day .meta:n = {unit=DAY},
+	% one (unit) = C62
+	unit / one .meta:n= {unit= C62},
+	% piece = H87
+	unit / piece .meta:n = {unit=H87},
+	% make selection case insensitive
+	unit / unknown .code:n = {
+		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {unit} {\str_uppercase:f {#1}}
+		{\keys_set:nx { zugferd } {unit= {\str_uppercase:f {#1}}}}
+		{\msg_warning:nnn { zugferd } {unknown-unit} {#1}}
+	}
+}
+
+\msg_new:nnnn {zugferd} {unknown-unit} {
+	You~selected~a~unit~which~was~not~predefined.\\
+	I~~will~directly~use~your~selection~'unit=#1'~as~Common~Code.
+	Please~ensure~the~selection~is~valid!
+} {
+	For~more~information~see~the~zugferd~documentation and the /UN/CEFACT Common Code list.
+}
+% tax category codes
+
+%https://portal3.gefeg.com/projectdata/invoice/deliverables/installed/publishingproject/zugferd%202.0.1%20-%20facturx%201.03/en%2016931%20%E2%80%93%20facturx%201.03%20%E2%80%93%20zugferd%202.0.1%20-%20basic.scm/html/de/021.htm?https://portal3.gefeg.com/projectdata/invoice/deliverables/installed/publishingproject/zugferd%202.0.1%20-%20facturx%201.03/en%2016931%20%E2%80%93%20facturx%201.03%20%E2%80%93%20zugferd%202.0.1%20-%20basic.scm/html/de/0243.htm
+% - S = standard rate
+% - Z = zero rated
+% - E = tax-exempt
+% - AE = VAT reverse charge
+% - K = VAT exempt for EEA intra-community supply of goods and services
+% - G = Free export item, tax not charged
+% - O = Services outside scope of tax
+% - L = Canary Islands general indirect tax
+% - M = Tax for production, services and importation in Ceuta and Melilla
+% need to use /UN/CEFACT Common Codes
+% source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
+\keys_define:nn { zugferd / tax} {
+	 category .choices:nn = {S,Z,E,AE,K,G,O,L,M} {
+		\tl_set_eq:NN \l_@@_tax_category_code_tl \l_keys_choice_tl
+	},
+	standard .meta:n = {category=S},
+	zero .meta:n = {category=Z},
+	exempt .meta:n = {category=E},
+	reverse-charge .meta:n = {category=AE},
+	intra-community .meta:n = {category=K},
+	EEA .meta:n = {category=K},
+	export .meta:n = {category=G},
+	canary-islands .meta:n = {category=L},
+	ceuta .meta:n = {category=M},
+	melilla .meta:n = {category=M},
+	category / unknown .code:n = {
+		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {category} {\str_uppercase:f {#1}}
+		{\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}}
+		{\msg_warning:nnn { zugferd } {unknown-unit} {#1}}
+	},
+	ExceptionReason .tl_set:N = \l_@@_tax_exception_reason_tl,
+	rate .fp_set:N =  \l_@@_tax_rate_fp,
+}
+
+
+\seq_new:N \g_@@_notes_seq
+\tl_new:N  \g_@@_id_tl
+\tl_new:N \g_@@_date_tl
+\tl_new:N \g_@@_subject_tl 
+\tl_new:N \g_@@_fromaddress_tl 
+\tl_new:N \g_@@_DocumentTypeCode_tl
+
+\keys_define:nn { zugferd } {
+	id .choice:,
+	id / komavar .code:n = \tl_gset:Nf \g_@@_id_tl {\scr@invoice@var},
+	id / unknown .code:n = \tl_gset:Nn \g_@@_id_tl {#1},
+	%TODO define others
+	document-type .choice:,
+	document-type / commercial-invoice .code:n = \tl_gset:Nn \g_@@_DocumentTypeCode_tl {380},
+	date .choice:,
+	date / auto .code:n = \tl_gset:Nn \g_@@_date_tl {\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day},
+	date / unknown .code:n = \tl_gset:Nn  \g_@@_date_tl,
+	delivery-date .choice:,
+	delivery-date / auto .code:n = \tl_gset:Nn \g_@@_delivery_date_tl {\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day},
+	delivery-date / unknown .code:n = \tl_gset:Nn  \g_@@_delivery_date_tl,
+	subject .choice:,
+	subject / komavar .code:n = \tl_gset:Nf \g_@@_subject_tl {\scr@subject@var},
+	subject /unknown .code:n  = \tl_gset:Nn  \g_@@_subject_tl {#1},
+	fromaddress .choice:,
+	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl {\scr@fromaddress@var},
+	fromaddress / unknown .code:n = \tl_gset:Nn \g_@@_fromaddress_tl {#1},
+	add-note .code:n = \seq_gput_right:Nn \g_@@_notes_seq {#1},
+}
+
+%TODO maybe expand when writing
+\newcommand{\SetZUGFeRDData}[1]{
+	\keys_set:nn {zugferd} {#1}
+}
+
+\cs_new:Nn  \_@@_note_if_not_empty:N {%
+	\tl_if_empty:NF #1 {%
+		\_@@_write_note:n {#1}%
+	}%
+}%
+
+\begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
+\endlinechar=13%
+\char_set_catcode:nn {13}{13}%
+%
+\cs_new:Nn \_@@_write_note:n {%
+	\begingroup%
+		\let\\\iow_newline:%
+		\_@@_write_xml:e {%
+			<ram:IncludedNote>
+				\_@@_xml_indent:<ram:Content>#1
+				\_@@_xml_indent:</ram:Content>
+			</ram:IncludedNote>%
+		}%
+	\endgroup%
+}%
+%
+%
+\begingroup%
+\char_set_catcode_other:N \#%
+\char_set_catcode:nn {32}{10}%
+\cs_new:Nn \_@@_insert_Header:{%
+\_@@_write_xml:e {%
+	<?xml version='1.0' encoding='UTF-8' ?>
+	<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
+}%
+\int_incr:N \l_@@_xml_indent_int%
+\_@@_write_xml:e {%
+	<rsm:ExchangedDocumentContext>
+	\_@@_xml_indent:<ram:GuidelineSpecifiedDocumentContextParameter>
+	\_@@_xml_indent:\_@@_xml_indent:<ram:ID>urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3</ram:ID>
+	\_@@_xml_indent:</ram:GuidelineSpecifiedDocumentContextParameter>
+	</rsm:ExchangedDocumentContext>%
+ }}%
+\endgroup%
+\cs_new:Nn \_@@_insert_FrontMatter: {%
+	\_@@_write_xml:n {<rsm:ExchangedDocument>}%
+	\int_incr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:e {%
+		<ram:ID>\g_@@_id_tl</ram:ID>
+		<ram:TypeCode>\g_@@_DocumentTypeCode_tl</ram:TypeCode>
+		<ram:IssueDateTime>
+			% space required!
+			<udt:DateTimeString~format="102">\g_@@_date_tl</udt:DateTimeString>
+		</ram:IssueDateTime>%
+	}%
+	\_@@_note_if_not_empty:N  \g_@@_subject_tl%
+	\_@@_note_if_not_empty:N \g_@@_fromaddress_tl%
+	\seq_map_inline:Nn \g_@@_notes_seq {%
+		\_@@_write_note:n {##1}%
+	}%
+	\int_decr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:e {%
+		</rsm:ExchangedDocument>
+		<rsm:SupplyChainTradeTransaction>%
+	}%
+	\int_incr:N \l_@@_xml_indent_int%
+ }%
+ %
+ % footer
+ \cs_new:Nn \_@@_insert_Footer: {%
+	 \_@@_write_xml:n {</rsm:SupplyChainTradeTransaction>}%
+	 \int_decr:N \l_@@_xml_indent_int%
+	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%
+ }%
+\endgroup
+
+%    \end{macrocode}
+% Each item consists of 5 parts:
+% \begin{itemize}
+% \item AssociatedDocumentLineDocument
+%\item SpecifiedTradeProduct
+%\item SpecifiedLineTradeAgreement
+%\item SpecifiedLineTradeDelivery
+%\item SpecifiedLineTradeSettlement
+%\end{itemize}
+%<*package>
+%<@@=zugferd>
+%    \begin{macrocode}
+%\begingroup
+\begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
+\endlinechar=13%
+\char_set_catcode:nn {13}{13}%
+% AssociatedDocumentLineDocument
+\cs_new:Nn \_@@_AssociatedDocumentLineDocument:n {%
+		<ram:AssociatedDocumentLineDocument>
+		\_@@_xml_indent: <ram:LineID>#1</ram:LineID>
+		</ram:AssociatedDocumentLineDocument>%
+}%
+%
+%
+% SpecifiedTradeProduct
+\cs_new:Nn \_@@_SpecifiedTradeProduct:nn {%
+		<ram:SpecifiedTradeProduct>
+		\tl_if_empty:nF {#1} {%
+			\_@@_xml_indent:<ram:SellerAssignedID>#1</ram:SellerAssignedID>
+		}%
+		\_@@_xml_indent:<ram:Name>#2</ram:Name>
+		</ram:SpecifiedTradeProduct>%
+}%
+%
+\cs_new:Nn \_@@_ProductTradePrice:nn {%
+	<ram:\str_uppercase:n #1PriceProductTradePrice>
+	\_@@_xml_indent:<ram:ChargeAmount>#2</ram:ChargeAmount>
+	</ram:\str_uppercase:n #1PriceProductTradePrice>%
+}%
+%
+\cs_new:Nn \_@@_SpecifiedLineTradeAgreement:nn {%
+					<ram:SpecifiedLineTradeAgreement>
+						<ram:GrossPriceProductTradePrice>
+							<ram:ChargeAmount>#1</ram:ChargeAmount>
+						</ram:GrossPriceProductTradePrice>
+						<ram:NetPriceProductTradePrice>
+							<ram:ChargeAmount>#1</ram:ChargeAmount>
+						</ram:NetPriceProductTradePrice>
+					</ram:SpecifiedLineTradeAgreement>
+}%
+%
+% SpecifiedLineTradeDelivery:nn <unit code > <number>
+\cs_new:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
+	<ram:SpecifiedLineTradeDelivery>
+	% SPACE!
+	\_@@_xml_indent:<ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
+	</ram:SpecifiedLineTradeDelivery>%
+}%
+%
+% SpecifiedLineTradeSettlement
+\cs_new:Nn  \_@@_SpecifiedLineTradeSettlement:nnnn {%
+		<ram:SpecifiedLineTradeSettlement>
+		\_@@_xml_indent:<ram:ApplicableTradeTax>
+		\_@@_xml_indent:\_@@_xml_indent:<ram:TypeCode>VAT</ram:TypeCode>
+		\tl_if_empty:nF {#1} {%
+		\_@@_xml_indent:\_@@_xml_indent:<ram:ExemptionReason>#1</ram:ExemptionReason>
+		}%
+		\_@@_xml_indent:\_@@_xml_indent:<ram:CategoryCode>#2</ram:CategoryCode>
+		\_@@_xml_indent:\_@@_xml_indent:<ram:RateApplicablePercent>#3</ram:RateApplicablePercent>
+		\_@@_xml_indent:</ram:ApplicableTradeTax>
+		\_@@_xml_indent:<ram:SpecifiedTradeSettlementLineMonetarySummation>
+		\_@@_xml_indent:\_@@_xml_indent:<ram:LineTotalAmount>#4</ram:LineTotalAmount>
+		\_@@_xml_indent:</ram:SpecifiedTradeSettlementLineMonetarySummation>
+		</ram:SpecifiedLineTradeSettlement>%
+}%
+\endgroup
+
+\cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {VVnn}
+
+% position nummer name einzel-preis anzahl gesamtpreis
+\cs_new:Nn	\_@@_insert_TradeLineItem:nnnnnn {
+	\_@@_write_xml:n {<ram:IncludedSupplyChainTradeLineItem>}
+	\int_incr:N  \l_@@_xml_indent_int
+	\_@@_write_xml:e {\_@@_AssociatedDocumentLineDocument:n {#1}}%
+
+	\begingroup
+	\zugferd_disable_macros: 
+	\_@@_write_xml:e {\_@@_SpecifiedTradeProduct:nn {#2} {#3}}
+	\endgroup
+
+	\_@@_write_xml:n {<ram:SpecifiedLineTradeAgreement>}
+		\int_incr:N  \l_@@_xml_indent_int
+		\_@@_write_xml:e {\_@@_ProductTradePrice:nn {net} {#4}}
+		\int_decr:N  \l_@@_xml_indent_int
+	\_@@_write_xml:n {</ram:SpecifiedLineTradeAgreement>}
+	
+	\_@@_write_xml:e {\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}}
+	\_@@_write_xml:e {\_@@_SpecifiedLineTradeSettlement:VVnn  \l_@@_tax_exception_reason_tl \l_@@_tax_category_code_tl  { \fp_use:N \l_@@_tax_rate_fp} {#6} }
+	\int_decr:N  \l_@@_xml_indent_int
+	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
+}
+%    \end{macrocode}
+% ApplicableHeaderTradeAgreement
+%
+% Contains information on seller and buyer trade party:
+% \begin{itemize}
+% \item  BuyerReference
+% \item SellerTradeParty
+% \item BuyerTradeParty
+% \end{itemize}
+% Seller and Buyer are specified the same way.
+%<*package>
+%<@@=zugferd>
+%    \begin{macrocode}
+%\begingroup
+\keys_define:nn {zugferd/buyer} {
+	reference .tl_gset:N = \g_@@_buyer_reference_tl,
+}
+
+\clist_map_inline:nn {seller,buyer} {
+	\prop_new:c {g_@@_#1_AddressData_prop}
+	\keys_define:nn {zugferd / #1} {
+		address .code:n = {
+			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
+			%TODO error if more than 2 lines or only 1
+			\keys_set:nx {zugferd / #1} {lineone=\seq_item:Nn \l_tmpa_seq {1},linetwo=\seq_item:Nn \l_tmpa_seq {2}}
+		},
+		unknown .code:n = \prop_gput:cVn {g_@@_#1_AddressData_prop} \l_keys_key_tl {##1}
+	}
+}
+
+\keys_define:nn {zugferd/seller} {
+	contact .code:n = {
+		\seq_set_split:Nnn \l_tmpa_seq {\\} {#1}
+		\int_compare:nNnTF {\seq_count:N \l_tmpa_seq} > {3}
+			{
+				\keys_set:ne {zugferd/seller} {
+					contact-name = \seq_item:Nn \l_tmpa_seq {1},
+					contact-department = \seq_item:Nn \l_tmpa_seq {2},
+					contact-phone = \seq_item:Nn \l_tmpa_seq {3},
+					contact-email= \seq_item:Nn \l_tmpa_seq {4}
+				}
+			}{
+				\keys_set:ne {zugferd/seller} {
+					contact-name = \seq_item:Nn \l_tmpa_seq {1},
+					contact-phone = \seq_item:Nn \l_tmpa_seq {2},
+					contact-email= \seq_item:Nn \l_tmpa_seq {3}
+				}
+			}
+	}
+}
+
+%\_@@_PostalTradeAddress:nnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode UID
+\cs_new:Nn \_@@_PostalTradeAddress:N {%
+	\_@@_PostalTradeAddress:eeeeee
+		{\prop_item:Nn #1 {postcode}}
+		{\prop_item:Nn #1 {lineone}}
+		{\prop_item:Nn #1 {linetwo}}
+		{\prop_item:Nn #1 {city}}
+		{\prop_item:Nn #1 {country}}
+		{\prop_item:Nn #1 {vatid}}
+}%
+%
+% Contact data phone/email to a specific contact person
+\cs_new:Nn \_@@_DefinedTradeContact:N {%
+	\_@@_DefinedTradeContact:eeee
+		{\prop_item:Nn #1 {contact-name}}
+		{\prop_item:Nn #1 {contact-department}}
+		{\prop_item:Nn #1 {contact-phone}}
+		{\prop_item:Nn #1 {contact-email}}
+}%
+%
+\begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
+\endlinechar=13%
+\char_set_catcode:nn {13}{13}%
+%\_@@_PostalTradeAddress:nnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode UID
+\cs_new:Nn \_@@_PostalTradeAddress:nnnnnn {%
+        <ram:PostalTradeAddress>
+         \_@@_xml_indent:<ram:PostcodeCode>#1</ram:PostcodeCode>
+         \_@@_xml_indent:<ram:LineOne>#2</ram:LineOne>
+         \_@@_xml_indent:<ram:LineTwo>#3</ram:LineTwo>
+         \_@@_xml_indent:<ram:CityName>#4</ram:CityName>
+         \_@@_xml_indent:<ram:CountryID>#5</ram:CountryID>
+        </ram:PostalTradeAddress>%
+% TODO add support local tax id: schemaID="FC"
+        \tl_if_empty:nF {#6} {
+        <ram:SpecifiedTaxRegistration>
+        \_@@_xml_indent:<ram:ID~schemeID="VA">#6</ram:ID>
+        </ram:SpecifiedTaxRegistration>%
+        }%
+}%
+%
+% Contact data phone/email to a specific contact person
+\cs_new:Nn \_@@_DefinedTradeContact:nnnn {%
+\bool_if:NT  \g_@@_writeTradeContact_bool {%
+	<ram:DefinedTradeContact>
+	\_@@_xml_indent:<ram:PersonName>#1</ram:PersonName>
+	\tl_if_blank:nF {#2} {%
+	\_@@_xml_indent:<ram:DepartmentName>#2</ram:DepartmentName>
+	}%
+	\tl_if_blank:nF {#3} {%
+	\_@@_xml_indent:<ram:TelephoneUniversalCommunication>
+	\_@@_xml_indent:\_@@_xml_indent:<ram:CompleteNumber>#3</ram:CompleteNumber>
+	\_@@_xml_indent:</ram:TelephoneUniversalCommunication>
+	}%
+	\tl_if_blank:nF {#4} {%
+	\_@@_xml_indent:<ram:EmailURIUniversalCommunication>
+	\_@@_xml_indent:\_@@_xml_indent:<ram:URIID>#4</ram:URIID>
+	\_@@_xml_indent:</ram:EmailURIUniversalCommunication>
+	}%
+	</ram:DefinedTradeContact>%
+	}%
+}%
+%
+%
+%
+\cs_new:Nn \_@@_ApplicableHeaderTradeAgreement: {%
+	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}%
+	\int_incr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:e {%
+		<ram:BuyerReference>\g_@@_buyer_reference_tl</ram:BuyerReference>
+		<ram:SellerTradeParty>%
+	}%
+	\int_incr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:e {%
+		<ram:Name>\prop_item:Nn \g_@@_seller_AddressData_prop {name}</ram:Name>
+		% Trade Contract
+			\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop
+			\_@@_PostalTradeAddress:N  \g_@@_seller_AddressData_prop
+		</ram:SellerTradeParty>
+		<ram:BuyerTradeParty>
+			<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>
+			\_@@_PostalTradeAddress:N  \g_@@_buyer_AddressData_prop
+		</ram:BuyerTradeParty>%
+	}%
+	\int_decr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:e {%
+		</ram:ApplicableHeaderTradeAgreement>
+		\_@@_ApplicableHeaderTradeDelivery:n { \g_@@_delivery_date_tl }%
+	}%
+}%
+%
+%
+% delivery date
+\cs_new:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
+	<ram:ApplicableHeaderTradeDelivery>
+		\_@@_xml_indent:<ram:ActualDeliverySupplyChainEvent>
+			\_@@_xml_indent:\_@@_xml_indent:<ram:OccurrenceDateTime>
+				\_@@_xml_indent:\_@@_xml_indent:\_@@_xml_indent:<udt:DateTimeString~format="102">#1</udt:DateTimeString>
+			\_@@_xml_indent:\_@@_xml_indent: </ram:OccurrenceDateTime>
+		\_@@_xml_indent:</ram:ActualDeliverySupplyChainEvent>
+	</ram:ApplicableHeaderTradeDelivery>%
+}%
+%
+%
+\endgroup
+\cs_generate_variant:Nn  \_@@_DefinedTradeContact:nnnn {eeee}%
+\cs_generate_variant:Nn  \_@@_PostalTradeAddress:nnnnnn {eeeeee}%
+%    \end{macrocode}
+% ApplicableHeaderTradeSettlement
+%<*package>
+%<@@=zugferd>
+%    \begin{macrocode}
+%\begingroup
+%
+\tl_new:N \l_@@_currency_tl
+\tl_new:N \l_@@_payment_means_tl
+\keys_define:nn {zugferd} {
+	currency .choices:nn = {EUR, USD, CHF} { \tl_set_eq:NN  \l_@@_currency_tl \l_keys_choice_tl	},
+	currency / € .meta:n = {currency = EUR},
+	% add support for all currencies/make case-insensitive/unknown
+	payment-terms .str_gset:N = \_@@_payment_terms_str,
+	payment-means / type .choices:nn = {10,20,30,42,48,49,57,58,59,97} {\tl_set_eq:NN \l_@@_payment_means_tl \l_keys_choice_tl},
+}
+
+\clist_map_inline:nn {iban,account-holder,bic} {
+	\keys_define:nn {zugferd/payment-means} {
+		#1 .tl_gset:c = {g_@@_payment_#1_tl}
+	}
+}
+
+\prop_new:c {g_@@_payment-means_names_prop}
+\newcommand*{\setupZUGFeRDStrings}[2]{
+	\prop_gset_from_keyval:cn {g_@@_#1_names_prop} {
+		#2
+	}
+}
+
+\ExplSyntaxOff
+%TODO english
+\setupZUGFeRDStrings{payment-means}{
+	10 = Bargeld,
+	30 = Überweisung,
+	42 = Payment to bank account,
+	48 = Kartenzahlung,
+	49 = Lastschrift,
+	57 = Dauerauftrag,
+	58 = Zahlung per SEPA Überweisung.,
+	59 = SEPA Lastschrift,
+	97 = Report
+}
+\ExplSyntaxOn
+
+% sums
+\cs_new:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
+	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
+    \int_incr:N \l_@@_xml_indent_int%
+    %TODO check if all need to be rounded to 2 decimals
+    \_@@__write_xml_number_round:nnn {2} {LineTotalAmount} {#1}
+    \_@@__write_xml_number_round:nnn {2} {ChargeTotalAmount} {#2}
+    \_@@__write_xml_number_round:nnn {2} {AllowanceTotalAmount} {#3}
+    \_@@__write_xml_number_round:nnn {2} {TaxBasisTotalAmount} {#4}
+	\_@@__write_xml_number_round:nnnn {2} {TaxTotalAmount} {~currencyID="\l_@@_currency_tl "} {#5}
+	\_@@__write_xml_number_round:nnn {2} {GrandTotalAmount} {#6}
+	\_@@__write_xml_number_round:nnn {2} {TotalPrepaidAmount} {#7}
+	\_@@__write_xml_number_round:nnn {2} {DuePayableAmount} {#8}
+	\int_decr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
+}%
+
+% ApplicableTradeTax CategoryCode Rate BaseAmount Result
+\cs_new:Nn \_@@_ApplicableTradeTax:nnnn {%
+	\_@@_write_xml:n {<ram:ApplicableTradeTax>}
+	\int_incr:N \l_@@_xml_indent_int%
+		\_@@__write_xml_number_round:nnn {2} {CalculatedAmount} {#4}
+		\_@@_write_xml:n {<ram:TypeCode>VAT</ram:TypeCode>}%
+		{{\_@@__write_xml_number_round:nnn {2} {BasisAmount} {#3}}}%
+		\_@@_write_xml:e {<ram:CategoryCode>#1</ram:CategoryCode>}%
+		\_@@_write_xml:n {<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>}%
+	\int_decr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
+}%
+%
+
+\begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
+\endlinechar=13%
+\char_set_catcode:nn {13}{13}%
+% ApplicableHeaderTradeSettlement
+\cs_new:Nn \_@@_ApplicableHeaderTradeSettlement:nnnnnnnn {%
+
+}%
+%
+% ApplicableHeaderTradeSettlement Need to be splitted to be used in separate parts of the tabular
+\cs_new:Nn \_@@_ApplicableHeaderTradeSettlement_start: {%
+	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}%
+	\int_incr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}%
+}%
+\cs_new:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {%
+	\int_decr:N \l_@@_xml_indent_int%
+	  \_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}%
+}%
+% SpecifiedTradePaymentTerms
+\cs_new:Nn \_@@_SpecifiedTradePaymentTerms:n {%
+	\_@@_write_xml:e {%
+		<ram:SpecifiedTradePaymentTerms>
+			\_@@_xml_indent:<ram:Description>#1</ram:Description>
+		</ram:SpecifiedTradePaymentTerms>%
+	}%
+}%
+%
+%
+% sums
+\cs_new:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {%
+\bool_if:NT  \g_@@_writePaymentMeans_bool {%
+	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
+	\int_incr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:e {%
+		<ram:TypeCode>\l_@@_payment_means_tl</ram:TypeCode>
+		\prop_if_in:cVT {g_@@_payment-means_names_prop} \l_@@_payment_means_tl {%
+			<ram:Information>\prop_item:cV {g_@@_payment-means_names_prop} \l_@@_payment_means_tl</ram:Information>
+		}%
+		<ram:PayeePartyCreditorFinancialAccount>
+			\_@@_xml_indent:<ram:IBANID>#2</ram:IBANID>
+			\_@@_xml_indent:<ram:AccountName>#1</ram:AccountName>
+		</ram:PayeePartyCreditorFinancialAccount>
+		<ram:PayeeSpecifiedCreditorFinancialInstitution>
+			\_@@_xml_indent:<ram:BICID>#3</ram:BICID>
+		</ram:PayeeSpecifiedCreditorFinancialInstitution>%
+	}%
+	\int_decr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
+}%
+}%
+\endgroup
+\cs_new:Nn \_@@_SpecifiedTradePaymentTerms: {\_@@_SpecifiedTradePaymentTerms:n {\_@@_payment_terms_str}}
+\cs_new:Nn  \_@@_SpecifiedTradeSettlementPaymentMeans: {
+	\tl_if_empty:cF {g_@@_payment_account-holder_tl}  {
+	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl}  {g_@@_payment_bic_tl}
+	}
+}
+
+%taken from hyperref.sty  v7.01h
+%% Copyright
+%% 1995-2001 Sebastian Rahtz, with portions written by David Carlisle and Heiko Oberdiek
+%% 2001-2015 Heiko Oberdiek
+%% 2016-2019 Oberdiek Package Support Group
+%% 2019-2024 LaTeX Project
+% maybe not all are required… but thought its a reasonable choice
+\cs_new:Nn \zugferd_disable_macros: {
+    \let\{\textbraceleft
+    \let\}\textbraceright
+    \let\\\textbackslash
+    \let\#\textnumbersign
+    \let\$\textdollar
+    \let\%\textpercent
+    \let\&\textampersand
+    \let\_\textunderscore
+    \let\P\textparagraph
+    \let\ldots\textellipsis
+    \let\dots\textellipsis
+    \ltx@IfUndefined{textEncodingNoboundary}%
+      {}{\let\noboundary\textEncodingNoboundary}%
+    \def\\{\pdfstringdefWarn\\}%
+    \def\newline{\pdfstringdefWarn\newline}%
+    \def\TeX{TeX}%
+    \def\LaTeX{La\TeX}%
+    \def\LaTeXe{%
+      \LaTeX2%
+      \ifHy@unicode\83\265\else e\fi
+    }%
+    \def\eTeX{%
+      \ifHy@unicode\83\265\else e\fi
+      -\TeX%
+    }%
+    \def\SliTeX{Sli\TeX}%
+    \def\MF{Metafont}%
+    \def\MP{Metapost}%
+    \let\fontencoding\@gobble
+    \let\fontfamily\@gobble
+    \let\fontseries\@gobble
+    \let\fontshape\@gobble
+    \let\fontsize\@gobbletwo
+    \let\selectfont\@empty
+    \let\usefont\@gobblefour
+    \let\emph\@firstofone
+    \let\textnormal\@firstofone
+    \let\textrm\@firstofone
+    \let\textsf\@firstofone
+    \let\texttt\@firstofone
+    \let\textbf\@firstofone
+    \let\textmd\@firstofone
+    \let\textit\@firstofone
+    \let\textsc\@firstofone
+    \let\textsl\@firstofone
+    \let\textup\@firstofone
+    \let\normalfont\@empty
+    \let\rmfamily\@empty
+    \let\sffamily\@empty
+    \let\ttfamily\@empty
+    \let\bfseries\@empty
+    \let\mdseries\@empty
+    \let\itshape\@empty
+    \let\scshape\@empty
+    \let\slshape\@empty
+    \let\upshape\@empty
+    \let\em\@empty
+    \let\rm\@empty
+    \let\Huge\@empty
+    \let\LARGE\@empty
+    \let\Large\@empty
+    \let\footnotesize\@empty
+    \let\huge\@empty
+    \let\large\@empty
+    \let\normalsize\@empty
+    \let\scriptsize\@empty
+    \let\small\@empty
+    \let\tiny\@empty
+    \let\mathversion\@gobble
+    \let\phantom\@gobble
+    \let\vphantom\@gobble
+    \let\hphantom\@gobble
+    \let\ding\HyPsd@ding
+    \let\Cube\HyPsd@DieFace
+    \def\begin##1{\csname##1\endcsname}%
+    \def\end##1{\csname end##1\endcsname}%
+    \def\textcolor##1##{\@secondoftwo}%
+   \def\TextOrMath{\ifmmode\expandafter\@secondoftwo\else\expandafter\@firstoftwo\fi}%
+    \let\foreignlanguage\@secondoftwo
+    \let\textlatin\@firstofone
+    \let\cyr\relax
+    \let\glqq\textglqq
+    \let\grqq\textgrqq
+    \let\glq\textglq
+    \let\grq\textgrq
+    \let\flqq\textflqq
+    \let\frqq\textfrqq
+    \let\flq\textflq
+    \let\frq\textfrq
+}
+
+%    \end{macrocode}
+
+% \Finale
+\endinput
