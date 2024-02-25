@@ -497,7 +497,7 @@
 			%TODO error if more than 2 lines or only 1
 			\keys_set:nx {zugferd / #1} {lineone=\seq_item:Nn \l_tmpa_seq {1},linetwo=\seq_item:Nn \l_tmpa_seq {2}}
 		},
-		unknown .code:n = \prop_gput:cVn {g_@@_#1_AddressData_prop} \l_keys_key_tl {##1}
+		unknown .code:n = \tl_if_blank:nF {##1} { \prop_gput:cVn {g_@@_#1_AddressData_prop} \l_keys_key_tl {##1} }
 	}
 }
 
