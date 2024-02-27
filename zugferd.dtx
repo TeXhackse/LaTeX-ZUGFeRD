@@ -120,8 +120,7 @@
 	% fix schema version
 	<fx:Version>1.0</fx:Version>\iow_newline:
 	% variable (zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG)
-	<fx:ConformanceLevel>
-	\g_@@_conformance_level_str</fx:ConformanceLevel>\iow_newline:
+	<fx:ConformanceLevel>\g_@@_conformance_level_str</fx:ConformanceLevel>\iow_newline:
 	%
  }
 
@@ -334,7 +333,7 @@
 \_@@_write_xml:e {%
 	<rsm:ExchangedDocumentContext>
 	\_@@_xml_indent:<ram:GuidelineSpecifiedDocumentContextParameter>
-	\_@@_xml_indent:\_@@_xml_indent:<ram:ID>urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3</ram:ID>
+	\_@@_xml_indent:\_@@_xml_indent:<ram:ID>\g_@@_format_str</ram:ID>
 	\_@@_xml_indent:</ram:GuidelineSpecifiedDocumentContextParameter>
 	</rsm:ExchangedDocumentContext>%
  }}%
