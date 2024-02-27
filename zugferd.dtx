@@ -862,6 +862,21 @@
 }
 
 %    \end{macrocode}
-
+% To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
+% Country is still missing.
+%   \begin{macrocode}
+\NewDocumentCommand{\insertZugferdData}{om}{
+	\str_case:nn {#1} {
+		{AddressData} {
+			\clist_map_inline:nn {name, lineone, linetwo} {
+				\prop_if_in:cnT  {g_@@_#2__prop } {##1} {\prop_item:cn {g_@@_#2_AddressData_prop } {##1}\\}
+			}
+			\prop_item:cn {g_@@_#2_AddressData_prop } {postcode}
+			\space
+			\prop_item:cn {g_@@_#2_AddressData_prop } {city}
+		}
+	}
+}
+%    \end{macrocode}
 % \Finale
 \endinput
