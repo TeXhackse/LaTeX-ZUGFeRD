@@ -278,6 +278,7 @@
 	%TODO define others
 	document-type .choice:,
 	document-type / commercial-invoice .code:n = \tl_gset:Nn \g_@@_DocumentTypeCode_tl {380},
+	document-type .initial:n = commercial-invoice,
 	date .choice:,
 	date / auto .code:n = \tl_gset:Nn \g_@@_date_tl {\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day},
 	date / unknown .code:n = \tl_gset:Nn  \g_@@_date_tl,
