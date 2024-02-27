@@ -294,8 +294,9 @@
 }
 
 %TODO maybe expand when writing
-\newcommand{\SetZUGFeRDData}[1]{
-	\keys_set:nn {zugferd} {#1}
+\NewDocumentCommand{\SetZUGFeRDData}{sm}{
+	\IfBooleanTF{#1}{\keys_set:ne}{\keys_set:nn}
+		{zugferd} {#2}
 }
 
 \cs_new:Nn  \_@@_note_if_not_empty:N {%
