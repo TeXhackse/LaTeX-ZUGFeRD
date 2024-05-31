@@ -17,16 +17,19 @@
 %
 % \iffalse
 %<*driver>
-\ProvidesFile{skeleton.dtx}
+\ProvidesFile{zugferd.dtx}
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
 %<package>\ProvidesExplPackage{zugferd}{2024-01-30}{0.1}{ZUGFerd Invoice and Faktur-X}
 %<*driver>
-\documentclass{ltxdoc}
+\documentclass{l3doc}
+\usepackage{ptxtools-l3doc}
 \usepackage{zugferd}[2024-01-30]
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
+\usepackage{biblatex}
+\addbibresource{ptxtools.bib}
 \begin{document}
   \DocInput{zugferd.dtx}
   \PrintChanges
@@ -52,9 +55,15 @@
 % \MaybeStop{}
 %
 % \section{Implementation}
-%
+% \iffalse
+%    \begin{macrocode}
 %<*package>
+%    \end{macrocode}
+% \fi
+%    \begin{macrocode}
 %<@@=zugferd>
+%    \end{macrocode}
+%    \begin{macrocode}
 % Define formats
 \str_new:N \g_@@_format_str
 \bool_new:N \g_@@_writeTradeContact_bool
@@ -75,7 +84,16 @@
 % module to write zugferd xml
 \iow_new:N \_@@_xml_writer_iow
 
-% based on experiments for l3pdfmeta from ulrike fischer
+\cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
+	\msg_new:nnnn {zugferd} {PDFmanagement-not-active} {
+		The~\LaTeX~PDF~management~is~not~active.~Activate~it~using~\string\DocumentMetadata.
+	} {
+		See~ZUGFeRD~or~PDFmanagement~documentation~for~more~information.
+	}
+	\msg_error:nn{zugferd} {PDFmanagement-not-active}
+	\RequirePackage{tagpdf-base}
+}
+% based on experiments for l3pdfmeta from  Ulrike Fischer
 \pdfmeta_xmp_xmlns_new:nn{fx}{urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
 
 \cs_generate_variant:Nn \__pdfmeta_xmp_schema_new:nnn {nne}
@@ -380,8 +398,6 @@
 %\item SpecifiedLineTradeDelivery
 %\item SpecifiedLineTradeSettlement
 %\end{itemize}
-%<*package>
-%<@@=zugferd>
 %    \begin{macrocode}
 %\begingroup
 \begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
@@ -482,8 +498,6 @@
 % \item BuyerTradeParty
 % \end{itemize}
 % Seller and Buyer are specified the same way.
-%<*package>
-%<@@=zugferd>
 %    \begin{macrocode}
 %\begingroup
 \keys_define:nn {zugferd/buyer} {
@@ -631,8 +645,6 @@
 \cs_generate_variant:Nn  \_@@_PostalTradeAddress:nnnnnn {eeeeee}%
 %    \end{macrocode}
 % ApplicableHeaderTradeSettlement
-%<*package>
-%<@@=zugferd>
 %    \begin{macrocode}
 %\begingroup
 %
@@ -879,5 +891,10 @@
 	}
 }
 %    \end{macrocode}
+% \iffalse
+%    \begin{macrocode}
+%</package>
+%    \end{macrocode}
+% \fi
 % \Finale
 \endinput
