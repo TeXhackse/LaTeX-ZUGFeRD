@@ -14,7 +14,6 @@
 % version 2008-05-04 or later.
 %
 % \fi
-%
 % \iffalse
 %<*driver>
 \ProvidesFile{zugferd.dtx}
@@ -22,6 +21,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
 %<package>\ProvidesExplPackage{zugferd}{2024-01-30}{0.1}{ZUGFerd Invoice and Faktur-X}
 %<*driver>
+\DocumentMetadata{pdfstandard=a-3b}
 \documentclass{l3doc}
 \usepackage{ptxtools-l3doc}
 \usepackage{zugferd}[2024-01-30]
@@ -63,12 +63,29 @@
 %    \begin{macrocode}
 %<@@=zugferd>
 %    \end{macrocode}
-%    \begin{macrocode}
 % Define formats
+% \begin{variable}{\g_@@_format_str}
+%    \begin{macrocode}
 \str_new:N \g_@@_format_str
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\g_@@_writeTradeContact_bool}
+%    \begin{macrocode}
 \bool_new:N \g_@@_writeTradeContact_bool
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\g_@@_writePaymentMeans_bool}
+%    \begin{macrocode}
 \bool_new:N \g_@@_writePaymentMeans_bool
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\g_@@_conformance_level_str}
+%    \begin{macrocode}
 \str_new:N \g_@@_conformance_level_str
+%    \end{macrocode}
+% \end{variable}
+% \begin{optionenv}{format}
+%    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
 	format .choice:,
@@ -80,10 +97,15 @@
 \char_set_catcode_parameter:N \#%
 
 \ProcessKeyOptions[zugferd]
-
+%    \end{macrocode}
+% \end{optionenv}
 % module to write zugferd xml
+% \begin{variable}{\_@@_xml_writer_iow}
+%    \begin{macrocode}
 \iow_new:N \_@@_xml_writer_iow
-
+%    \end{macrocode}
+% \end{variable}
+%    \begin{macrocode}
 \cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
 	\msg_new:nnnn {zugferd} {PDFmanagement-not-active} {
 		The~\LaTeX~PDF~management~is~not~active.~Activate~it~using~\string\DocumentMetadata.
@@ -91,12 +113,12 @@
 		See~ZUGFeRD~or~PDFmanagement~documentation~for~more~information.
 	}
 	\msg_error:nn{zugferd} {PDFmanagement-not-active}
-	\RequirePackage{tagpdf-base}
 }
 % based on experiments for l3pdfmeta from  Ulrike Fischer
 \pdfmeta_xmp_xmlns_new:nn{fx}{urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
 
 \cs_generate_variant:Nn \__pdfmeta_xmp_schema_new:nnn {nne}
+
 \__pdfmeta_xmp_schema_new:nne
 	  {Factur-X~PDFA~Extension~Schema}
 	  {fx}
@@ -142,12 +164,13 @@
 	%
  }
 
-\newcommand*{\startWritingZUGFeRDxml}{\iow_open:Nn  \_@@_xml_writer_iow {\jobname _zugferd.xml}}
+\newcommand*{\startWritingZUGFeRDxml}{\begingroup\char_set_active_eq:nN {13} \_@@_xml_newline_indent:\iow_open:Nn  \_@@_xml_writer_iow {\jobname _zugferd.xml}}
 
 % The metadata elements are taken from Ulrike Fischers faktur-x experiments
 % https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
-\newcommand*{\stopWritingZUGFeRDxml}{
-	\iow_close:N  \_@@_xml_writer_iow
+\newcommand*{\stopWritingZUGFeRDxml}{%
+	\iow_close:N  \_@@_xml_writer_iow%
+	\endgroup
 	\group_begin:
 	\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative} %or /Source in some cases
 	\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
@@ -160,7 +183,9 @@
 		% steht in der docu ist aber pdf 2.0 ....
 	\pdfmanagement_add:nnx{Catalog}{AF}{\pdf_object_ref:n{zugferd/rechnung}}
 }
-
+%    \end{macrocode}
+% \begin{function}{\_@@_write_xml:n}
+%    \begin{macrocode}
 \cs_new:Nn \_@@_write_xml:n {
 	\tl_if_head_eq_charcode:nNTF {#1} \^^M {
 		\iow_now:Nn \_@@_xml_writer_iow {#1}
@@ -170,49 +195,84 @@
 }
 
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
-
+%    \end{macrocode}
+% \end{function}
 % Auxiliary functions
-
+%    \begin{macrocode}
 \RequirePackage{siunitx}
-
+%    \end{macrocode}
+% \begin{variable}{\l_@@_tmp_tl}
+%    \begin{macrocode}
 \tl_new:N \l_@@_tmp_tl
+%    \end{macrocode}
+% \end{variable}
 
+% \begin{function}{\_@@_number_format:nNn}
+%    \begin{macrocode}
 \cs_new:Nn \_@@_number_format:nNn {
 	\sisetup{parse-numbers=true,round-mode=places,round-precision=#1,round-pad = false,group-digits=false,minimum-decimal-digits=#1,output-decimal-marker=.}
 	\siunitx_number_format:nN {#3} #2
 }
 
 \cs_generate_variant:Nn  \_@@_number_format:nNn  {nNe}
+%    \end{macrocode}
+% \end{function}
 
-\cs_new:Nn  \_@@__write_xml_number_round:nnnn {
+
+% \begin{function}{\_@@__write_xml_number_round:nnnn}
+%    \begin{macrocode}
+\cs_new:Nn \_@@__write_xml_number_round:nnnn {
 	\_@@_number_format:nNe {#1} \l_@@_tmp_tl {#4}
 	\_@@_write_xml:e {<ram:#2#3>\l_@@_tmp_tl</ram:#2>}
 }
+%    \end{macrocode}
+% \end{function}
 
-\cs_new:Nn  \_@@__write_xml_number_round:nnn {
+
+% \begin{function}{\_@@__write_xml_number_round:nnn}
+%    \begin{macrocode}
+\cs_new:Nn \_@@__write_xml_number_round:nnn {
 	 \_@@__write_xml_number_round:nnnn {#1} {#2} {} {#3}
 }
+%    \end{macrocode}
+% \end{function}
 
+
+% \begin{variable}{\l_@@_xml_indent_int}
+%    \begin{macrocode}
 \int_new:N \l_@@_xml_indent_int
+%    \end{macrocode}
+% \end{variable}
+% \begin{function}{\_@@_xml_indent:}
+%    \begin{macrocode}
 \cs_new:Nn \_@@_xml_indent: {
 	\space\space
 }
+%    \end{macrocode}
+% \end{function}
 
+
+% \begin{function}{\_@@_xml_auto_indent:}
+%    \begin{macrocode}
 \cs_new:Nn \_@@_xml_auto_indent: {
 	\prg_replicate:nn {\l_@@_xml_indent_int} {\_@@_xml_indent:}
 }
+%    \end{macrocode}
+% \end{function}
 
+
+% \begin{function}{\_@@_xml_add_indent:}
+%    \begin{macrocode}
 \cs_new:Nn \_@@_xml_add_indent: {
 	\prg_replicate:nn {\l_@@_xml_indent_int} {\_@@_xml_indent:}
 	\space\space
 }
-
+%    \end{macrocode}
+% \end{function}
 %setup for xml indentation
+%    \begin{macrocode}
 \cs_new:Nn \_@@_xml_newline_indent: {\iow_newline: \_@@_xml_auto_indent:}
-\char_set_active_eq:nN {13} \_@@_xml_newline_indent:%
-
 % unit codes
-
 % need to use /UN/CEFACT Common Codes
 % source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
 \keys_define:nn { zugferd } {
@@ -280,14 +340,38 @@
 	rate .fp_set:N =  \l_@@_tax_rate_fp,
 }
 
-
+%    \end{macrocode}
+% \begin{variable}{\g_@@_notes_seq}
+%    \begin{macrocode}
 \seq_new:N \g_@@_notes_seq
-\tl_new:N  \g_@@_id_tl
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\g_@@_id_tl}
+%    \begin{macrocode}
+\tl_new:N \g_@@_id_tl
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\g_@@_date_tl}
+%    \begin{macrocode}
 \tl_new:N \g_@@_date_tl
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\g_@@_subject_tl }
+%    \begin{macrocode}
 \tl_new:N \g_@@_subject_tl 
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\g_@@_fromaddress_tl }
+%    \begin{macrocode}
 \tl_new:N \g_@@_fromaddress_tl 
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\g_@@_DocumentTypeCode_tl}
+%    \begin{macrocode}
 \tl_new:N \g_@@_DocumentTypeCode_tl
-
+%    \end{macrocode}
+% \end{variable}
+%    \begin{macrocode}
 \keys_define:nn { zugferd } {
 	id .choice:,
 	id / komavar .code:n = \tl_gset:Nf \g_@@_id_tl {\scr@invoice@var},
@@ -647,9 +731,18 @@
 % ApplicableHeaderTradeSettlement
 %    \begin{macrocode}
 %\begingroup
-%
+% %    \end{macrocode}
+% \begin{variable}{\l_@@_currency_tl}
+%    \begin{macrocode}
 \tl_new:N \l_@@_currency_tl
+%    \end{macrocode}
+% \end{variable}
+% \begin{variable}{\l_@@_payment_means_tl}
+%    \begin{macrocode}
 \tl_new:N \l_@@_payment_means_tl
+%    \end{macrocode}
+% \end{variable}
+%    \begin{macrocode}
 \keys_define:nn {zugferd} {
 	currency .choices:nn = {EUR, USD, CHF} { \tl_set_eq:NN  \l_@@_currency_tl \l_keys_choice_tl	},
 	currency / € .meta:n = {currency = EUR},
@@ -769,13 +862,19 @@
 }%
 \endgroup
 \cs_new:Nn \_@@_SpecifiedTradePaymentTerms: {\_@@_SpecifiedTradePaymentTerms:n {\_@@_payment_terms_str}}
-\cs_new:Nn  \_@@_SpecifiedTradeSettlementPaymentMeans: {
+%    \end{macrocode}
+% \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
+%    \begin{macrocode}
+\cs_new:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
 	\tl_if_empty:cF {g_@@_payment_account-holder_tl}  {
 	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl}  {g_@@_payment_bic_tl}
 	}
 }
-
-%taken from hyperref.sty  v7.01h
+%    \end{macrocode}
+% \end{function}
+% \begin{function}{\zugferd_disable_macros:}
+%    \begin{macrocode}
+%taken from hyperref.sty  v7.01i
 %% Copyright
 %% 1995-2001 Sebastian Rahtz, with portions written by David Carlisle and Heiko Oberdiek
 %% 2001-2015 Heiko Oberdiek
@@ -794,7 +893,7 @@
     \let\P\textparagraph
     \let\ldots\textellipsis
     \let\dots\textellipsis
-    \ltx@IfUndefined{textEncodingNoboundary}%
+    \@ifundefined{textEncodingNoboundary}%
       {}{\let\noboundary\textEncodingNoboundary}%
     \def\\{\pdfstringdefWarn\\}%
     \def\newline{\pdfstringdefWarn\newline}%
@@ -872,9 +971,26 @@
     \let\frqq\textfrqq
     \let\flq\textflq
     \let\frq\textfrq
+    \let\if@mid@expandable\@firstoftwo
+    \let\hspace\HyPsd@hspace
+    \let\label\@gobble
+    \let\index\@gobble
+    \let\glossary\@gobble
+    \let\href\HyPsd@href
+    \let\@mkboth\@gobbletwo
+    \let\ref\HyPsd@ref
+    \let\pageref\HyPsd@pageref
+    \let\nameref\HyPsd@nameref
+    \let\autoref\HyPsd@autoref
+    \let\leavevmode\@empty
+    \let\mbox\@empty
+    \def\halign{\pdfstringdefWarn\halign\@gobble}%
+    \let\ignorespaces\HyPsd@ignorespaces
+    \let\Hy@SectionAnchorHref\@gobble
+    \let\ensuremath\@firstofone
 }
-
 %    \end{macrocode}
+% \end{function}
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
 % Country is still missing.
 %   \begin{macrocode}
