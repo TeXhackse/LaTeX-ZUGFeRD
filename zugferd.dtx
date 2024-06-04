@@ -662,7 +662,9 @@
         <ram:PostalTradeAddress>
          \_@@_xml_indent:<ram:PostcodeCode>#1</ram:PostcodeCode>
          \_@@_xml_indent:<ram:LineOne>#2</ram:LineOne>
-         \_@@_xml_indent:<ram:LineTwo>#3</ram:LineTwo>
+         \tl_if_empty:nF {#3} {%
+		\_@@_xml_indent:<ram:LineTwo>#3</ram:LineTwo>
+         }%
          \_@@_xml_indent:<ram:CityName>#4</ram:CityName>
          \_@@_xml_indent:<ram:CountryID>#5</ram:CountryID>
         </ram:PostalTradeAddress>%
