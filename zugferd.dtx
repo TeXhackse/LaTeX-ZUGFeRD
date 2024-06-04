@@ -69,6 +69,11 @@
 \str_new:N \g_@@_format_str
 %    \end{macrocode}
 % \end{variable}
+% \begin{variable}{\g_@@_businessProcessId_str}
+%    \begin{macrocode}
+\str_new:N \g_@@_businessProcessId_str
+%    \end{macrocode}
+% \end{variable}
 % \begin{variable}{\g_@@_writeTradeContact_bool}
 %    \begin{macrocode}
 \bool_new:N \g_@@_writeTradeContact_bool
@@ -428,18 +433,25 @@
 \char_set_catcode_other:N \#%
 \char_set_catcode:nn {32}{10}%
 \cs_new:Nn \_@@_insert_Header:{%
-\_@@_write_xml:e {%
-	<?xml version='1.0' encoding='UTF-8' ?>
-	<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
+	\_@@_write_xml:e {%
+		<?xml version='1.0' encoding='UTF-8' ?>
+		<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
+	}%
+	\int_incr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:n {<rsm:ExchangedDocumentContext>}%
+	\int_incr:N \l_@@_xml_indent_int%
+	\_@@_write_xml:e {%
+		\str_if_empty:NF \g_@@_businessProcessId_str {%
+			<ram:BusinessProcessSpecifiedDocumentContextParameter>
+			\_@@_xml_indent:<ram:ID>\g_@@_businessProcessId_str</ram:ID>
+			</ram:BusinessProcessSpecifiedDocumentContextParameter>
+		}%
+		<ram:GuidelineSpecifiedDocumentContextParameter>
+		\_@@_xml_indent:<ram:ID>\g_@@_format_str</ram:ID>
+		</ram:GuidelineSpecifiedDocumentContextParameter>%
+	}%
+	\_@@_write_xml:n {</rsm:ExchangedDocumentContext>}%
 }%
-\int_incr:N \l_@@_xml_indent_int%
-\_@@_write_xml:e {%
-	<rsm:ExchangedDocumentContext>
-	\_@@_xml_indent:<ram:GuidelineSpecifiedDocumentContextParameter>
-	\_@@_xml_indent:\_@@_xml_indent:<ram:ID>\g_@@_format_str</ram:ID>
-	\_@@_xml_indent:</ram:GuidelineSpecifiedDocumentContextParameter>
-	</rsm:ExchangedDocumentContext>%
- }}%
 \endgroup%
 \cs_new:Nn \_@@_insert_FrontMatter: {%
 	\_@@_write_xml:n {<rsm:ExchangedDocument>}%
