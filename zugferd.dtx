@@ -57,14 +57,16 @@
 %<@@=zugferd>
 % Define formats
 \str_new:N \g_@@_format_str
+\str_new:N \g_@@_businessProcessId_str
+\bool_new:N \g_@@_writeEmail_bool
 \bool_new:N \g_@@_writeTradeContact_bool
 \bool_new:N \g_@@_writePaymentMeans_bool
 \str_new:N \g_@@_conformance_level_str
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
 	format .choice:,
-	format / xrechnung2.3 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3}\bool_gset_true:N \g_@@_writeTradeContact_bool\bool_gset_true:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG},
-	format  / basic .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic}\bool_gset_false:N \g_@@_writeTradeContact_bool\bool_gset_false:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {BASIC},
+	format / xrechnung3.0 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0}\str_gset:Nx \g_@@_businessProcessId_str {urn:fdc:peppol.eu:2017:poacc:billing:01:1.0}\bool_gset_true:N \g_@@_writeEmail_bool\bool_gset_true:N \g_@@_writeTradeContact_bool\bool_gset_true:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG},
+	format / basic .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic}\bool_gset_false:N \g_@@_writeEmail_bool\bool_gset_false:N \g_@@_writeTradeContact_bool\bool_gset_false:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {BASIC},
 	format .initial:n = basic,
 	format .usage:n = load
 }
@@ -332,6 +334,11 @@
 \int_incr:N \l_@@_xml_indent_int%
 \_@@_write_xml:e {%
 	<rsm:ExchangedDocumentContext>
+	\tl_if_empty:NF {\g_@@_businessProcessId_str} {%
+	\_@@_xml_indent:<ram:BusinessProcessSpecifiedDocumentContextParameter>
+	\_@@_xml_indent:\_@@_xml_indent:<ram:ID>\g_@@_businessProcessId_str</ram:ID>
+	\_@@_xml_indent:</ram:BusinessProcessSpecifiedDocumentContextParameter>
+        }%
 	\_@@_xml_indent:<ram:GuidelineSpecifiedDocumentContextParameter>
 	\_@@_xml_indent:\_@@_xml_indent:<ram:ID>\g_@@_format_str</ram:ID>
 	\_@@_xml_indent:</ram:GuidelineSpecifiedDocumentContextParameter>
@@ -522,14 +529,15 @@
 	}
 }
 
-%\_@@_PostalTradeAddress:nnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode UID
+%\_@@_PostalTradeAddress:nnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
 \cs_new:Nn \_@@_PostalTradeAddress:N {%
-	\_@@_PostalTradeAddress:eeeeee
+	\_@@_PostalTradeAddress:eeeeeee
 		{\prop_item:Nn #1 {postcode}}
 		{\prop_item:Nn #1 {lineone}}
 		{\prop_item:Nn #1 {linetwo}}
 		{\prop_item:Nn #1 {city}}
 		{\prop_item:Nn #1 {country}}
+		{\prop_item:Nn #1 {email}}
 		{\prop_item:Nn #1 {vatid}}
 }%
 %
@@ -545,19 +553,26 @@
 \begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
-%\_@@_PostalTradeAddress:nnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode UID
-\cs_new:Nn \_@@_PostalTradeAddress:nnnnnn {%
+%\_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
+\cs_new:Nn \_@@_PostalTradeAddress:nnnnnnn {%
         <ram:PostalTradeAddress>
          \_@@_xml_indent:<ram:PostcodeCode>#1</ram:PostcodeCode>
          \_@@_xml_indent:<ram:LineOne>#2</ram:LineOne>
-         \_@@_xml_indent:<ram:LineTwo>#3</ram:LineTwo>
+         \tl_if_empty:nF {#3} {%
+         \__zugferd_xml_indent:<ram:LineTwo>#3</ram:LineTwo>
+         }%
          \_@@_xml_indent:<ram:CityName>#4</ram:CityName>
          \_@@_xml_indent:<ram:CountryID>#5</ram:CountryID>
         </ram:PostalTradeAddress>%
+        \bool_if:NT  \g_@@_writeEmail_bool {
+        <ram:URIUniversalCommunication>
+        \_@@_xml_indent:<ram:URIID~schemeID="EM">#6</ram:URIID>
+        </ram:URIUniversalCommunication>%
+        }%
 % TODO add support local tax id: schemaID="FC"
-        \tl_if_empty:nF {#6} {
+        \tl_if_empty:nF {#7} {
         <ram:SpecifiedTaxRegistration>
-        \_@@_xml_indent:<ram:ID~schemeID="VA">#6</ram:ID>
+        \_@@_xml_indent:<ram:ID~schemeID="VA">#7</ram:ID>
         </ram:SpecifiedTaxRegistration>%
         }%
 }%
@@ -627,7 +642,7 @@
 %
 \endgroup
 \cs_generate_variant:Nn  \_@@_DefinedTradeContact:nnnn {eeee}%
-\cs_generate_variant:Nn  \_@@_PostalTradeAddress:nnnnnn {eeeeee}%
+\cs_generate_variant:Nn  \_@@_PostalTradeAddress:nnnnnnn {eeeeeee}%
 %    \end{macrocode}
 % ApplicableHeaderTradeSettlement
 %<*package>
