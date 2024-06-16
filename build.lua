@@ -4,4 +4,5 @@ module="zugferd"
 
 sourcefiles={"*.dtx","*.ins", "*.sty"}
 
-typesetfiles = {"*.tex"}-- while testing
+demofiles={"*.tex"}
+typesetdemofiles={"*.tex"}
