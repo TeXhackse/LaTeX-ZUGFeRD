@@ -93,8 +93,10 @@
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
+	xrechnung .code:n = {\bool_gset_true:N \g_@@_writeTradeContact_bool\bool_gset_true:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}},
 	format .choice:,
-	format / xrechnung2.3 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3}\bool_gset_true:N \g_@@_writeTradeContact_bool\bool_gset_true:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG},
+	format / xrechnung3.0 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0}\str_gset:Nx \g_@@_businessProcessId_str {urn:fdc:peppol.eu:2017:poacc:billing:01:1.0}\keys_set:nn {zugferd}{xrechnung},
+	format / xrechnung2.3 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3}keys_set:nn {zugferd}{xrechnung},
 	format  / basic .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic}\bool_gset_false:N \g_@@_writeTradeContact_bool\bool_gset_false:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {BASIC},
 	format .initial:n = basic,
 	format .usage:n = load
