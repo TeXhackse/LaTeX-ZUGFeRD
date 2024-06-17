@@ -7,9 +7,6 @@ check:
   script:
     - l3build doc
     - bash validate_zugferd.sh build/doc/DEMO*.pdf
-  artifacts:
-    paths:
-      - ./*.pdf
 
 build_ctan:
   stage: deploy
