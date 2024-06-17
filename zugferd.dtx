@@ -23,17 +23,26 @@
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b}
 \documentclass{l3doc}
-\usepackage{ptxtools-l3doc}
 \usepackage{zugferd}[2024-01-30]
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
 \usepackage{biblatex}
+\begin{filecontents}[overwrite]{ptxtools.bib}
+@online{x-rechnung,
+	url={https://xeinkauf.de/dokumente/}
+}
+@online{mustang-project,
+	title={Mustangproject},
+	url={https://github.com/ZUGFeRD/mustangproject}
+}
+\end{filecontents}
 \addbibresource{ptxtools.bib}
 \begin{document}
   \DocInput{zugferd.dtx}
   \PrintChanges
   \PrintIndex
+  \printbibliography
 \end{document}
 %</driver>
 % \fi
