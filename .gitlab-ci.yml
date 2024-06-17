@@ -1,0 +1,12 @@
+image: registry.gitlab.com/islandoftex/images/texlive:latest
+
+build:
+  script:
+    - apt-get update && apt-get install -y zip unzip default-jre && rm -rf /var/lib/apt/lists/*
+    - l3build ctan
+    - bash validate_zugferd.sh build/doc/DEMO*.pdf
+  artifacts:
+    paths:
+      - ./*.pdf
+      - ./*.zip
+
