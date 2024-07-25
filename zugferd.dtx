@@ -805,6 +805,7 @@
 	currency / € .meta:n = {currency = EUR},
 	% add support for all currencies/make case-insensitive/unknown
 	payment-terms .str_gset:N = \_@@_payment_terms_str,
+	payment-terms/date .str_gset:N = \_@@_payment_terms_date_str,
 	payment-means / type .choices:nn = {10,20,30,42,48,49,57,58,59,97} {\tl_set_eq:NN \l_@@_payment_means_tl \l_keys_choice_tl},
 }
 
@@ -893,6 +894,17 @@
 		</ram:SpecifiedTradePaymentTerms>%
 	}%
 }%
+% SpecifiedTradePaymentTerms with machine readable due date
+\cs_new:Nn \_@@_SpecifiedTradePaymentTermsWithDueDate:nn {%
+	\_@@_write_xml:e {%
+		<ram:SpecifiedTradePaymentTerms>
+			\_@@_xml_indent:<ram:Description>#1</ram:Description>
+			\_@@_xml_indent:<ram:DueDateDateTime>
+			\_@@_xml_indent:\_@@_xml_indent:\_@@_xml_indent:<udt:DateTimeString~format="102">#2</udt:DateTimeString>
+			\_@@_xml_indent:</ram:DueDateDateTime>
+		</ram:SpecifiedTradePaymentTerms>%
+	}%
+}%
 %
 %
 % sums
@@ -919,6 +931,7 @@
 }%
 \endgroup
 \cs_new:Nn \_@@_SpecifiedTradePaymentTerms: {\_@@_SpecifiedTradePaymentTerms:n {\_@@_payment_terms_str}}
+\cs_new:Nn \_@@_SpecifiedTradePaymentTermsWithDueDate: {\_@@_SpecifiedTradePaymentTermsWithDueDate:nn {\_@@_payment_terms_str}{\_@@_payment_terms_date_str}}
 %    \end{macrocode}
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
 %    \begin{macrocode}
