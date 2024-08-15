@@ -135,7 +135,18 @@
 	format / xrechnung2.3 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3}keys_set:nn {zugferd}{xrechnung},
 	format  / basic .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic}\bool_gset_false:N \g_@@_writeTradeContact_bool\bool_gset_false:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {BASIC},
 	format .initial:n = basic,
-	format .usage:n = load
+	format .usage:n = load,
+	write-xml .bool_gset:N = \g_@@_write_xml_bool,
+	write-xml .initial:n = true,
+	write-xml .usage:n = load,
+	zugferd .bool_gset:N = \g_@@_active_bool,
+	zugferd .initial:n = true,
+	zugferd .default:n = true,
+	zugferd .usage:n = load,
+	ZUGFerD .meta:n = {zugferd = #1},
+	xml-file .tl_gset:N = \g_@@_xml_file_tl,
+	xml-file .initial:n = \jobname _zugferd.xml,
+	xml-file .usage:n = load,
 }
 \char_set_catcode_parameter:N \#%
 
@@ -162,79 +173,92 @@
 
 \cs_generate_variant:Nn \__pdfmeta_xmp_schema_new:nnn {nne}
 
-\__pdfmeta_xmp_schema_new:nne
-	  {Factur-X~PDFA~Extension~Schema}
-	  {fx}
-	  {urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
+\bool_if:NT \g_@@_active_bool {
+	\__pdfmeta_xmp_schema_new:nne
+		  {Factur-X~PDFA~Extension~Schema}
+		  {fx}
+		  {urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
 
-\__pdfmeta_xmp_property_new:nnnnn
-	  {fx}
-	  {DocumentFileName}
-	  {Text}
-	  {external}
-	  {name~of~the~embedded~XML~invoice~file}
+	\__pdfmeta_xmp_property_new:nnnnn
+		  {fx}
+		  {DocumentFileName}
+		  {Text}
+		  {external}
+		  {name~of~the~embedded~XML~invoice~file}
 
-\__pdfmeta_xmp_property_new:nnnnn
-	  {fx}
-	  {DocumentType}
-	  {Text}
-	  {external}
-	  {INVOICE}
+	\__pdfmeta_xmp_property_new:nnnnn
+		  {fx}
+		  {DocumentType}
+		  {Text}
+		  {external}
+		  {INVOICE}
 
-\__pdfmeta_xmp_property_new:nnnnn
-	  {fx}
-	  {Version}
-	  {Text}
-	  {external}
-	  {The~actual~version~of~the~factur-x~schema}
+	\__pdfmeta_xmp_property_new:nnnnn
+		  {fx}
+		  {Version}
+		  {Text}
+		  {external}
+		  {The~actual~version~of~the~factur-x~schema}
 
-\__pdfmeta_xmp_property_new:nnnnn
-	  {fx}
-	  {ConformanceLevel}
-	  {Text}
-	  {external}
-	  {The~conformance~level~of~the~factur-x~data}
+	\__pdfmeta_xmp_property_new:nnnnn
+		  {fx}
+		  {ConformanceLevel}
+		  {Text}
+		  {external}
+		  {The~conformance~level~of~the~factur-x~data}
 
-\exp_args:Ne \pdfmeta_xmp_add:n {
-	% fix INVOICE
-	<fx:DocumentType>INVOICE</fx:DocumentType>\iow_newline:
-	% fix factur-x.xml
-	<fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>\iow_newline:
-	% fix schema version
-	<fx:Version>1.0</fx:Version>\iow_newline:
-	% variable (zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG)
-	<fx:ConformanceLevel>\g_@@_conformance_level_str</fx:ConformanceLevel>\iow_newline:
-	%
- }
+	\exp_args:Ne \pdfmeta_xmp_add:n {
+		% fix INVOICE
+		<fx:DocumentType>INVOICE</fx:DocumentType>\iow_newline:
+		% fix factur-x.xml
+		<fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>\iow_newline:
+		% fix schema version
+		<fx:Version>1.0</fx:Version>\iow_newline:
+		% variable (zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG)
+		<fx:ConformanceLevel>\g_@@_conformance_level_str</fx:ConformanceLevel>\iow_newline:
+		%
+	 }
+}
 
-\newcommand*{\startWritingZUGFeRDxml}{\begingroup\char_set_active_eq:nN {13} \_@@_xml_newline_indent:\iow_open:Nn  \_@@_xml_writer_iow {\jobname _zugferd.xml}}
+\newcommand*{\startWritingZUGFeRDxml}{
+	\begingroup
+	\bool_if:NTF \g_@@_write_xml_bool
+		{\char_set_active_eq:nN {13} \_@@_xml_newline_indent:\iow_open:Nn  \_@@_xml_writer_iow {\g_@@_xml_file_tl}}
+		{}%TODO Mesage info
+}
 
 % The metadata elements are taken from Ulrike Fischers faktur-x experiments
 % https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
 \newcommand*{\stopWritingZUGFeRDxml}{%
-	\iow_close:N  \_@@_xml_writer_iow%
+	\bool_if:NT \g_@@_write_xml_bool {\iow_close:N  \_@@_xml_writer_iow}%
 	\endgroup
-	\group_begin:
-	\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative} %or /Source in some cases
-	\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
-	\pdffile_embed_file:nnn {\jobname _zugferd.xml}{factur-x.xml}{zugferd/rechnung}
-	\group_end:
-	\pdfmanagement_add:nnx
-		  {Catalog/Names}
-		  {EmbeddedFiles}
-		  {\pdf_object_ref:n{zugferd/rechnung}}
-		% steht in der docu ist aber pdf 2.0 ....
-	\pdfmanagement_add:nnx{Catalog}{AF}{\pdf_object_ref:n{zugferd/rechnung}}
+	\bool_if:NT  \g_@@_active_bool {
+		\group_begin:
+		\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative} %or /Source in some cases
+		\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
+		\pdffile_embed_file:nnn {\g_@@_xml_file_tl}{factur-x.xml}{zugferd/rechnung}
+		\group_end:
+		\pdfmanagement_add:nnx
+			  {Catalog/Names}
+			  {EmbeddedFiles}
+			  {\pdf_object_ref:n{zugferd/rechnung}}
+			% steht in der docu ist aber pdf 2.0 ....
+		\pdfmanagement_add:nnx{Catalog}{AF}{\pdf_object_ref:n{zugferd/rechnung}}
+	}
 }
 %    \end{macrocode}
 % \begin{function}{\_@@_write_xml:n}
 %    \begin{macrocode}
-\cs_new:Nn \_@@_write_xml:n {
-	\tl_if_head_eq_charcode:nNTF {#1} \^^M {
-		\iow_now:Nn \_@@_xml_writer_iow {#1}
-	} {
-		\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: \exp_not:n {#1}}
+ \bool_if:NTF \g_@@_write_xml_bool {
+	\cs_new:Nn \_@@_write_xml:n {
+		\tl_if_head_eq_charcode:nNTF {#1} \^^M {
+			\iow_now:Nn \_@@_xml_writer_iow {#1}
+		} {
+			\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: \exp_not:n {#1}}
+		}
 	}
+} {
+	\cs_set_eq:NN \_@@_write_xml:n \use_none:n
 }
 
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
