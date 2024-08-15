@@ -247,9 +247,9 @@
 	}
 }
 %    \end{macrocode}
-% \begin{function}{\_@@_write_xml:n}
+% \begin{function}{\_@@_write_xml:n,\_@@_define_xml_writing_macro:Nn}
 %    \begin{macrocode}
- \bool_if:NTF \g_@@_write_xml_bool {
+\bool_if:NTF \g_@@_write_xml_bool {
 	\cs_new:Nn \_@@_write_xml:n {
 		\tl_if_head_eq_charcode:nNTF {#1} \^^M {
 			\iow_now:Nn \_@@_xml_writer_iow {#1}
@@ -257,8 +257,10 @@
 			\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: \exp_not:n {#1}}
 		}
 	}
+	\cs_new_eq:NN \_@@_define_xml_writing_macro:Nn  \cs_new:Nn
 } {
 	\cs_set_eq:NN \_@@_write_xml:n \use_none:n
+	\cs_new:Nn \_@@_define_xml_writing_macro:Nn {\cs_new:Nn #1{} \use_none:n {#2}}
 }
 
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
@@ -478,7 +480,7 @@
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
 %
-\cs_new:Nn \_@@_write_note:n {%
+\_@@_define_xml_writing_macro:Nn \_@@_write_note:n {%
 	\begingroup%
 		\let\\\iow_newline:%
 		\_@@_write_xml:e {%
@@ -494,7 +496,7 @@
 \begingroup%
 \char_set_catcode_other:N \#%
 \char_set_catcode:nn {32}{10}%
-\cs_new:Nn \_@@_insert_Header:{%
+\_@@_define_xml_writing_macro:Nn \_@@_insert_Header:{%
 	\_@@_write_xml:e {%
 		<?xml version='1.0' encoding='UTF-8' ?>
 		<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
@@ -515,7 +517,7 @@
 	\_@@_write_xml:n {</rsm:ExchangedDocumentContext>}%
 }%
 \endgroup%
-\cs_new:Nn \_@@_insert_FrontMatter: {%
+\_@@_define_xml_writing_macro:Nn \_@@_insert_FrontMatter: {%
 	\_@@_write_xml:n {<rsm:ExchangedDocument>}%
 	\int_incr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:e {%
@@ -540,7 +542,7 @@
  }%
  %
  % footer
- \cs_new:Nn \_@@_insert_Footer: {%
+\_@@_define_xml_writing_macro:Nn \_@@_insert_Footer: {%
 	 \_@@_write_xml:n {</rsm:SupplyChainTradeTransaction>}%
 	 \int_decr:N \l_@@_xml_indent_int%
 	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%
@@ -562,7 +564,7 @@
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
 % AssociatedDocumentLineDocument
-\cs_new:Nn \_@@_AssociatedDocumentLineDocument:n {%
+\_@@_define_xml_writing_macro:Nn \_@@_AssociatedDocumentLineDocument:n {%
 		<ram:AssociatedDocumentLineDocument>
 		\_@@_xml_indent: <ram:LineID>#1</ram:LineID>
 		</ram:AssociatedDocumentLineDocument>%
@@ -570,7 +572,7 @@
 %
 %
 % SpecifiedTradeProduct
-\cs_new:Nn \_@@_SpecifiedTradeProduct:nn {%
+\_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeProduct:nn {%
 		<ram:SpecifiedTradeProduct>
 		\tl_if_empty:nF {#1} {%
 			\_@@_xml_indent:<ram:SellerAssignedID>#1</ram:SellerAssignedID>
@@ -579,13 +581,13 @@
 		</ram:SpecifiedTradeProduct>%
 }%
 %
-\cs_new:Nn \_@@_ProductTradePrice:nn {%
+\_@@_define_xml_writing_macro:Nn \_@@_ProductTradePrice:nn {%
 	<ram:\str_uppercase:n #1PriceProductTradePrice>
 	\_@@_xml_indent:<ram:ChargeAmount>#2</ram:ChargeAmount>
 	</ram:\str_uppercase:n #1PriceProductTradePrice>%
 }%
 %
-\cs_new:Nn \_@@_SpecifiedLineTradeAgreement:nn {%
+\_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeAgreement:nn {%
 					<ram:SpecifiedLineTradeAgreement>
 						<ram:GrossPriceProductTradePrice>
 							<ram:ChargeAmount>#1</ram:ChargeAmount>
@@ -597,7 +599,7 @@
 }%
 %
 % SpecifiedLineTradeDelivery:nn <unit code > <number>
-\cs_new:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
+\_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
 	<ram:SpecifiedLineTradeDelivery>
 	% SPACE!
 	\_@@_xml_indent:<ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
@@ -605,7 +607,7 @@
 }%
 %
 % SpecifiedLineTradeSettlement
-\cs_new:Nn  \_@@_SpecifiedLineTradeSettlement:nnnn {%
+\_@@_define_xml_writing_macro:Nn  \_@@_SpecifiedLineTradeSettlement:nnnn {%
 		<ram:SpecifiedLineTradeSettlement>
 		\_@@_xml_indent:<ram:ApplicableTradeTax>
 		\_@@_xml_indent:\_@@_xml_indent:<ram:TypeCode>VAT</ram:TypeCode>
@@ -621,11 +623,10 @@
 		</ram:SpecifiedLineTradeSettlement>%
 }%
 \endgroup
-
 \cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {VVnn}
 
 % position nummer name einzel-preis anzahl gesamtpreis
-\cs_new:Nn	\_@@_insert_TradeLineItem:nnnnnn {
+\_@@_define_xml_writing_macro:Nn \_@@_insert_TradeLineItem:nnnnnn {
 	\_@@_write_xml:n {<ram:IncludedSupplyChainTradeLineItem>}
 	\int_incr:N  \l_@@_xml_indent_int
 	\_@@_write_xml:e {\_@@_AssociatedDocumentLineDocument:n {#1}}%
@@ -719,7 +720,7 @@
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
 %\_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
-\cs_new:Nn \_@@_PostalTradeAddress:nnnnnnn {%
+\_@@_define_xml_writing_macro:Nn \_@@_PostalTradeAddress:nnnnnnn {%
         <ram:PostalTradeAddress>
          \_@@_xml_indent:<ram:PostcodeCode>#1</ram:PostcodeCode>
          \_@@_xml_indent:<ram:LineOne>#2</ram:LineOne>
@@ -743,7 +744,7 @@
 }%
 %
 % Contact data phone/email to a specific contact person
-\cs_new:Nn \_@@_DefinedTradeContact:nnnn {%
+\_@@_define_xml_writing_macro:Nn \_@@_DefinedTradeContact:nnnn {%
 \bool_if:NTF  \g_@@_writeTradeContact_bool {%
 	<ram:DefinedTradeContact>
 	\_@@_xml_indent:<ram:PersonName>#1</ram:PersonName>
@@ -766,7 +767,7 @@
 %
 %
 %
-\cs_new:Nn \_@@_ApplicableHeaderTradeAgreement: {%
+\_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeAgreement: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}%
 	\int_incr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:e {%
@@ -794,7 +795,7 @@
 %
 %
 % delivery date
-\cs_new:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
+\_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
 	<ram:ApplicableHeaderTradeDelivery>
 		\_@@_xml_indent:<ram:ActualDeliverySupplyChainEvent>
 			\_@@_xml_indent:\_@@_xml_indent:<ram:OccurrenceDateTime>
@@ -861,7 +862,7 @@
 \ExplSyntaxOn
 
 % sums
-\cs_new:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
+\_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
     \int_incr:N \l_@@_xml_indent_int%
     %TODO check if all need to be rounded to 2 decimals
@@ -878,7 +879,7 @@
 }%
 
 % ApplicableTradeTax CategoryCode Rate BaseAmount Result
-\cs_new:Nn \_@@_ApplicableTradeTax:nnnn {%
+\_@@_define_xml_writing_macro:Nn \_@@_ApplicableTradeTax:nnnn {%
 	\_@@_write_xml:n {<ram:ApplicableTradeTax>}
 	\int_incr:N \l_@@_xml_indent_int%
 		\_@@__write_xml_number_round:nnn {2} {CalculatedAmount} {#4}
@@ -895,22 +896,22 @@
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
 % ApplicableHeaderTradeSettlement
-\cs_new:Nn \_@@_ApplicableHeaderTradeSettlement:nnnnnnnn {%
+\_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeSettlement:nnnnnnnn {%
 
 }%
 %
 % ApplicableHeaderTradeSettlement Need to be splitted to be used in separate parts of the tabular
-\cs_new:Nn \_@@_ApplicableHeaderTradeSettlement_start: {%
+\_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeSettlement_start: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}%
 	\int_incr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}%
 }%
-\cs_new:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {%
+\_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {%
 	\int_decr:N \l_@@_xml_indent_int%
 	  \_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}%
 }%
 % SpecifiedTradePaymentTerms
-\cs_new:Nn \_@@_SpecifiedTradePaymentTerms:n {%
+\_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradePaymentTerms:n {%
 	\_@@_write_xml:e {%
 		<ram:SpecifiedTradePaymentTerms>
 			\_@@_xml_indent:<ram:Description>#1</ram:Description>
@@ -920,7 +921,7 @@
 %
 %
 % sums
-\cs_new:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {%
+\_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {%
 \bool_if:NT  \g_@@_writePaymentMeans_bool {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
 	\int_incr:N \l_@@_xml_indent_int%
@@ -942,11 +943,11 @@
 }%
 }%
 \endgroup
-\cs_new:Nn \_@@_SpecifiedTradePaymentTerms: {\_@@_SpecifiedTradePaymentTerms:n {\_@@_payment_terms_str}}
+\_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradePaymentTerms: {\_@@_SpecifiedTradePaymentTerms:n {\_@@_payment_terms_str}}
 %    \end{macrocode}
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
 %    \begin{macrocode}
-\cs_new:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
+\_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
 	\tl_if_empty:cF {g_@@_payment_account-holder_tl}  {
 	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl}  {g_@@_payment_bic_tl}
 	}
