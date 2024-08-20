@@ -480,10 +480,10 @@
 		{\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}}
 		{\msg_warning:nnn { zugferd } {unknown-unit} {#1}}
 	},
-	ExceptionReason .tl_set:N = \l_@@_tax_exception_reason_tl,
+	exemption-reason .tl_set:N = \l_@@_tax_exemption_reason_tl,
+	exemption-reason-code .tl_set:N  = \l_@@_tax_exemption_code_tl,
 	rate .fp_set:N =  \l_@@_tax_rate_fp,
 }
-
 %    \end{macrocode}
 % \begin{variable}{\g_@@_notes_seq}
 %    \begin{macrocode}
@@ -688,22 +688,36 @@
 }%
 %
 % SpecifiedLineTradeSettlement
-\_@@_define_xml_writing_macro:Nn  \_@@_SpecifiedLineTradeSettlement:nnnn {%
+\_@@_define_xml_content_macro:Nn  \_@@_SpecifiedLineTradeSettlement:nnn {%
 		<ram:SpecifiedLineTradeSettlement>
 		\_@@_xml_indent:<ram:ApplicableTradeTax>
+		%BT-151
 		\_@@_xml_indent:\_@@_xml_indent:<ram:TypeCode>VAT</ram:TypeCode>
-		\tl_if_empty:nF {#1} {%
-		\_@@_xml_indent:\_@@_xml_indent:<ram:ExemptionReason>#1</ram:ExemptionReason>
-		}%
-		\_@@_xml_indent:\_@@_xml_indent:<ram:CategoryCode>#2</ram:CategoryCode>
-		\_@@_xml_indent:\_@@_xml_indent:<ram:RateApplicablePercent>#3</ram:RateApplicablePercent>
+		%BT-151
+		\_@@_xml_indent:\_@@_xml_indent:<ram:CategoryCode>#1</ram:CategoryCode>
+		%BT-152
+		\_@@_xml_indent:\_@@_xml_indent:<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
 		\_@@_xml_indent:</ram:ApplicableTradeTax>
 		\_@@_xml_indent:<ram:SpecifiedTradeSettlementLineMonetarySummation>
-		\_@@_xml_indent:\_@@_xml_indent:<ram:LineTotalAmount>#4</ram:LineTotalAmount>
+		% BT-131
+		\_@@_xml_indent:\_@@_xml_indent:<ram:LineTotalAmount>#3</ram:LineTotalAmount>
 		\_@@_xml_indent:</ram:SpecifiedTradeSettlementLineMonetarySummation>
 		</ram:SpecifiedLineTradeSettlement>%
 }%
 \cctab_end:
+\cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnn {Vnn}
+%    \end{macrocode}
+% The exemption reason was placed wrong with the pre-CTAN release.
+% This was fixed in August 2024.
+% The old macro will be kept for a bit longer but will be removed soon.
+% Please update your own implementatios accordingly.
+%    \begin{macrocode}
+\cs_new:Nn\_@@_SpecifiedLineTradeSettlement:nnnn {
+	\msg_warning:nnnn {zugferd} {macro-deprecated}
+		{ \_@@_SpecifiedLineTradeSettlement:nnnn }
+		{ \_@@_SpecifiedLineTradeSettlement:nnn }
+	\_@@_SpecifiedLineTradeSettlement:nnn {#2} {#3} {#4}
+}
 \cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {VVnn}
 
 % position nummer name einzel-preis anzahl gesamtpreis
@@ -723,7 +737,7 @@
 	\int_decr:N  \l_@@_xml_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeAgreement>}
 	\_@@_write_xml:e {\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}}
-	\_@@_write_xml:e {\_@@_SpecifiedLineTradeSettlement:VVnn  \l_@@_tax_exception_reason_tl \l_@@_tax_category_code_tl  { \fp_use:N \l_@@_tax_rate_fp} {#6} }
+	\_@@_write_xml:e {\_@@_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl  { \fp_use:N \l_@@_tax_rate_fp} {#6} }
 	\int_decr:N  \l_@@_xml_indent_int
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
@@ -964,11 +978,21 @@
 \_@@_define_xml_writing_macro:Nn \_@@_ApplicableTradeTax:nnnn {%
 	\_@@_write_xml:n {<ram:ApplicableTradeTax>}
 	\int_incr:N \l_@@_xml_indent_int%
-		\_@@__write_xml_number_round:nnn {2} {CalculatedAmount} {#4}
-		\_@@_write_xml:n {<ram:TypeCode>VAT</ram:TypeCode>}%
-		{{\_@@__write_xml_number_round:nnn {2} {BasisAmount} {#3}}}%
-		\_@@_write_xml:e {<ram:CategoryCode>#1</ram:CategoryCode>}%
-		\_@@_write_xml:n {<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>}%
+		\_@@__write_xml_number_round:nnn {2} {CalculatedAmount} {#4}%BT117
+		\_@@_write_xml:n {<ram:TypeCode>VAT</ram:TypeCode>}%BT118
+		\tl_if_blank:VF \l_@@_tax_exemption_reason_tl {%BT-120
+			\_@@_write_xml:e {<ram:ExemptionReason>
+				\l_@@_tax_exemption_reason_tl
+				</ram:ExemptionReason>}
+		}
+		{{\_@@__write_xml_number_round:nnn {2} {BasisAmount} {#3}}}%BT-116
+		\_@@_write_xml:e {<ram:CategoryCode>#1</ram:CategoryCode>}%BT-118
+		\tl_if_blank:VF \l_@@_tax_exemption_code_tl {%BT121
+			\_@@_write_xml:e {<ram:ExemptionReasonCode>
+				\l_@@_tax_exemption_code_tl
+				</ram:ExemptionReasonCode>}
+		}
+		\_@@_write_xml:n {<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>}%BT-119
 	\int_decr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
 }%
@@ -1228,6 +1252,15 @@
 % \end{function}
 % \end{implementation}
 % \end{function}
+% \begin{implementation}
+%    \begin{macrocode}
+\msg_new:nnn {zugferd} {macro-deprecated} {
+	The~function~#1~is~deprecated.\\
+	It~was~replaced~by~#2.\\
+	Please~adjust~your~mechanism~to~use~the~new~version.
+}
+%    \end{macrocode}
+% \end{implementation}
 % \iffalse
 %    \begin{macrocode}
 %</package>
