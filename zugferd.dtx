@@ -30,11 +30,46 @@
 \usepackage{biblatex}
 \begin{filecontents}{zugferd.bib}
 @online{x-rechnung,
-	url={https://xeinkauf.de/dokumente/}
+	url={https://xeinkauf.de/dokumente/},
+	urldate={2024-08-20}
+}
+@online{spec-xrechnung,
+	url={https://xeinkauf.de/app/uploads/2024/07/302-XRechnung-2024-06-20.pdf},
+	author={{Koodinierungsstelle für IT-Standards}},
+	title={Spezifikation Standard XRechnung},
+	subtitle={CIUS und Extension},
+	edition={Version XRechnung 3.0.2},
+	date={2024-06-20},
+	urldate={2024-08-20},
+	langid={german}
 }
 @online{mustang-project,
 	title={Mustangproject},
-	url={https://github.com/ZUGFeRD/mustangproject}
+	url={https://github.com/ZUGFeRD/mustangproject},
+	urldate={2024-08-20}
+}
+@online{country-codes,
+	title={ECE/TRADE/201},
+	subtitle={ISO COUNTRY CODE for Representation of Names of Countries},
+	url={https://unece.org/trade/documents/iso-country-code-representation-names-countries},
+	urldate={2024-08-20},
+}
+@online{unit-codes,
+	title={Rec 20 – Codes for Units of Measure Used in International Trade},
+	url={https://unece.org/sites/default/files/2023-10/rec20_Rev17e-2021.xlsx},
+	urldate={2024-08-20},
+	note={Link directory to xlsx. All Revisions can be found in \cite{cl-recommenations}.}
+}
+@online{cl-recommendations,
+	author={United Nations Economic Commission for Europe (UNECE)}},
+	title={Code List Recommendations},
+	url={https://unece.org/trade/uncefact/cl-recommendations},
+	urldate={2024-08-20}
+}
+@online{VAT-exemption-codes,
+	title={VAT exemption reason code list},
+	url={https://www.xrepository.de/details/urn:xoev-de:kosit:codeliste:vatex_1},
+	urldate={2024-08-20}
 }
 \end{filecontents}
 \addbibresource{zugferd.bib}
