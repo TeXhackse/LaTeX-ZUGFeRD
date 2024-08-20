@@ -39,7 +39,8 @@
 	buyer/vatid = {DE123456789},
 	buyer/email = {invoice@example.org},
 	currency=€,
-	payment-terms={Zahlbar innerhalb von 14 Tagen},
+	payment-terms={Zahlbar innerhalb von 14 Tagen},% entweder das oder das Datum (Zeile drunter) ist notwendig
+	due-date={20240118},
 	payment-means / type = 58, % SEPA Übereisung,
 	payment-means / iban = DE68430609671013251700,
 	payment-means / account-holder = Marei Peischl,
