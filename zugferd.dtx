@@ -28,7 +28,7 @@
 \CodelineIndex
 \RecordChanges
 \usepackage{biblatex}
-\begin{filecontents}[overwrite]{ptxtools.bib}
+\begin{filecontents}{zugferd.bib}
 @online{x-rechnung,
 	url={https://xeinkauf.de/dokumente/}
 }
@@ -37,9 +37,12 @@
 	url={https://github.com/ZUGFeRD/mustangproject}
 }
 \end{filecontents}
-\addbibresource{ptxtools.bib}
+\addbibresource{zugferd.bib}
 \begin{document}
+  \EnableDocumentation\DisableImplementation
   \DocInput{zugferd.dtx}
+  \DisableDocumentation\EnableImplementation
+  \DocInputAgain
   \PrintChanges
   \PrintIndex
   \printbibliography
