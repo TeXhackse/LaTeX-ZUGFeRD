@@ -161,6 +161,7 @@
 	\fp_gadd:Nn \g__ptxcd_invoice_sum_fp {\g__ptxcd_invoice_item_fp}
 	
 	% position nummer name einzel-preis anzahl gesamtpreis	
+	\keys_set:ne {zugferd/tax}{rate=#1, category=\use:c {__ptxcd_invoice_type_code#1:}}
 	\__ptxcd_write_TradeLineItem:nnnnnn {\theinvoiceitem} {} {#3} {#4} {#2} {\fp_use:N \g__ptxcd_invoice_item_fp}
 	
 	&#2% Anzahl
