@@ -128,7 +128,7 @@
 \str_new:N \g_@@_conformance_level_str
 %    \end{macrocode}
 % \end{variable}
-% \begin{optionenv}{format}
+% \begin{optionenv}{format,xrechnung}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
@@ -481,10 +481,18 @@
 		\_@@_write_note:n {#1}%
 	}%
 }%
-
+%    \end{macrocode}
+% \iffalse
+\cctab_new:N  \g_@@_xml_cctab
 \begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
+\cctab_gsave_current:N \g_@@_xml_cctab%
+\endgroup
+% \fi
+%    \begin{macrocode}
+% start of xml content - need to ensure to comment all line endings except those written to xml
+\cctab_begin:N  \g_@@_xml_cctab%
 %
 \_@@_define_xml_writing_macro:Nn \_@@_write_note:n {%
 	\begingroup%
@@ -553,8 +561,7 @@
 	 \int_decr:N \l_@@_xml_indent_int%
 	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%
  }%
-\endgroup
-
+\cctab_end:
 %    \end{macrocode}
 % Each item consists of 5 parts:
 % \begin{itemize}
@@ -566,9 +573,8 @@
 %\end{itemize}
 %    \begin{macrocode}
 %\begingroup
-\begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
-\endlinechar=13%
-\char_set_catcode:nn {13}{13}%
+% start of xml content - need to ensure to comment all line endings except those written to xml
+\cctab_begin:N  \g_@@_xml_cctab%
 % AssociatedDocumentLineDocument
 \_@@_define_xml_writing_macro:Nn \_@@_AssociatedDocumentLineDocument:n {%
 		<ram:AssociatedDocumentLineDocument>
@@ -628,7 +634,7 @@
 		\_@@_xml_indent:</ram:SpecifiedTradeSettlementLineMonetarySummation>
 		</ram:SpecifiedLineTradeSettlement>%
 }%
-\endgroup
+\cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {VVnn}
 
 % position nummer name einzel-preis anzahl gesamtpreis
@@ -722,9 +728,8 @@
 		{\prop_item:Nn #1 {contact-email}}
 }%
 %
-\begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
-\endlinechar=13%
-\char_set_catcode:nn {13}{13}%
+% start of xml content - need to ensure to comment all line endings except those written to xml
+\cctab_begin:N  \g_@@_xml_cctab%
 %\_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
 \_@@_define_xml_content_macro:Nn \_@@_PostalTradeAddress:nnnnnnn {%
         <ram:PostalTradeAddress>
@@ -811,8 +816,7 @@
 	</ram:ApplicableHeaderTradeDelivery>%
 }%
 %
-%
-\endgroup
+\cctab_end:
 \cs_generate_variant:Nn  \_@@_DefinedTradeContact:nnnn {eeee}%
 \cs_generate_variant:Nn  \_@@_PostalTradeAddress:nnnnnnn {eeeeeee}%
 %    \end{macrocode}
@@ -900,10 +904,7 @@
 	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
 }%
 %
-
-\begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
-\endlinechar=13%
-\char_set_catcode:nn {13}{13}%
+\cctab_begin:N  \g_@@_xml_cctab%
 % ApplicableHeaderTradeSettlement
 \_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeSettlement:nnnnnnnn {%
 
@@ -960,7 +961,7 @@
 	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
 }%
 }%
-\endgroup
+\cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nn {VV}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradePaymentTerms: {\_@@_SpecifiedTradePaymentTerms:VV \_@@_payment_terms_str \_@@_due_date_tl}
 %    \end{macrocode}
