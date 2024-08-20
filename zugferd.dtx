@@ -247,7 +247,7 @@
 	}
 }
 %    \end{macrocode}
-% \begin{function}{\_@@_write_xml:n,\_@@_define_xml_writing_macro:Nn}
+% \begin{function}{\_@@_write_xml:n,\_@@_define_xml_writing_macro:Nn,\_@@_define_xml_content_macro:Nn}
 %    \begin{macrocode}
 \bool_if:NTF \g_@@_write_xml_bool {
 	\cs_new:Nn \_@@_write_xml:n {
@@ -258,9 +258,11 @@
 		}
 	}
 	\cs_new_eq:NN \_@@_define_xml_writing_macro:Nn  \cs_new:Nn
+	\cs_new_eq:NN \_@@_define_xml_content_macro:Nn  \cs_new:Nn
 } {
 	\cs_set_eq:NN \_@@_write_xml:n \use_none:n
 	\cs_new:Nn \_@@_define_xml_writing_macro:Nn {\cs_new:Nn #1{} \use_none:n {#2}}
+	\cs_seq_eq:NN \_@@_define_xml_content_macro:Nn \use_none:n
 }
 
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
@@ -720,7 +722,7 @@
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
 %\_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
-\_@@_define_xml_writing_macro:Nn \_@@_PostalTradeAddress:nnnnnnn {%
+\_@@_define_xml_content_macro:Nn \_@@_PostalTradeAddress:nnnnnnn {%
         <ram:PostalTradeAddress>
          \_@@_xml_indent:<ram:PostcodeCode>#1</ram:PostcodeCode>
          \_@@_xml_indent:<ram:LineOne>#2</ram:LineOne>
@@ -744,7 +746,7 @@
 }%
 %
 % Contact data phone/email to a specific contact person
-\_@@_define_xml_writing_macro:Nn \_@@_DefinedTradeContact:nnnn {%
+\_@@_define_xml_content_macro:Nn  \_@@_DefinedTradeContact:nnnn {%
 \bool_if:NTF  \g_@@_writeTradeContact_bool {%
 	<ram:DefinedTradeContact>
 	\_@@_xml_indent:<ram:PersonName>#1</ram:PersonName>
@@ -795,7 +797,7 @@
 %
 %
 % delivery date
-\_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
+\_@@_define_xml_content_macro:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
 	<ram:ApplicableHeaderTradeDelivery>
 		\_@@_xml_indent:<ram:ActualDeliverySupplyChainEvent>
 			\_@@_xml_indent:\_@@_xml_indent:<ram:OccurrenceDateTime>
