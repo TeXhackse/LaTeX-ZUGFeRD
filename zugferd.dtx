@@ -1081,9 +1081,9 @@
 }
 \cs_generate_variant:Nn \_@@_set_today:n  {v}
 \cs_new:Nn \_@@_set_today_aux:nnnnnnnn {
-	\year=#1#2#3#4\prg_do_nothing:
-	\month=#5#6\prg_do_nothing:
-	\day=#7#8\prg_do_nothing:
+	\year=\int_eval:n {#1#2#3#4}\prg_do_nothing:
+	\month=\int_eval:n {#5#6}\prg_do_nothing:
+	\day=\int_eval:n {#7#8}\prg_do_nothing:
 }
 %    \end{macrocode}
 % \end{function}
