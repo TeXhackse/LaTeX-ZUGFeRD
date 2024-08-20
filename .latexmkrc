@@ -8,6 +8,6 @@ push @generated_exts, 'idx', 'ind';
 
 add_cus_dep( 'glo', 'gls', 0,'gglo' );
 sub gglo {
-	return system( "makeindex -s gglo.ist -o \"$_[0].glo\" \"$_[0].gls\"" );
+	return system( "makeindex -s gglo.ist -o \"$_[0].gls\" \"$_[0].glo\"" );
 }
 push @generated_exts, 'gls', 'glo';
