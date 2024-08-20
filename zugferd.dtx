@@ -28,6 +28,30 @@
 \CodelineIndex
 \RecordChanges
 \usepackage{biblatex}
+
+\ExplSyntaxOn
+\newcommand*{\codefamily}{\ttfamily}
+\DeclareTextFontCommand{\codefont}{\codefamily}
+
+\cs_new:Npn \__ptxctools_parse_key_option:w #1 #2  #3 #4 = #5  \q_stop {
+	\par
+	\dim_compare:nNnF {\parskip} > {\c_zero_dim} {\medskip}
+	\noindent\DescribeOption{#4=}\noindent\makebox[\linewidth]{
+	\IfBooleanTF{#3}{\textsf{#5}}{\textsf{(#5)}}
+	\hfill
+		\IfBooleanTF{#1}
+			{#2}
+			{(default:~\codefont{#2})}
+	}
+}
+
+\NewDocumentCommand{\DescribeKeyOption}{smms}{
+	\__ptxctools_parse_key_option:w  #1 {#3} #4 #2 \q_stop
+}
+\ExplSyntaxOff
+
+\usepackage{underscore-ltx}
+
 \begin{filecontents}{zugferd.bib}
 @online{x-rechnung,
 	url={https://xeinkauf.de/dokumente/},
@@ -132,44 +156,59 @@
 % It hold all the layout information which is static accross all the invoices.
 % The idea is to create your own version of this package to use your own layout and internally load the zugferd package that way.
 %
-% \section{Package Options}
 % \end{documentation}
 % \begin{implementation}
 % \section{Implementation}
 % \iffalse
 %    \begin{macrocode}
 %<*package>
-%    \end{macrocode}
-% \fi
-%    \begin{macrocode}
 %<@@=zugferd>
 %    \end{macrocode}
-% Define formats
-% \begin{variable}{\g_@@_format_str}
+% \fi
+%  \begin{variable}{
+	\l_@@_tmp_tl,
+	\g_@@_format_str,
+	\g_@@_businessProcessId_str,
+	\g_@@_writeTradeContact_bool,
+	\g_@@_writePaymentMeans_bool
+	\g_@@_conformance_level_str
+	}
 %    \begin{macrocode}
+\tl_new:N \l_@@_tmp_tl
 \str_new:N \g_@@_format_str
-%    \end{macrocode}
-% \end{variable}
-% \begin{variable}{\g_@@_businessProcessId_str}
-%    \begin{macrocode}
 \str_new:N \g_@@_businessProcessId_str
-%    \end{macrocode}
-% \end{variable}
-% \begin{variable}{\g_@@_writeTradeContact_bool}
-%    \begin{macrocode}
 \bool_new:N \g_@@_writeTradeContact_bool
-%    \end{macrocode}
-% \end{variable}
-% \begin{variable}{\g_@@_writePaymentMeans_bool}
-%    \begin{macrocode}
 \bool_new:N \g_@@_writePaymentMeans_bool
-%    \end{macrocode}
-% \end{variable}
-% \begin{variable}{\g_@@_conformance_level_str}
-%    \begin{macrocode}
 \str_new:N \g_@@_conformance_level_str
 %    \end{macrocode}
 % \end{variable}
+% \end{implementation}
+% \begin{documentation}
+% \section{Package Options}
+% The package supports a few fundamental settings.
+% These have to be set when the package is loaded as they are used internally to setup the scheme or activate the xml mechanism.
+%
+%  \DescribeKeyOption{format=xrechung3.0/xrechnung2.3/basic}{xrechung3.0}
+% \option{format} selects the scheme to be used for the zugferd invoice.
+% Currently xrechung3.0, xrechnung2.3 and the basic scheme are supported.
+%
+% \DescribeKeyOption{zugferd=\meta{boolean}}{true}
+% This option can be used to deactivate the xml embedding.
+% It would also disable the the \option{write-xml} option.
+% This can be used to create a package which can use the same structure to also create invoices without XML attachment.
+% It can also be used with older \LaTeX{} releases than this package requires.
+% There will be a warning, but the visible part should be okay.
+%
+% \DescribeKeyOption{write-xml=\meta{boolean}}{true}
+% Disable the xml output.
+% This can be used if you want to create the xml attachment with different software than this package.
+%
+% In that case you can either rename your file to \meta{\cs{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
+%
+% \DescribeKeyOption{xml-file=\meta{filename}}{\cs{jobname}_zugferd.xml}
+% Adjust the file name of the created or loaded xml file.
+% \end{documentation}
+% \begin{implementation}
 % \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
@@ -213,7 +252,7 @@
 	}
 	\msg_error:nn{zugferd} {PDFmanagement-not-active}
 }
-% based on experiments for l3pdfmeta from  Ulrike Fischer
+% based on experiments for l3pdfmeta by Ulrike Fischer
 \pdfmeta_xmp_xmlns_new:nn{fx}{urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
 
 \cs_generate_variant:Nn \__pdfmeta_xmp_schema_new:nnn {nne}
@@ -271,8 +310,7 @@
 		{\char_set_active_eq:nN {13} \_@@_xml_newline_indent:\iow_open:Nn  \_@@_xml_writer_iow {\g_@@_xml_file_tl}}
 		{}%TODO Mesage info
 }
-
-% The metadata elements are taken from Ulrike Fischers faktur-x experiments
+% The metadata elements are taken by Ulrike Fischers faktur-x experiments
 % https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
 \newcommand*{\stopWritingZUGFeRDxml}{%
 	\bool_if:NT \g_@@_write_xml_bool {\iow_close:N  \_@@_xml_writer_iow}%
@@ -318,12 +356,6 @@
 %    \begin{macrocode}
 \RequirePackage{siunitx}
 %    \end{macrocode}
-% \begin{variable}{\l_@@_tmp_tl}
-%    \begin{macrocode}
-\tl_new:N \l_@@_tmp_tl
-%    \end{macrocode}
-% \end{variable}
-
 % \begin{function}{\_@@_number_format:nNn}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_number_format:nNn {
@@ -567,6 +599,7 @@
 	}%
 }%
 %    \end{macrocode}
+% Setting up the catcides to simplify the xml indentation.
 % \iffalse
 \cctab_new:N  \g_@@_xml_cctab
 \begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
@@ -960,6 +993,10 @@
 
 \ExplSyntaxOff
 %TODO english
+%   \end{macrocode}
+% \subsection{Payment Means}
+%
+%   \begin{macrocode}
 \setupZUGFeRDStrings{payment-means}{
 	10 = Bargeld,
 	30 = Überweisung,
@@ -971,6 +1008,8 @@
 	59 = SEPA Lastschrift,
 	97 = Report
 }
+%   \end{macrocode}
+%   \begin{macrocode}
 \ExplSyntaxOn
 
 % sums
@@ -1084,14 +1123,19 @@
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\zugferd_disable_macros:}
+% The definition was mostly taken from \pkg{hyperref} \cite{hyperref}.
+% Most likely not all of these are required, but it's probably easier to take this as a reasonable choice instead of creating an own collection.
+% \iffalse
 %    \begin{macrocode}
-%taken from hyperref.sty  v7.01i
+%% taken from hyperref.sty  v7.01i
 %% Copyright
 %% 1995-2001 Sebastian Rahtz, with portions written by David Carlisle and Heiko Oberdiek
 %% 2001-2015 Heiko Oberdiek
 %% 2016-2019 Oberdiek Package Support Group
 %% 2019-2024 LaTeX Project
-% maybe not all are required… but thought its a reasonable choice
+%   \end{macrocode}
+% \fi
+%    \begin{macrocode}
 \cs_new:Nn \zugferd_disable_macros: {
     \let\{\textbraceleft
     \let\}\textbraceright
@@ -1128,6 +1172,8 @@
     \let\fontsize\@gobbletwo
     \let\selectfont\@empty
     \let\usefont\@gobblefour
+%    \end{macrocode}
+%    \begin{macrocode}
     \let\emph\@firstofone
     \let\textnormal\@firstofone
     \let\textrm\@firstofone
@@ -1149,6 +1195,8 @@
     \let\scshape\@empty
     \let\slshape\@empty
     \let\upshape\@empty
+%    \end{macrocode}
+%    \begin{macrocode}
     \let\em\@empty
     \let\rm\@empty
     \let\Huge\@empty
@@ -1182,6 +1230,8 @@
     \let\frqq\textfrqq
     \let\flq\textflq
     \let\frq\textfrq
+%    \end{macrocode}
+%    \begin{macrocode}
     \let\if@mid@expandable\@firstoftwo
     \let\hspace\HyPsd@hspace
     \let\label\@gobble
