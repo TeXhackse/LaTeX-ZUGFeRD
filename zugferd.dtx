@@ -1052,7 +1052,7 @@
 % Country is still missing.
 %   \begin{macrocode}
 \NewDocumentCommand{\insertZugferdData}{om}{
-	\str_case:nn {#1} {
+	\str_case:nnF {#1} {
 		{AddressData} {
 			\clist_map_inline:nn {name, lineone, linetwo} {
 				\prop_if_in:cnT  {g_@@_#2_AddressData_prop } {##1} {\prop_item:cn {g_@@_#2_AddressData_prop } {##1}\\}
@@ -1061,6 +1061,8 @@
 			\space
 			\prop_item:cn {g_@@_#2_AddressData_prop } {city}
 		}
+	} {
+		\tl_if_exist:cT {g_@@_#2_tl} {\use:c {g_@@_#2_tl}}
 	}
 }
 %    \end{macrocode}
