@@ -170,7 +170,7 @@
 \str_new:N \g_@@_conformance_level_str
 %    \end{macrocode}
 % \end{variable}
-% \begin{optionenv}{format,xrechnung}
+% \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
@@ -389,9 +389,13 @@
 \cs_new:Nn \_@@_xml_newline_indent: {\iow_newline: \_@@_xml_auto_indent:}
 %    \end{macrocode}
 % \end{implementation}
-% \subsection{Units}
-% \begin{optionenv}{zugferd/unit}
 % \begin{documentation}
+% \section{Local options/settings}
+% This section is listing the options which may be changed per invoice item.
+% It depends a bit on the business case if it's worth to define a global default.
+% Generally these are assigned locally.
+% \subsection{Units}
+% \DescribeOption{unit}
 % The Faktur-X standard requires the unit to be selected.
 % These are called \enquote{/UN/CEFACT Common Codes} and can be found withtin \cite{unit-codes}.
 %
@@ -401,11 +405,12 @@
 %
 % This option is not case sensitive. The value is automatically converted to uppercase.
 % If the selected option is different from the predefined ones, there will be a warning, as \pkg{zugferd} does not know if the selection is valid or not.
-% \begin{note}
+% \begin{NOTE}
 % additional source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
-% \end{note}
+% \end{NOTE}
 % \end{documentation}
 % \begin{implementation}
+% \begin{optionenv}{unit}
 %    \begin{macrocode}
 \keys_define:nn { zugferd } {
 	unit .choices:nn = {HUR,DAY,C62,H87} {
@@ -420,7 +425,8 @@
 		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {unit} {\str_uppercase:f {#1}}
 		{\keys_set:nx { zugferd } {unit= {\str_uppercase:f {#1}}}}
 		{\msg_warning:nnn { zugferd } {unknown-unit} {#1}}
-	}
+	},
+	unit .usage:n = general,
 }
 
 \msg_new:nnnn {zugferd} {unknown-unit} {
@@ -431,12 +437,11 @@
 	For~more~information~see~the~zugferd~documentation and the /UN/CEFACT Common Code list.
 }
 %    \end{macrocode}
-% \end{implementation}
 % \end{optionenv}
-% \begin{optionenv}{zugferd/tax/category, zugferd/tax/exemption-reason, zugferd/tax/rate}
+% \end{implementation}
 % \begin{documentation}
 % \subsection{Tax category codes}
-% \DescribeOption{zugferd/tax/category}
+% \DescribeOption{category,exemption-reason,rate}
 % The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g.][]{spec-xrechnung}.
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
 % The example file includes 2 different VAT values using the same category.
@@ -447,7 +452,7 @@
 % \item[standard] Standard rate and reduced rate item, |category=S|
 % \item[zero] Zero rated sale,  |category=Z|
 % \item[exempt] Exempted from VAT. This requires a reason via \option{exemption-reason},|category=E|
-% \DescribeOption{zugferd/tax/exemption-reason, zugferd/tax/exemption-reason-code}
+% \DescribeOption{exemption-reason, exemption-reason-code}
 % Add Reasons for a tax exempt, as required by |category=E|.
 % This can either be added using a text (|exemption-reason|) or a predefined code (|exemption-reason-code|).
 % The codes are listed at \cite{VAT-exemption-codes}.
@@ -460,6 +465,7 @@
 % \end{description}
 % \end{documentation}
 % \begin{implementation}
+% \begin{optionenv}{category, exemption-reason,rate}
 %    \begin{macrocode}
 \keys_define:nn { zugferd / tax } {
 	 category .choices:nn = {S,Z,E,AE,K,G,O,L,M} {
@@ -480,11 +486,21 @@
 		{\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}}
 		{\msg_warning:nnn { zugferd } {unknown-unit} {#1}}
 	},
+	category .usage:n = general,
 	exemption-reason .tl_set:N = \l_@@_tax_exemption_reason_tl,
+	exemption-reason  .initial:V = \c_empty_tl,
+	exemption-reason .usage:n = general,
 	exemption-reason-code .tl_set:N  = \l_@@_tax_exemption_code_tl,
+	exemption-reason-code  .initial:V = \c_empty_tl,
+	exemption-reason .usage:n = general,
 	rate .fp_set:N =  \l_@@_tax_rate_fp,
+	rate .initial:n = 19,
+	rate .usage:n = general,
 }
 %    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{implementation}
 % \begin{variable}{\g_@@_notes_seq}
 %    \begin{macrocode}
 \seq_new:N \g_@@_notes_seq
