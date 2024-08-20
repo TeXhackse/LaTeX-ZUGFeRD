@@ -353,8 +353,10 @@
 }
 %    \end{macrocode}
 % \end{function}
-
-
+% \subsection{XML indentation}
+% The indentation of the XML does not really matter.
+% For debugging it's a lot simpler to have it included and this also helped maintaining the structure of the code during development, so I decided to keep it.
+% The indentation is created using s bunch of auxiliary commands and variables which are defined here.
 % \begin{variable}{\l_@@_xml_indent_int}
 %    \begin{macrocode}
 \int_new:N \l_@@_xml_indent_int
@@ -367,8 +369,6 @@
 }
 %    \end{macrocode}
 % \end{function}
-
-
 % \begin{function}{\_@@_xml_auto_indent:}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_xml_auto_indent: {
@@ -376,8 +376,6 @@
 }
 %    \end{macrocode}
 % \end{function}
-
-
 % \begin{function}{\_@@_xml_add_indent:}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_xml_add_indent: {
@@ -386,24 +384,36 @@
 }
 %    \end{macrocode}
 % \end{function}
-%setup for xml indentation
+% The idea was to redefine the \cs{newlinechar} to automatically indent the following line.
 %    \begin{macrocode}
 \cs_new:Nn \_@@_xml_newline_indent: {\iow_newline: \_@@_xml_auto_indent:}
-% unit codes
-% need to use /UN/CEFACT Common Codes
-% source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
+%    \end{macrocode}
+% \end{implementation}
+% \subsection{Units}
+% \begin{optionenv}{zugferd/unit}
+% \begin{documentation}
+% The Faktur-X standard requires the unit to be selected.
+% These are called \enquote{/UN/CEFACT Common Codes} and can be found withtin \cite{unit-codes}.
+%
+% Currently \pkg{zugferd} supports |hour| (|HUR|), |day| (|DAY|), |one| (C62) and |piece| (H87).
+% For these the corresponding codes have been implemented within the package.
+% Other units can be selected using the codes listed in \cite{unit-codes}.
+%
+% This option is not case sensitive. The value is automatically converted to uppercase.
+% If the selected option is different from the predefined ones, there will be a warning, as \pkg{zugferd} does not know if the selection is valid or not.
+% \begin{note}
+% additional source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
+% \end{note}
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
 \keys_define:nn { zugferd } {
 	unit .choices:nn = {HUR,DAY,C62,H87} {
 		\tl_set_eq:NN \l_@@_unit_code_tl \l_keys_choice_tl
 	},
-	% hour = HUR
 	unit / hour .meta:n = {unit=HUR},
-%	unit / hur .meta:n = {unit=HUR},
-	%day = DAY
 	unit / day .meta:n = {unit=DAY},
-	% one (unit) = C62
 	unit / one .meta:n= {unit= C62},
-	% piece = H87
 	unit / piece .meta:n = {unit=H87},
 	% make selection case insensitive
 	unit / unknown .code:n = {
@@ -420,21 +430,38 @@
 } {
 	For~more~information~see~the~zugferd~documentation and the /UN/CEFACT Common Code list.
 }
-% tax category codes
-
-%https://portal3.gefeg.com/projectdata/invoice/deliverables/installed/publishingproject/zugferd%202.0.1%20-%20facturx%201.03/en%2016931%20%E2%80%93%20facturx%201.03%20%E2%80%93%20zugferd%202.0.1%20-%20basic.scm/html/de/021.htm?https://portal3.gefeg.com/projectdata/invoice/deliverables/installed/publishingproject/zugferd%202.0.1%20-%20facturx%201.03/en%2016931%20%E2%80%93%20facturx%201.03%20%E2%80%93%20zugferd%202.0.1%20-%20basic.scm/html/de/0243.htm
-% - S = standard rate
-% - Z = zero rated
-% - E = tax-exempt
-% - AE = VAT reverse charge
-% - K = VAT exempt for EEA intra-community supply of goods and services
-% - G = Free export item, tax not charged
-% - O = Services outside scope of tax
-% - L = Canary Islands general indirect tax
-% - M = Tax for production, services and importation in Ceuta and Melilla
-% need to use /UN/CEFACT Common Codes
-% source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
-\keys_define:nn { zugferd / tax} {
+%    \end{macrocode}
+% \end{implementation}
+% \end{optionenv}
+% \begin{optionenv}{zugferd/tax/category, zugferd/tax/exemption-reason, zugferd/tax/rate}
+% \begin{documentation}
+% \subsection{Tax category codes}
+% \DescribeOption{zugferd/tax/category}
+% The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g.][]{spec-xrechnung}.
+% \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
+% The example file includes 2 different VAT values using the same category.
+%
+% The labels have been chosen to simplify the usage. It's also possible to enter the codes directly.
+% This option is not case sensitive.
+% \begin{description}
+% \item[standard] Standard rate and reduced rate item, |category=S|
+% \item[zero] Zero rated sale,  |category=Z|
+% \item[exempt] Exempted from VAT. This requires a reason via \option{exemption-reason},|category=E|
+% \DescribeOption{zugferd/tax/exemption-reason, zugferd/tax/exemption-reason-code}
+% Add Reasons for a tax exempt, as required by |category=E|.
+% This can either be added using a text (|exemption-reason|) or a predefined code (|exemption-reason-code|).
+% The codes are listed at \cite{VAT-exemption-codes}.
+% \item[reverse-charge] Reverse Charge
+% \item[intra-community \textnormal{or} EEA] Intra-Community Supply, |category=K|
+% \item[export] Free export item, tax not charged, |category=G|
+% \item[O] Services outside scope of tax
+% \item[canary-islands] Canary Islands general indirect tax, |category=L|
+% \item[ceuta \textnormal{or} melilla] Ceuta and Melilla, |category=M|
+% \end{description}
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\keys_define:nn { zugferd / tax } {
 	 category .choices:nn = {S,Z,E,AE,K,G,O,L,M} {
 		\tl_set_eq:NN \l_@@_tax_category_code_tl \l_keys_choice_tl
 	},
