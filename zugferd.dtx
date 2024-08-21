@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-% Copyright (C) 2024 Marei Peischl <marei@peitex.de>
+% Copyright (C) 2021–2024 Marei Peischl <marei@peitex.de>
 % ---------------------------------------------------------
 %
 % This file may be distributed and/or modified under the
@@ -19,11 +19,11 @@
 \ProvidesFile{zugferd.dtx}
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2024-01-30}{0.1}{ZUGFerd Invoice and Faktur-X}
+%<package>\ProvidesExplPackage{zugferd}{2024-08-21}{0.3}{ZUGFerd Invoice and Faktur-X}
 %<*driver>
-\DocumentMetadata{pdfstandard=a-3b}
+\DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass{l3doc}
-\usepackage{zugferd}[2024-01-30]
+\usepackage{zugferd}[2024-08-21]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -82,7 +82,7 @@
 	title={Rec 20 – Codes for Units of Measure Used in International Trade},
 	url={https://unece.org/sites/default/files/2023-10/rec20_Rev17e-2021.xlsx},
 	urldate={2024-08-20},
-	note={Link directory to xlsx. All Revisions can be found in \cite{cl-recommenations}.}
+	note={Link directory to xlsx. All Revisions can be found in \cite{cl-recommendations}.}
 }
 @online{cl-recommendations,
 	author={United Nations Economic Commission for Europe (UNECE)}},
@@ -137,7 +137,8 @@
 %
 % Currently this project is financially supported by:
 % \begin{itemize}
-% \item Pengutronix e.K., \url{https://pengutronix} who also sponsored the minimal \TeX{} Live setup.
+% \item Pengutronix e.K., \url{https://pengutronix}\newline
+% Special thanks to them, as they also sponsored the minimal portable \TeX{} Live setup.
 % \end{itemize}
 %
 % \tableofcontents
@@ -327,7 +328,8 @@
 % \begin{documentation}
 % \section{User Commands}
 % The end user is only asked to set or access the data to be used by \pkg{zugferd}.
-% \DescribeMacro{\SetZUGFeRDData,\SetZugferdData}
+% \DescribeMacro{\SetZUGFeRDData}
+% \DescribeMacro{\SetZugferdData}
 % \begin{syntax}
 % \cs[no-index]{SetZUGFeRDData}*\marg{key value list}
 % \end{syntax}
@@ -349,7 +351,8 @@
 % \end{implementation}
 %
 % \begin{documentation}
-% \DescribeMacro{\InsertZUGFeRDData,\InsertZugferdData}
+% \DescribeMacro{\InsertZUGFeRDData}
+% \DescribeMacro{\InsertZugferdData}
 % \begin{syntax}
 % \cs[no-index]{insertZugferdData}\oarg{special mode option}\marg{data-selection}
 % \end{syntax}
