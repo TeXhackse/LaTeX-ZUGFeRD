@@ -113,7 +113,7 @@
 %
 % \GetFileInfo{zugferd.dtx}
 %
-% \DoNotIndex{\newcommand,\newenvironment}
+% \DoNotIndex{\newcommand,\newenvironment,\today}
 % \begin{documentation}
 % \title{The \textsf{zugferd} package\thanks{This document
 %   corresponds to \textsf{zugferd}~\fileversion, dated \filedate.}}
@@ -201,9 +201,9 @@
 % Disable the xml output.
 % This can be used if you want to create the xml attachment with different software than this package.
 %
-% In that case you can either rename your file to \meta{\cs{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
+% In that case you can either rename your file to \meta{\cs[no-index]{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
 %
-% \DescribeKeyOption{xml-file=\meta{filename}}{\cs{jobname}_zugferd.xml}
+% \DescribeKeyOption{xml-file=\meta{filename}}{\cs[no-index]{jobname}_zugferd.xml}
 % Adjust the file name of the created or loaded xml file.
 %
 % The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
@@ -327,11 +327,11 @@
 % \begin{documentation}
 % \section{User Commands}
 % The end user is only asked to set or access the data to be used by \pkg{zugferd}.
-% \DescribeMacro{\SetZUGFeRDData}
+% \DescribeMacro{\SetZUGFeRDData,\SetZugferdData}
 % \begin{syntax}
-% \cs{SetZUGFeRDData}*\marg{key value list}
+% \cs[no-index]{SetZUGFeRDData}*\marg{key value list}
 % \end{syntax}
-% The two modes of \cs{SetZUGFeRDData} control if the argument is expanded before the fields are set.
+% The two modes of \cs[no-index]{SetZUGFeRDData} control if the argument is expanded before the fields are set.
 % Depending on the source of the data this might be necessary.
 % Fields which are involved in the calculation will be expanded anyway, but the text fields will not, to support special characters.
 %
@@ -343,22 +343,23 @@
 	\IfBooleanTF{#1}{\keys_set:ne}{\keys_set:nn}
 		{zugferd} {#2}
 }
+\let\SetZugferdData\SetZUGFeRDData
 %    \end{macrocode}
 % \end{function}
 % \end{implementation}
 %
 % \begin{documentation}
-% \DescribeMacro{\insertZugferdData}
+% \DescribeMacro{\InsertZUGFeRDData,\InsertZugferdData}
 % \begin{syntax}
-% \cs{insertZugferdData}\oarg{special mode option}\marg{data-selection}
+% \cs[no-index]{insertZugferdData}\oarg{special mode option}\marg{data-selection}
 % \end{syntax}
 % ZUGFerd uses the same data as the XML inside the PDF.
 % To simplify the reuse of data this command is designed to simplify the access to data fields, for example:
 %
 % \begin{verbatim}
-% \insertZugferdData{id}
-% {\insertZugferdData[set-today]{date}\today}
-% \insertZugferdData[AddressData]{seller}
+% \InsertZUGFeRDData{id}
+% {\InsertZUGFeRDData[set-today]{date}\today}
+% \InsertZUGFeRDData[AddressData]{seller}
 % \end{verbatim}
 % As special modes the command currently supports the following:
 %
@@ -378,11 +379,11 @@
 %
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\insertZugferdData}
+% \begin{function}{\InsertZUGFeRDData,\InsertZugferdData}
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
 % Country is still missing.
 %    \begin{macrocode}
-\NewDocumentCommand{\insertZugferdData}{om}{
+\NewDocumentCommand{\InsertZUGFeRDData}{om}{
 	\str_case:nnF {#1} {
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -424,6 +425,8 @@
 		}
 	}
 }
+\providecommand{\InsertZugferdData}{\InsertZUGFeRDData}
+\providecommand{\insertZugferdData}{\InsertZUGFeRDData}
 %    \end{macrocode}
 % \begin{function}{\_@@_set_today:c}
 % Auxiliary function to use a date variable within the current group to be used as \cs{today}.
@@ -444,14 +447,14 @@
 % \begin{documentation}
 % \section{Developer Commands}
 % \DescribeMacro{\startWritingZUGFeRDxml}
-% \cs{startWritingZUGFeRDxml} is opening the output stream for the XML file.
+% \cs[no-index]{startWritingZUGFeRDxml} is opening the output stream for the XML file.
 % It also adjusts the indentation.
 % If \option{write-xml} is false, this option only opens a group to achieve the same structure in both modes.
 %
 % \DescribeMacro{\stopWritingZUGFeRDxml}
 % Here the output stream is closed and the xml file is attached.
 % In case \option{write-xml} is not active, the attachment will be made if that's not deactivated separately using \option{zugferd}.
-% I also ends the group started by \cs{startWritingZUGFeRDxml}.
+% I also ends the group started by \cs[no-index]{startWritingZUGFeRDxml}.
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
@@ -576,7 +579,7 @@
 }
 %    \end{macrocode}
 % \end{function}
-% The idea was to redefine the \cs{newlinechar} to automatically indent the following line.
+% The idea was to redefine the \cs[no-index]{newlinechar} to automatically indent the following line.
 %    \begin{macrocode}
 \cs_new:Nn \_@@_xml_newline_indent: {\iow_newline: \_@@_xml_auto_indent:}
 %    \end{macrocode}
