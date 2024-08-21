@@ -420,7 +420,7 @@
 		\bool_set_true:N  \g_tmpa_bool
 		\clist_map_inline:nn {tl, str} {
 			\clist_map_inline:nn {g, l} {
-				\use:c {##1 _ if exist:cT} {####1_@@_ \l_tmpa_str _##1}
+				\use:c {##1 _if_exist:cT} {####1_@@_ \l_tmpa_str _##1}
 					{ \use:c {####1_@@_ \l_tmpa_str _##1} \bool_gset_false:N \g_tmpa_bool}
 				\bool_if:NF  \g_tmpa_bool {\clist_map_break:}
 			}
@@ -435,13 +435,13 @@
 % Auxiliary function to use a date variable within the current group to be used as \cs{today}.
 %    \begin{macrocode}
 \cs_new:Nn \_@@_set_today:n {
-	\_@@_set_today_aux:nnnnnnnn #1\prg_do_nothing:
+	\_@@_set_today_aux:w #1 \q_stop
 }
 \cs_generate_variant:Nn \_@@_set_today:n  {v}
-\cs_new:Nn \_@@_set_today_aux:nnnnnnnn {
-	\year=\int_eval:n {#1#2#3#4}\prg_do_nothing:
-	\month=\int_eval:n {#5#6}\prg_do_nothing:
-	\day=\int_eval:n {#7#8}\prg_do_nothing:
+\cs_new:Npn \_@@_set_today_aux:w #1 #2 #3 #4 #5 #6 #7 #8 \q_stop{
+	\int_set:Nn \year {#1#2#3#4}
+	\int_set:Nn \month {#5#6}
+	\int_set:Nn \day {#7#8}
 }
 %    \end{macrocode}
 % \end{function}
