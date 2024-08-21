@@ -1163,23 +1163,69 @@
 \ExplSyntaxOff
 %TODO english
 %    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
 % \subsection{Payment Means}
+% The payment means are selected by numeric codes.
+% Currently we support:
+% \begin{itemize}
+% \UseName{exp_args:Nnnc} \UseName{exp_args:co} {clist_map_inline:nn} {zugferd@paymentMeans@english} {\item #1}
+% \end{itemize}
+% Others may be added in the future but it's not planned to include a full list.
 %
+% The codes will automatically add the corresponding string inside the \enquote{Information} field.
+% The initial version only included German strings, but currently they are also included in English.
+% It's possible to overwrite them using the same structure:
+%
+% \begin{verbatim}
+% \setupZUGFeRDStrings{payment-means}{
+%	10 = Bargeld,
+%	58 = Zahlung per SEPA Überweisung.,
+%	}
+% \end{verbatim}
+% The language selection is done using at hook executed at |\begin{document}|.
+% Internally the commands are predefined as a key-value list like the argument in the example above.
+% They macros are called \cs{zugferd@paymentMeans@\meta{languagename}}.
+% Currently \pkg{zugferd} defines these for |english| and |german| (also |ngerman| as an compatibility alias).
+% \end{documentation}
+% \begin{implementation}
 %    \begin{macrocode}
-\setupZUGFeRDStrings{payment-means}{
+\providecommand*{\zugferd@paymentMeans@german}{
+	  1 = Keine Zahlungsart definiert,
 	10 = Bargeld,
 	30 = Überweisung,
-	42 = Payment to bank account,
+	42 = Zahlung an Bankkonto,
 	48 = Kartenzahlung,
-	49 = Lastschrift,
+	49 = Lastschriftverfahren,
 	57 = Dauerauftrag,
 	58 = Zahlung per SEPA Überweisung.,
 	59 = SEPA Lastschrift,
-	97 = Report
+	97 = Ausgleich zwischen Partnern
+}
+\def\zugferd@paymentMeans@ngerman{\zugferd@paymentMeans@german}
+\providecommand*{\zugferd@paymentMeans@english}{
+	  1 = Instrument not defined,
+	10 = In cash,
+	30 = Credit Transfer,
+	31 = Debit Transfer,
+	42 = Payment to bank account,
+	48 = Bank card,
+	49 = Direct Debit,
+	57 = Standing agreement,
+	58 = SEPA credit transfer,
+	59 = SEPA direct debit,
+	97 = Clearing between partners
 }
 %    \end{macrocode}
 %    \begin{macrocode}
 \ExplSyntaxOn
+\hook_gput_code:nnn {begindocument/end}{zugferd/payment-means}{
+		\prop_if_empty:cT  {g_@@_payment-means_names_prop} {
+				\exp_args:Nne \setupZUGFeRDStrings{payment-means}{
+					\use:c {zugferd@paymentMeans@\cs_if_exist:cTF {zugferd@paymentMeans@\languagename} {\languagename} {english}}
+				}
+		}
+}
 
 % sums
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
