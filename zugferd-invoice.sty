@@ -141,7 +141,7 @@
 		{0} %ChargeTotalAmount
 		{0} %AllowanceTotalAmount
 		{\fp_use:N  \g__ptxcd_invoice_sum_fp} %TaxBasisTotalAmount
-		{\fp_use:N \g__ptxcd_tax_total_fp} %TaxBasisTotalAmount
+		{\fp_use:N \g__ptxcd_tax_total_fp} %TaxTotalAmount
 		{\fp_eval:n {\g__ptxcd_tax_total_fp +  \g__ptxcd_invoice_total_fp }} %GrandTotalAmount
 		{0} % TotalPrepaidAmount
 		{\fp_eval:n {\g__ptxcd_tax_total_fp +  \g__ptxcd_invoice_total_fp }} %DuePayableAmount = GrandTotalAmount - TotalPrepaidAmount
