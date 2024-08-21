@@ -256,7 +256,13 @@
 \iow_new:N \_@@_xml_writer_iow
 %    \end{macrocode}
 % \end{variable}
+% To adjust the metadata it is necessary to use the \pkg{pdfmanagement-testphase} by \citeauthor{pdfmanagement-testphase}.
+% She had prepared some experiment files for the PDF attachment in the experiments of the repository.
+% We use these to embed the XML file.
+%
+% This part prepares the XMP metadata according to the required scheme.
 %    \begin{macrocode}
+\bool_if:NT \g_@@_active_bool {
 \cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
 	\msg_new:nnnn {zugferd} {PDFmanagement-not-active} {
 		The~\LaTeX~PDF~management~is~not~active.~Activate~it~using~\string\DocumentMetadata.
@@ -265,12 +271,12 @@
 	}
 	\msg_error:nn{zugferd} {PDFmanagement-not-active}
 }
-% based on experiments for l3pdfmeta by Ulrike Fischer
-\pdfmeta_xmp_xmlns_new:nn{fx}{urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
+%% based on experiments for l3pdfmeta by Ulrike Fischer
+\pdfmeta_xmp_xmlns_new:nn {fx}{urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
 
 \cs_generate_variant:Nn \__pdfmeta_xmp_schema_new:nnn {nne}
 
-\bool_if:NT \g_@@_active_bool {
+
 	\__pdfmeta_xmp_schema_new:nne
 		  {Factur-X~PDFA~Extension~Schema}
 		  {fx}
@@ -316,15 +322,40 @@
 		%
 	 }
 }
-
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeMacro{\startWritingZUGFeRDxml}
+% \cs{\startWritingZUGFeRDxml} is opening the output stream for the XML file.
+% It also adjusts the indentation.
+% If \option{write-xml} is false, this option only opens a group to achieve the same structure in both modes.
+%
+% \DescribeMacro{\stopWritingZUGFeRDxml}
+% Here the output stream is closed and the xml file is attached.
+% In case \option{write-xml} is not active, the attachment will be made if that's not deactivated separately using \option{zugferd}.
+% I also ends the group started by \cs{\startWritingZUGFeRDxml}.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
 \newcommand*{\startWritingZUGFeRDxml}{
 	\begingroup
 	\bool_if:NTF \g_@@_write_xml_bool
-		{\char_set_active_eq:nN {13} \_@@_xml_newline_indent:\iow_open:Nn  \_@@_xml_writer_iow {\g_@@_xml_file_tl}}
-		{}%TODO Mesage info
+		{
+			\char_set_active_eq:nN {13} \_@@_xml_newline_indent:
+			\iow_open:Nn  \_@@_xml_writer_iow {\g_@@_xml_file_tl}
+		}{
+			\msg_info:nn {zugferd} {no-xml-write}
+		}
 }
-% The metadata elements are taken by Ulrike Fischers faktur-x experiments
-% https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
+\msg_new:nnn {zugferd} {no-xml-write} {
+	The~option~write-xml=false~was~set.\\
+	Writing~of~XML~file~is~deactivated.
+}
+%    \end{macrocode}
+% The PDF attachment is done after the writing stream is closed.
+%    \begin{macrocode}
+%% The metadata elements are taken by Ulrike Fischer's faktur-x experiments
+%% https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
 \newcommand*{\stopWritingZUGFeRDxml}{%
 	\bool_if:NT \g_@@_write_xml_bool {\iow_close:N  \_@@_xml_writer_iow}%
 	\endgroup
@@ -440,7 +471,7 @@
 % It depends a bit on the business case if it's worth to define a global default.
 % Generally these are assigned locally.
 % \subsection{Units}
-% \DescribeKeyOption{unit=hour/day/one/piece/\meta{unit code}}
+% \DescribeKeyOption{unit=hour/day/one/piece/\meta{unit code}}{initially emty}*
 % The Faktur-X standard requires the unit to be selected.
 % These are called \enquote{/UN/CEFACT Common Codes} and can be found withtin \cite{unit-codes}.
 %
@@ -487,7 +518,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsection{Tax category codes}
-% \DescribeKeyOption{tax/category=\meta{category code}}{}*
+% \DescribeKeyOption{tax/category=\meta{category code/alias}}{standard}*
 % The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g.][]{spec-xrechnung}.
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
 % The example file includes 2 different VAT values using the same category.
@@ -540,6 +571,7 @@
 		{\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}}
 		{\msg_warning:nnn { zugferd } {unknown-unit} {#1}}
 	},
+	category .initial:n = standard,
 	category .usage:n = general,
 	exemption-reason .tl_set:N = \l_@@_tax_exemption_reason_tl,
 	exemption-reason  .initial:V = \c_empty_tl,
