@@ -157,22 +157,18 @@
 % The idea is to create your own version of this package to use your own layout and internally load the zugferd package that way.
 %
 % \end{documentation}
-% \begin{implementation}
-% \section{Implementation}
 % \iffalse
 %    \begin{macrocode}
 %<*package>
-%<@@=zugferd>
 %    \end{macrocode}
 % \fi
-%  \begin{variable}{
-	\l_@@_tmp_tl,
-	\g_@@_format_str,
-	\g_@@_businessProcessId_str,
-	\g_@@_writeTradeContact_bool,
-	\g_@@_writePaymentMeans_bool
-	\g_@@_conformance_level_str
-	}
+% \begin{implementation}
+% \section{Implementation}
+
+%    \begin{macrocode}
+%<@@=zugferd>
+%    \end{macrocode}
+% \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_conformance_level_str}
 %    \begin{macrocode}
 \tl_new:N \l_@@_tmp_tl
 \str_new:N \g_@@_format_str
@@ -188,9 +184,11 @@
 % The package supports a few fundamental settings.
 % These have to be set when the package is loaded as they are used internally to setup the scheme or activate the xml mechanism.
 %
-%  \DescribeKeyOption{format=xrechung3.0/xrechnung2.3/basic}{xrechung3.0}
+%  \DescribeKeyOption{format=xrechnung/xrechung3.0/xrechnung2.3/basic}{xrechung}
 % \option{format} selects the scheme to be used for the zugferd invoice.
 % Currently xrechung3.0, xrechnung2.3 and the basic scheme are supported.
+%
+% The value |xrechnung| is set as an alias to |xrechnung3.0| and will always use the latest version supported by \pkg{zugferd}.
 %
 % \DescribeKeyOption{zugferd=\meta{boolean}}{true}
 % This option can be used to deactivate the xml embedding.
@@ -207,6 +205,8 @@
 %
 % \DescribeKeyOption{xml-file=\meta{filename}}{\cs{jobname}_zugferd.xml}
 % Adjust the file name of the created or loaded xml file.
+%
+% The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
 % \end{documentation}
 % \begin{implementation}
 % \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
@@ -215,10 +215,23 @@
 \keys_define:nn {zugferd} {
 	xrechnung .code:n = {\bool_gset_true:N \g_@@_writeTradeContact_bool\bool_gset_true:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}},
 	format .choice:,
-	format / xrechnung3.0 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0}\str_gset:Nx \g_@@_businessProcessId_str {urn:fdc:peppol.eu:2017:poacc:billing:01:1.0}\keys_set:nn {zugferd}{xrechnung},
-	format / xrechnung2.3 .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3}keys_set:nn {zugferd}{xrechnung},
-	format  / basic .code:n = \str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic}\bool_gset_false:N \g_@@_writeTradeContact_bool\bool_gset_false:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {BASIC},
-	format .initial:n = basic,
+	format / xrechnung3.0 .code:n = {
+		\str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0}
+		\str_gset:Nx \g_@@_businessProcessId_str {urn:fdc:peppol.eu:2017:poacc:billing:01:1.0}
+		\keys_set:nn {zugferd}{xrechnung}
+	},
+	format / xrechnung2.3 .code:n = {
+		\str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3}
+		\keys_set:nn {zugferd}{xrechnung}
+	},
+	format  / basic .code:n = {
+		\str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic}
+		\bool_gset_false:N \g_@@_writeTradeContact_bool
+		\bool_gset_false:N \g_@@_writePaymentMeans_bool
+		\str_gset:Nn \g_@@_conformance_level_str {BASIC}
+	},
+	format / basic .meta:n = { xrechnung = xrechnung3.0 },
+	format .initial:n = xrechnung,
 	format .usage:n = load,
 	write-xml .bool_gset:N = \g_@@_write_xml_bool,
 	write-xml .initial:n = true,
