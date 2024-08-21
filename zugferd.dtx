@@ -396,11 +396,12 @@
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
 %    \end{macrocode}
 % \end{function}
-% Auxiliary functions
+% \subsection{Numer rounding}
+% As \pkg{siunitx} is implementing this, we use it instead of building our own mechanism.
 %    \begin{macrocode}
 \RequirePackage{siunitx}
 %    \end{macrocode}
-% \begin{function}{\_@@_number_format:nNn}
+% \begin{function}{\_@@_number_format:nNn,\_@@__write_xml_number_round:nnnn,\_@@__write_xml_number_round:nnn}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_number_format:nNn {
 	\sisetup{parse-numbers=true,round-mode=places,round-precision=#1,round-pad = false,group-digits=false,minimum-decimal-digits=#1,output-decimal-marker=.}
@@ -409,20 +410,12 @@
 
 \cs_generate_variant:Nn  \_@@_number_format:nNn  {nNe}
 %    \end{macrocode}
-% \end{function}
-
-
-% \begin{function}{\_@@__write_xml_number_round:nnnn}
 %    \begin{macrocode}
 \cs_new:Nn \_@@__write_xml_number_round:nnnn {
 	\_@@_number_format:nNe {#1} \l_@@_tmp_tl {#4}
 	\_@@_write_xml:e {<ram:#2#3>\l_@@_tmp_tl</ram:#2>}
 }
 %    \end{macrocode}
-% \end{function}
-
-
-% \begin{function}{\_@@__write_xml_number_round:nnn}
 %    \begin{macrocode}
 \cs_new:Nn \_@@__write_xml_number_round:nnn {
 	 \_@@__write_xml_number_round:nnnn {#1} {#2} {} {#3}
@@ -438,21 +431,17 @@
 \int_new:N \l_@@_xml_indent_int
 %    \end{macrocode}
 % \end{variable}
-% \begin{function}{\_@@_xml_indent:}
+% \begin{function}{\_@@_xml_indent:,\_@@_xml_auto_indent:,\_@@_xml_add_indent:,\_@@_xml_newline_indent: }
 %    \begin{macrocode}
 \cs_new:Nn \_@@_xml_indent: {
 	\space\space
 }
 %    \end{macrocode}
-% \end{function}
-% \begin{function}{\_@@_xml_auto_indent:}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_xml_auto_indent: {
 	\prg_replicate:nn {\l_@@_xml_indent_int} {\_@@_xml_indent:}
 }
 %    \end{macrocode}
-% \end{function}
-% \begin{function}{\_@@_xml_add_indent:}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_xml_add_indent: {
 	\prg_replicate:nn {\l_@@_xml_indent_int} {\_@@_xml_indent:}
