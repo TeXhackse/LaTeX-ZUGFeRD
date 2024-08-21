@@ -230,7 +230,7 @@
 		\bool_gset_false:N \g_@@_writePaymentMeans_bool
 		\str_gset:Nn \g_@@_conformance_level_str {BASIC}
 	},
-	format / basic .meta:n = { xrechnung = xrechnung3.0 },
+	format / xrechnung .meta:n = { format = xrechnung3.0 },
 	format .initial:n = xrechnung,
 	format .usage:n = load,
 	write-xml .bool_gset:N = \g_@@_write_xml_bool,
@@ -329,7 +329,7 @@
 % The end user is only asked to set or access the data to be used by \pkg{zugferd}.
 % \DescribeMacro{\SetZUGFeRDData}
 % \begin{syntax}
-% \cs{\SetZUGFeRDData}*\marg{key value list}
+% \cs{SetZUGFeRDData}*\marg{key value list}
 % \end{syntax}
 % The two modes of \cs{SetZUGFeRDData} control if the argument is expanded before the fields are set.
 % Depending on the source of the data this might be necessary.
@@ -337,19 +337,20 @@
 %
 % \end{documentation}
 % \begin{implementation}
-% \begin{macro}{\SetZUGFeRDData}
-%   \begin{macrocode}
+% \begin{function}{\SetZUGFeRDData}
+%    \begin{macrocode}
 \NewDocumentCommand{\SetZUGFeRDData}{sm}{
 	\IfBooleanTF{#1}{\keys_set:ne}{\keys_set:nn}
 		{zugferd} {#2}
 }
-%   \end{macrocode}
-% \end{macro}
+%    \end{macrocode}
+% \end{function}
 % \end{implementation}
+%
 % \begin{documentation}
 % \DescribeMacro{\insertZugferdData}
 % \begin{syntax}
-% \cs{insertZugferdData}\oarg{special mode}\marg{data-selection}
+% \cs{insertZugferdData}\oarg{special mode option}\marg{data-selection}
 % \end{syntax}
 % ZUGFerd uses the same data as the XML inside the PDF.
 % To simplify the reuse of data this command is designed to simplify the access to data fields, for example:
@@ -360,21 +361,30 @@
 % \insertZugferdData[AddressData]{seller}
 % \end{verbatim}
 % As special modes the command currently supports the following:
+%
+% By default \pkg{zugferd} tries to find the variable holding the data itself.
+% First a token list is tried, afterwards a string.
+% Global variables are prefered over local ones.
+%
+% As the variable names may container underscores and the option usually prefers dashes, dashes are converted to underscores for the detection.
+%
+% \DescribeOption{AddressData} Allows |seller| or |buyer| for the data selection.
+% Will print the address, to be used in letters.
+%
+% \DescribeOption{set-today}
+% For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
+% Using this the date format can be controlled easier using the language setting of the document.
+% Here you should take care to use it within a group to restore the real value of \cs{today} afterwards.
+%
 % \end{documentation}
-% \begin{function}{\insertZugferdData}
 % \begin{implementation}
+% \begin{function}{\insertZugferdData}
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
 % Country is still missing.
 %    \begin{macrocode}
 \NewDocumentCommand{\insertZugferdData}{om}{
 	\str_case:nnF {#1} {
 %    \end{macrocode}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeOption{AddressData} Allows |seller| or |buyer| for the data selection.
-% Will print the address, to be used in letters.
-% \end{documentation}
-% \begin{implementation}
 %    \begin{macrocode}
 		{AddressData} {
 			\clist_map_inline:nn {name, lineone, linetwo} {
@@ -385,16 +395,31 @@
 			\prop_item:cn {g_@@_#2_AddressData_prop } {city}
 		}
 %    \end{macrocode}
-% \DescribeOption{set-today}
-% For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
-% Using this the date format can be controlled easier using the language setting of the document.
-% Here you should take care to use it within a group to restore the real value of \cs{today} afterwards.
 %    \begin{macrocode}
 	   {set-today} {
 			\_@@_set_today:v {g_@@_#2_tl}
 	   }
 	} {
-		\tl_if_exist:cT {g_@@_#2_tl} {\use:c {g_@@_#2_tl}}
+%    \end{macrocode}
+% Try to find the variable automatially.
+% \begin{itemize}
+%		\item replace dashes by underscores
+%		\item try if a tokenlist or a string
+%		\item prefer global over local
+%		\item take the first existing variable and break the loop
+% \end{itemize}
+%    \begin{macrocode}
+		\str_set:Ne \l_tmpa_str {#2}
+		\str_replace_all:Nnn \l_tmpa_str {-} {_}
+		\bool_set_true:N  \g_tmpa_bool
+		\clist_map_inline:nn {tl, str} {
+			\clist_map_inline:nn {g, l} {
+				\use:c {##1 _ if exist:cT} {####1_@@_ \l_tmpa_str _##1}
+					{ \use:c {####1_@@_ \l_tmpa_str _##1} \bool_gset_false:N \g_tmpa_bool}
+				\bool_if:NF  \g_tmpa_bool {\clist_map_break:}
+			}
+			\bool_if:NF  \g_tmpa_bool {\clist_map_break:}
+		}
 	}
 }
 %    \end{macrocode}
@@ -412,19 +437,19 @@
 }
 %    \end{macrocode}
 % \end{function}
-% \end{implementation}
 % \end{function}
+% \end{implementation}
 % \begin{documentation}
 % \section{Developer Commands}
 % \DescribeMacro{\startWritingZUGFeRDxml}
-% \cs{\startWritingZUGFeRDxml} is opening the output stream for the XML file.
+% \cs{startWritingZUGFeRDxml} is opening the output stream for the XML file.
 % It also adjusts the indentation.
 % If \option{write-xml} is false, this option only opens a group to achieve the same structure in both modes.
 %
 % \DescribeMacro{\stopWritingZUGFeRDxml}
 % Here the output stream is closed and the xml file is attached.
 % In case \option{write-xml} is not active, the attachment will be made if that's not deactivated separately using \option{zugferd}.
-% I also ends the group started by \cs{\startWritingZUGFeRDxml}.
+% I also ends the group started by \cs{startWritingZUGFeRDxml}.
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
