@@ -1048,7 +1048,7 @@
 		</ram:URIUniversalCommunication>%
         }%
 % TODO add support local tax id: schemaID="FC"
-        \tl_if_empty:nF {#7} {%
+        \tl_if_empty:nF {#7} {
 	        <ram:SpecifiedTaxRegistration>
 	        \_@@_xml_indent:<ram:ID~schemeID="VA">#7</ram:ID>
 	        </ram:SpecifiedTaxRegistration>%
@@ -1289,9 +1289,9 @@
 	\int_incr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:e {%
 		\tl_if_blank:nF {#1} {%
-			<ram:Description>#1</ram:Description>
+			<ram:Description>#1</ram:Description>%
 		}%
-		\tl_if_blank:nF {#2} {%
+		\tl_if_blank:nF {#2} {
 			<ram:DueDateDateTime>
 			\_@@_xml_indent:<udt:DateTimeString~format="102">#2</udt:DateTimeString>
 			</ram:DueDateDateTime>%
