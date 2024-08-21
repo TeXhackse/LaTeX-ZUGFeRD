@@ -427,7 +427,7 @@
 % It depends a bit on the business case if it's worth to define a global default.
 % Generally these are assigned locally.
 % \subsection{Units}
-% \DescribeOption{unit}
+% \DescribeKeyOption{unit=hour/day/one/piece/\meta{unit code}}
 % The Faktur-X standard requires the unit to be selected.
 % These are called \enquote{/UN/CEFACT Common Codes} and can be found withtin \cite{unit-codes}.
 %
@@ -435,7 +435,8 @@
 % For these the corresponding codes have been implemented within the package.
 % Other units can be selected using the codes listed in \cite{unit-codes}.
 %
-% This option is not case sensitive. The value is automatically converted to uppercase.
+% This option is not case sensitive
+%  The value is automatically converted to uppercase.
 % If the selected option is different from the predefined ones, there will be a warning, as \pkg{zugferd} does not know if the selection is valid or not.
 % \begin{NOTE}
 % additional source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
@@ -473,7 +474,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsection{Tax category codes}
-% \DescribeOption{category,exemption-reason,rate}
+% \DescribeKeyOption{tax/category=\meta{category code}}{}*
 % The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g.][]{spec-xrechnung}.
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
 % The example file includes 2 different VAT values using the same category.
@@ -484,7 +485,8 @@
 % \item[standard] Standard rate and reduced rate item, |category=S|
 % \item[zero] Zero rated sale,  |category=Z|
 % \item[exempt] Exempted from VAT. This requires a reason via \option{exemption-reason},|category=E|
-% \DescribeOption{exemption-reason, exemption-reason-code}
+% \DescribeKeyOption{tax/exemption-reason=\meta{Text}}{initially empty}*
+% \DescribeKeyOption{tax/exemption-reason-code=\meta{exemption reason code}}{initially empty}*
 % Add Reasons for a tax exempt, as required by |category=E|.
 % This can either be added using a text (|exemption-reason|) or a predefined code (|exemption-reason-code|).
 % The codes are listed at \cite{VAT-exemption-codes}.
@@ -495,6 +497,13 @@
 % \item[canary-islands] Canary Islands general indirect tax, |category=L|
 % \item[ceuta \textnormal{or} melilla] Ceuta and Melilla, |category=M|
 % \end{description}
+%
+% \DescribeKeyOption{tax/rate=\meta{integer value}}{19}
+% The value given will be used for tax calculation.
+% As the xml format requires this to be an integer we use the integer value here.
+% Internally it's saves as a floating point to simplify calculations.
+%
+% By default it's configured to |19| to match the German standard VAT rate.
 % \end{documentation}
 % \begin{implementation}
 % \begin{optionenv}{category, exemption-reason,rate}
