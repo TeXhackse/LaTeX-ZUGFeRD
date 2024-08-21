@@ -1465,10 +1465,15 @@
         \let\ignorespaces\relax
     }
     \let\ensuremath\@firstofone
+    \hook_use:n {zugferd/disable-macros}
 %    \end{macrocode}
 % \endcomment
 %    \begin{macrocode}
 }
+%    \end{macrocode}
+% To provide a possibility to extend or overwrite the macro list a hook is added.
+%    \begin{macrocode}
+\hook_new:n {zugferd/disable-macros}
 %    \end{macrocode}
 % \end{function}
 % \end{implementation}
