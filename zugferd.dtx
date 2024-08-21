@@ -691,9 +691,9 @@
 	category / unknown .code:n = {
 		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {category} {\str_uppercase:f {#1}}
 		{\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}}
-		{\msg_warning:nnn { zugferd } {unknown-unit} {#1}}
+		{\msg_warning:nnn { zugferd } {unknown-tax-category} {#1}}
 	},
-	category .initial:n = standard,
+	category .initial:n =  S,
 	category .usage:n = general,
 	exemption-reason .tl_set:N = \l_@@_tax_exemption_reason_tl,
 	exemption-reason  .initial:V = \c_empty_tl,
@@ -704,6 +704,13 @@
 	rate .fp_set:N =  \l_@@_tax_rate_fp,
 	rate .initial:n = 19,
 	rate .usage:n = general,
+}
+\msg_new:nnnn {zugferd} {unknown-tax-category} {
+	You~selected~an~unknown~tax~category.\\
+	I~~will~directly~use~your~selection~'category=#1'~as~Code.\\
+	Please~ensure~the~selection~is~valid!
+} {
+	For~more~information~see~the~zugferd~documentation and the corresponding code list.
 }
 %    \end{macrocode}
 % \end{optionenv}
