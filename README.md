@@ -2,6 +2,8 @@
 
 Package to create Faktur-X and ZUGFeRD invoices using LaTeX
 
+Version 0.4 (2024-08-22)
+
 ––––––––––––––––––––––––––
 
 Copyright (C) 2023–2024 by Marei Peischl (peiTeX) <marei@peitex.de>
