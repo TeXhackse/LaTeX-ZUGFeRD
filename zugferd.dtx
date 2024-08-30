@@ -739,23 +739,20 @@
 % \begin{variable}{\g_@@_notes_seq,\g_@@_id_tl,\g_@@_date_tl,\g_@@_subject_tl,\g_@@_fromaddress_tl,\g_@@_DocumentTypeCode_tl}
 %    \begin{macrocode}
 \seq_new:N \g_@@_notes_seq
-%    \end{macrocode}
-%    \begin{macrocode}
 \tl_new:N \g_@@_id_tl
-%    \end{macrocode}
-%    \begin{macrocode}
 \tl_new:N \g_@@_date_tl
-%    \end{macrocode}
-%    \begin{macrocode}
+\tl_new:N \g_@@_delivery_date_tl
 \tl_new:N \g_@@_subject_tl
-%    \end{macrocode}
-%    \begin{macrocode}
 \tl_new:N \g_@@_fromaddress_tl
-%    \end{macrocode}
-%    \begin{macrocode}
 \tl_new:N \g_@@_DocumentTypeCode_tl
 %    \end{macrocode}
 % \end{variable}
+% \end{implementation}
+% \begin{documentation}
+%
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{id, document-type}
 %    \begin{macrocode}
 \keys_define:nn { zugferd } {
 	id .choice:,
@@ -766,19 +763,59 @@
 	document-type / commercial-invoice .code:n =
 		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {380},
 	document-type .initial:n = commercial-invoice,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{date=auto/\meta{date formatted as YYYYMMDD}}{auto}*
+% \DescribeKeyOption{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}*
+% \DescribeKeyOption*{due-date=\meta{date formatted as YYYYMMDD}}{initially empty}
+% Currently there are three kinds of dates implemented.
+% The XML-Standard requires them to use the structure \meta{YYYYMMDD}.
+% For the day this document was compiled this would be: \enquote{\InsertZUGFeRDData{date}} (\today).
+%
+% Instead of providing a date value directly it's also possible to use \cs[no-index]{today}.
+% This is done using the \value{auto} which is the default setting for \option{date} and \option{delivery-date}.
+% Please be aware, that this would change if you rebuild the document later. So you might want to use an actual value here.
+% \end{documentation}
+%
+% \begin{implementation}
+% \begin{optionenv}{date,delivery-date}
+%    \begin{macrocode}
 	date .choice:,
-	date / auto .code:n = \tl_gset:Nn \g_@@_date_tl {
+	date / auto .code:n = \tl_gset:Ne \g_@@_date_tl {
 		\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day
 	},
 	date / unknown .code:n = \tl_gset:Nn  \g_@@_date_tl  {#1},
+	date .initial:n = auto,
 	delivery-date .choice:,
-	delivery-date / auto .code:n = \tl_gset:Nn \g_@@_delivery_date_tl {
+	delivery-date / auto .code:n = \tl_gset:Ne \g_@@_delivery_date_tl {
 		\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day
 	},
 	delivery-date / unknown .code:n = \tl_gset:Nn  \g_@@_delivery_date_tl  {#1},
+	delivery-date .initial:n = auto,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption*{subject=komavar/\meta{Tokenlist}}{initially empty}
+% \DescribeKeyOption*{fromaddress=/\meta{Tokenlist}}{initially empty}
+% \DescribeKeyOption*{add-note=\meta{Tokenlist}}{initially empty}
+% The ZUGFeRD example files use all visible Data to add them to the XML as a note.
+% \option{subject} and \option{fromaddress} are used to support this.
+% The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the XML using the note element.
+% So these fields can be left out but in case they are not empty, they will also be written to the XML.
+%
+% The \value{komavar} corresponds to the mechanism provided by \pkg{scrletter}.
+% It accesses the variable expands it to be used directly.
+% If you don't use this package, you can ignore this setting or add content manually.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{subject,fromaddress,add-note}
+%    \begin{macrocode}
 	subject .choice:,
 	subject / komavar .code:n = \tl_gset:Nf \g_@@_subject_tl {\scr@subject@var},
-	subject /unknown .code:n  = \tl_gset:Nn  \g_@@_subject_tl {#1},
+	subject / unknown .code:n  = \tl_gset:Nn  \g_@@_subject_tl {#1},
 	fromaddress .choice:,
 	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl
 		{\scr@fromaddress@var},
