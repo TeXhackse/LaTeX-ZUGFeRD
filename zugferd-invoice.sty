@@ -13,6 +13,10 @@
 \RequirePackage{scrletter}
 \RequirePackage{ragged2e}
 \RequirePackage{zugferd}
+% e.g. use comma as output decimal marker if german
+\iflanguage{german}{
+	\sisetup{locale=DE}
+}{}
 
 \RequirePackage{xltabular}
 \RequirePackage{booktabs}
