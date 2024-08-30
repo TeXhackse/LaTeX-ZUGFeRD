@@ -61,7 +61,12 @@
                         \let\makelabel\valuelistlabel}}
                {\endlist}
 \newcommand*\valuelistlabel[1]{%\hspace\labelsep
-                                \llap{\normalfont\codefamily\color_select:n {black!60} #1}
+	\llap{
+		\normalfont\codefamily\color_select:n {black!60}
+		\begin{tabular}[1]{@{}r@{}}
+		\clist_use:nn {#1} {\\}
+		\end{tabular}
+	}
 }
 \ExplSyntaxOff
 
@@ -674,11 +679,11 @@
 % This can either be added using a text (|exemption-reason|) or a predefined code (|exemption-reason-code|).
 % The codes are listed at \cite{VAT-exemption-codes}.
 % \item[reverse-charge] Reverse Charge
-% \item[intra-community \textnormal{or} EEA] Intra-Community Supply, |category=K|
+% \item[intra-community\\\textnormal{or} EEA] Intra-Community Supply, |category=K|
 % \item[export] Free export item, tax not charged, |category=G|
 % \item[O] Services outside scope of tax
 % \item[canary-islands] Canary Islands general indirect tax, |category=L|
-% \item[ceuta \textnormal{or} melilla] Ceuta and Melilla, |category=M|
+% \item[ceuta\\\textnormal{or} melilla] Ceuta and Melilla, |category=M|
 % \end{valuelist}
 %
 % \DescribeKeyOption*{tax/rate=\meta{floating point}}{19}
@@ -781,6 +786,8 @@
 	add-note .code:n = \seq_gput_right:Nn \g_@@_notes_seq {#1},
 }
 %    \end{macrocode}
+% \end{optionenv}
+% Macro to write notes
 %    \begin{macrocode}
 \cs_new:Nn  \_@@_note_if_not_empty:N {%
 	\tl_if_empty:NF #1 {%
@@ -982,6 +989,12 @@
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
 %    \end{macrocode}
+% \end{implementation}
+%
+% \begin{documentation}
+%
+% \end{documentation}
+% \begin{implementation}
 % ApplicableHeaderTradeAgreement
 %
 % Contains information on seller and buyer trade party:
