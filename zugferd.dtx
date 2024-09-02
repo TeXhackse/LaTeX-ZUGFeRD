@@ -400,7 +400,7 @@
 % \DescribeOption{set-today}
 % For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
 % Using this the date format can be controlled easier using the language setting of the document.
-% Here you should take care to use it within a group to restore the real value of \cs{today} afterwards.
+% Here you should take care to use it within a group to restore the real value of \cs[no-index]{today} afterwards.
 %
 % \end{documentation}
 % \begin{implementation}
@@ -454,7 +454,7 @@
 \providecommand{\insertZugferdData}{\InsertZUGFeRDData}
 %    \end{macrocode}
 % \begin{function}{\_@@_set_today:c}
-% Auxiliary function to use a date variable within the current group to be used as \cs{today}.
+% Auxiliary function to use a date variable within the current group to be used as \cs[no-index]{today}.
 %    \begin{macrocode}
 \cs_new:Nn \_@@_set_today:n {
 	\_@@_set_today_aux:w #1 \q_stop
@@ -612,7 +612,7 @@
 % \begin{documentation}
 % \section{Local options/settings}
 % This section is listing the options which may be changed per invoice item.
-% It depends a bit on the business case if it's worth to define a global default.
+% It depends a bit on the business case, if it's worth to define a global default.
 % Generally these are assigned locally.
 % \subsection{Units}
 % \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{initially empty}
@@ -661,7 +661,7 @@
 % \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
-% \subsection{Tax category codes}
+% \subsection{Tax category and rate}
 % \DescribeKeyOption{tax/category=\meta{category code/alias}}{standard}*
 % The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g.][]{spec-xrechnung}.
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
@@ -916,27 +916,29 @@
  }%
 \cctab_end:
 %    \end{macrocode}
+% \subsection{Invoice Items}
 % Each item consists of 5 parts:
 % \begin{itemize}
 % \item AssociatedDocumentLineDocument
-%\item SpecifiedTradeProduct
-%\item SpecifiedLineTradeAgreement
-%\item SpecifiedLineTradeDelivery
-%\item SpecifiedLineTradeSettlement
-%\end{itemize}
+% \item SpecifiedTradeProduct
+% \item SpecifiedLineTradeAgreement
+% \item SpecifiedLineTradeDelivery
+% \item SpecifiedLineTradeSettlement
+% \end{itemize}
+% These are implemented as separate commands to be more flexible.
+% The wrapper command is called \cs[no-index]{@@_insert_TradeLineItem:nnnnnn} and is created to be used in your own invoicing package.
 %    \begin{macrocode}
 %\begingroup
 % start of xml content - need to ensure to comment all line endings except those written to xml
 \cctab_begin:N  \g_@@_xml_cctab%
-% AssociatedDocumentLineDocument
+% \subsection{AssociatedDocumentLineDocument}
 \_@@_define_xml_writing_macro:Nn \_@@_AssociatedDocumentLineDocument:n {%
 		<ram:AssociatedDocumentLineDocument>
 		\_@@_xml_indent: <ram:LineID>#1</ram:LineID>
 		</ram:AssociatedDocumentLineDocument>%
 }%
 %
-%
-% SpecifiedTradeProduct
+% \subsubsection{SpecifiedTradeProduct}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeProduct:nn {%
 		<ram:SpecifiedTradeProduct>
 		\tl_if_empty:nF {#1} {%
@@ -951,7 +953,7 @@
 	\_@@_xml_indent:<ram:ChargeAmount>#2</ram:ChargeAmount>
 	</ram:\str_uppercase:n #1PriceProductTradePrice>%
 }%
-%
+% \subsubsection{SpecifiedLineTradeAgreement}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeAgreement:nn {%
 					<ram:SpecifiedLineTradeAgreement>
 						<ram:GrossPriceProductTradePrice>
@@ -962,8 +964,7 @@
 						</ram:NetPriceProductTradePrice>
 					</ram:SpecifiedLineTradeAgreement>
 }%
-%
-% SpecifiedLineTradeDelivery:nn <unit code > <number>
+%\subsubsection{SpecifiedLineTradeDelivery}%:nn <unit code > <number>
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
 	<ram:SpecifiedLineTradeDelivery>
 	% SPACE!
@@ -971,7 +972,7 @@
 	</ram:SpecifiedLineTradeDelivery>%
 }%
 %
-% SpecifiedLineTradeSettlement
+% \subsubsection{SpecifiedLineTradeSettlement}
 \_@@_define_xml_content_macro:Nn  \_@@_SpecifiedLineTradeSettlement:nnn {%
 		<ram:SpecifiedLineTradeSettlement>
 		\_@@_xml_indent:<ram:ApplicableTradeTax>
@@ -994,7 +995,7 @@
 % The exemption reason was placed wrong with the pre-CTAN release.
 % This was fixed in August 2024.
 % The old macro will be kept for a bit longer but will be removed soon.
-% Please update your own implementatios accordingly.
+% Please update your own implementations accordingly.
 %    \begin{macrocode}
 \cs_new:Nn\_@@_SpecifiedLineTradeSettlement:nnnn {
 	\msg_warning:nnnn {zugferd} {macro-deprecated}
@@ -1260,7 +1261,7 @@
 % \end{verbatim}
 % The language selection is done using at hook executed at |\begin{document}|.
 % Internally the commands are predefined as a key-value list like the argument in the example above.
-% They macros are called \cs{zugferd@paymentMeans@\meta{languagename}}.
+% They macros are called \cs[no-index]{zugferd@paymentMeans@\meta{languagename}}.
 % Currently \pkg{zugferd} defines these for |english| and |german| (also |ngerman| as an compatibility alias).
 % \end{documentation}
 % \begin{implementation}
