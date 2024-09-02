@@ -201,7 +201,7 @@
 % \end{variable}
 % \end{implementation}
 % \begin{documentation}
-% \section{Package Options}
+% \section{Package Options}\label{sec:package-options}
 % The package supports a few fundamental settings.
 % These have to be set when the package is loaded as they are used internally to setup the scheme or activate the xml mechanism.
 %
@@ -543,7 +543,7 @@
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
 %    \end{macrocode}
 % \end{function}
-% \subsection{Numer rounding}
+% \subsection{Number rounding}
 % As \pkg{siunitx} is implementing this, we use it instead of building our own mechanism.
 %    \begin{macrocode}
 \RequirePackage{siunitx}
@@ -863,7 +863,7 @@
 \begingroup%
 \char_set_catcode_other:N \#%
 \char_set_catcode:nn {32}{10}%
-\_@@_define_xml_writing_macro:Nn \_@@_insert_Header:{%
+\_@@_define_xml_writing_macro:Nn \_@@_insert_Header: {%
 	\_@@_write_xml:e {%
 		<?xml version='1.0' encoding='UTF-8' ?>
 		<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
@@ -915,6 +915,41 @@
 	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%
  }%
 \cctab_end:
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeEnv{ZUGFeRD}
+% To simplify the structure of the wrapper package, \pkg{zugferd} provides an environment for the XML mechanism and does the attachment to the PDF file (of course only, if enabled, see \autoref{sec:package-options}).
+% This provides the public interface bundling some steps together to reduce maintenance effort for any template maintainer using this package.
+% It also avoids the use of internal commands.
+%
+% This environment opens the xml file using \cs{startWritingZUGFeRDxml} and afterwards writes the XML header including the File and Scheme information, the ExchangedDocumentContext and information of the ExchangedDocument.
+% Notes will also be written within this step.
+% Afterwards the environment should include all the mechanisms to write the invoice positions as well as summation.
+%
+% At the end of the environment the open structure of \enquote{ApplicableHeaderTradeSettlement} is closed and the footer is inserted, before the output stream is closed using \cs{stopWritingZUGFeRDxml}.
+% \end{documentation}
+% \begin{implementation}
+% Provide public interfaces and the ZUGFeRD environment.
+%     \begin{macrocode}
+\cs_new:Nn \zugferd_write_Header: {
+	\_@@_insert_Header:
+	\_@@_insert_FrontMatter:
+}
+\cs_new:Nn  \zugferd_write_Footer: {
+	\_@@_ApplicableHeaderTradeSettlement_stop:
+	\_@@_insert_Footer:
+}
+\NewDocumentEnvironment{ZUGFeRD}{o}{
+	\IfNoValueF{#1}{
+		\SetZUGFeRDData{#1}
+	}
+	\startWritingZUGFeRDxml
+	\zugferd_write_Header:
+}{
+	\zugferd_write_Footer:
+	\stopWritingZUGFeRDxml
+}
 %    \end{macrocode}
 % \subsection{Invoice Items}
 % Each item consists of 5 parts:
@@ -1240,19 +1275,8 @@
 %    \end{macrocode}
 % ApplicableHeaderTradeSettlement
 %    \begin{macrocode}
-%\begingroup
-% %    \end{macrocode}
-% \begin{variable}{\l_@@_currency_tl}
-%    \begin{macrocode}
-\tl_new:N \l_@@_currency_tl
-%    \end{macrocode}
-% \end{variable}
-% \begin{variable}{\l_@@_payment_means_tl}
-%    \begin{macrocode}
 \tl_new:N \l_@@_payment_means_tl
-%    \end{macrocode}
-% \end{variable}
-%    \begin{macrocode}
+\tl_new:N \l_@@_currency_tl
 \keys_define:nn {zugferd} {
 	currency .choices:nn = {EUR, USD, CHF} { \tl_set_eq:NN  \l_@@_currency_tl \l_keys_choice_tl	},
 	currency / € .meta:n = {currency = EUR},

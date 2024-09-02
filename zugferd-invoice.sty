@@ -63,17 +63,7 @@
 
 \newcommand*{\PrintInvoiceTabular}{
 \bool_gset_true:N \g_ptxcd_first_run_bool
-\startWritingZUGFeRDxml
-
-	\__zugferd_insert_Header:
-	\__zugferd_insert_FrontMatter:
-
-%	\seq_map_inline:Nn  \g__ptxcd_VAT_rates_seq  {
-%		\fp_gzero:c  {g__ptxcd_invoice_vat##1_fp}
-%		\fp_gzero:c {g__ptxcd_invoice_base_vat##1_fp}
-%	}
-%	\fp_gzero:N \g__ptxcd_invoice_sum_fp
-	
+	\begin{ZUGFeRD}
 	\cs_gset_eq:NN \__ptxcd_write_TradeLineItem:nnnnnn  \zugferd_write_TradeLineItem:nnnnnn
 	\cs_gset:Nn 	\__ptxcd_PrintInvoiceSummation:nnnnnnnn {
 		\__zugferd_SpecifiedTradePaymentTerms:
@@ -120,10 +110,8 @@
 	\noalign{\skip_vertical:n {-\ht\strutbox-\dp\strutbox}}%offset for extra empty row of mapping
 	\midrule[\heavyrulewidth]
 	\PrintInvoiceTotal
-\end{xltabular}
-	\__zugferd_ApplicableHeaderTradeSettlement_stop:
-	\__zugferd_insert_Footer:
-	\stopWritingZUGFeRDxml
+	\end{xltabular}
+	\end{ZUGFeRD}
 }
 
 \newcommand*{\PrintInvoiceTotal}{
