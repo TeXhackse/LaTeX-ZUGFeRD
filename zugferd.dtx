@@ -557,6 +557,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsection{Interfaces to write the XML contents}
+% \label{sec:xml-interfaces}
 % In case you are using |write-xml=true| (which is the default) You need to ensure to call the XML writing functions in the correct order.
 % For example after setting the global invoice data, like it's done in the example file.
 % The minimal example below would create a valid XML.
@@ -567,7 +568,6 @@
 %	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
 %	\zugferd_startInvoiceSums:
 %	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
-%	\zugferd_write_PaymentTerms:
 %	\zugferd_write_Summation:nnnnnnnn {63.78} {0} {0} {63.78} {12.12} {75.90} {0} {75.90}
 %	\zugferd_stopInvoiceSums:
 % \end{ZUGFeRD}
@@ -579,7 +579,9 @@
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Item:nnnnn}
 %    \marg{LineID}\marg{optional: item id (\enquote{SellerAssignedID})}\marg{item name}
-%    \marg{NetPriceProductTradePrice}\marg{BilledQuantity}\marg{LineTotalAmount}
+%    \marg{NetPriceProductTradePrice}
+%		\marg{BilledQuantity}
+%               \marg{LineTotalAmount}
 % \end{syntax}
 % Within the product name macros are disabled using \cs[no-index]{zugferd_disable_macros:}, see \autoref{sec:disable_macros}.
 %
@@ -594,7 +596,8 @@
 % \end{verbatim}
 % This will set the tax rate to 19\,\% unregarding the global setting.
 %
-% \DescribeMacro{\zugferd_startInvoiceSums:,\zugferd_stopInvoiceSums:}
+% \DescribeMacro{\zugferd_startInvoiceSums:}
+% \DescribeMacro{\zugferd_stopInvoiceSums:}
 % There is some global data which is placed in the XML file after the invoice items have been placed.
 % Typically in \LaTeX{} this block is started after the items have been printed and will enclose the summation block.
 %
@@ -604,18 +607,19 @@
 % \DescribeMacro{\zugferd_write_TaxEntry:nnnn}
 % This command is writing the sum over a tax rate. This command has to be used once per rate applied to the items.
 % \begin{syntax}
-% \cs[no-index]{\zugferd_write_TaxEntry:nnnn} \marg{Tax Category Code} \marg{Tax rate in \%} \marg{Basis Amount the Tax applies to} \marg{Tax Amount}
+% \cs[no-index]{zugferd_write_TaxEntry:nnnn} \marg{tax category code} \marg{tax rate in \%} \marg{basis amount the tax applies to} \marg{tax amount}
 % \end{syntax}
 % The tax amount could of course be calculated internally.
 % In the example package this is done automatically, but the interface needs to support manual input as a lot of usecases for \LaTeX{} invoicing use it only to create the output file.
 %
 % \DescribeMacro{\zugferd_write_Summation:nnnnnnnn}
+% \noindent The Sums are collected all within a single macro.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Summation:nnnnnnnn}
-%	 \marg{LineTotalAmount}\marg{ChargeTotalAmount}\marg{AllowanceTotalAmount}\marg{TaxBasisTotalAmount}
-% 	\marg{TaxTotalAmount}\marg{GrandTotalAmount}\marg{TotalPrepaidAmount}\marg{DuePayableAmount}
+%	\marg{LineTotalAmount}\marg{ChargeTotalAmount}\marg{AllowanceTotalAmount}
+%   \marg{TaxBasisTotalAmount}\marg{TaxTotalAmount}
+%    \marg{GrandTotalAmount}\marg{TotalPrepaidAmount}\marg{DuePayableAmount}
 % \end{syntax}
-% The Sums are collected all within a single macro.
 % This commnd is also writing the payment terms to the XML file.
 % Please be aware that it's in general not possible to calculate the tax values in here, as there might be mutiple tax rates applied.
 % This is only taking the sums over all tax entries.
@@ -624,8 +628,10 @@
 % For that it is referencing the current value of the setting.
 %
 % \subsection{Commands to temporary disable/re-enable the xml writing interfaces}
-% \DescribeMacro{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
-% As there may be a lot of usecases where code is processed multiple times, it's necessary to provide an interface to temporary disable the XML writing mechanism.
+% \DescribeMacro{\zugferd_enable_XML_interfaces:}
+% \DescribeMacro{\zugferd_disable_XML_interfaces:}
+% \par\bigskip
+% As there are a lot of usecases where code is processed multiple times, it's necessary to provide an interface to temporary disable the XML writing mechanism.
 % A lot of these situations appear within table structures whereas a local adjustmet would not be helpful.
 % Therefore these adjustments have to be done globally.
 %
@@ -763,10 +769,21 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
-% \section{Local options/settings}
-% This section is listing the options which may be changed per invoice item.
-% It depends a bit on the business case, if it's worth to define a global default.
-% Generally these are assigned locally.
+% \section{Adding Data to the XML}
+% All data which does not directly depend on amounts or specific items is provided using a key-value interface.
+% For some fields there is the option to define a global preset but locally overwrite it for a specific item.
+% This only applies to data fields used by the writing interfaces described in \autoref{sec:xml-interfaces}.
+%
+% In most cases this functionality will be used to change the tax setting or unit for a single item.
+% \autoref{sec:xml-interfaces} also provided an example for this.
+%
+% This section will now take all data which can be set using \cs{SetZUGFeRDData}.
+%
+% \subsection{General Invoicing Data}
+% Some of the general data currently supports only one value, which is alreay selected by default.
+% The interface already exists and may be extended later.
+%
+%
 % \subsection{Units}
 % \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{initially empty}
 % The Faktur-X standard requires the unit to be selected.
