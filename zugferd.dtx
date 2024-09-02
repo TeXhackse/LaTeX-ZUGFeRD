@@ -579,7 +579,7 @@
 				\_@@_insert_Footer:
 			}
 			\cs_gset_eq:NN \zugferd_write_PaymentTerms: \_@@_SpecifiedTradePaymentTerms:
-			\cs_gset_eq:NN \zugferd_write_TradeLineItem:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
+			\cs_gset_eq:NN \zugferd_write_Item:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
 			\cs_gset:Nn \zugferd_startInvoiceSums: {
 				\_@@_ApplicableHeaderTradeAgreement:
 				\_@@_ApplicableHeaderTradeSettlement_start:
@@ -588,7 +588,7 @@
 			\cs_gset:Nn \zugferd_stopInvoiceSums:  {
 				\_@@_ApplicableHeaderTradeSettlement_stop:
 			}
-			\cs_gset_eq:NN \zugferd_writeTradeTax:nnnn \_@@_ApplicableTradeTax:nnnn
+			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
 			\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn%
 	}
 }
@@ -597,10 +597,10 @@
 		\cs_gset_eq:NN \zugferd_write_Header: \prg_do_nothing:
 		\cs_gset_eq:NN \zugferd_write_Footer: \prg_do_nothing:
 		\cs_gset_eq:NN \zugferd_write_PaymentTerms: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_write_TradeLineItem:nnnnnn \use_none:nnnnnn
+		\cs_gset_eq:NN \zugferd_write_Item:nnnnnn \use_none:nnnnnn
 		\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
 		\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_writeTradeTax:nnnn \use_none:nnnn
+		\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
 		\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \use_none:nnnnnnnn
 	}
 }
