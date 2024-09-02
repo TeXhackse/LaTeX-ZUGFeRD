@@ -105,7 +105,7 @@
 	note={Link directory to xlsx. All Revisions can be found in \cite{cl-recommendations}.}
 }
 @online{cl-recommendations,
-	author={United Nations Economic Commission for Europe (UNECE)}},
+	author={United Nations Economic Commission for Europe (UNECE)},
 	title={Code List Recommendations},
 	url={https://unece.org/trade/uncefact/cl-recommendations},
 	urldate={2024-08-20}
@@ -612,7 +612,7 @@
 % The tax amount could of course be calculated internally.
 % In the example package this is done automatically, but the interface needs to support manual input as a lot of usecases for \LaTeX{} invoicing use it only to create the output file.
 %
-% \DescribeMacro{\zugferd_write_Summation:nnnnnnnn}
+% \DescribeMacro{\zugferd_write_Summation:nnnnnnnn}\par
 % \noindent The Sums are collected all within a single macro.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Summation:nnnnnnnn}
@@ -779,11 +779,164 @@
 %
 % This section will now take all data which can be set using \cs{SetZUGFeRDData}.
 %
+% \end{documentation}
+% \begin{implementation}
+% \begin{variable}{\g_@@_notes_seq,\g_@@_id_tl,\g_@@_date_tl,\g_@@_subject_tl,\g_@@_fromaddress_tl,\g_@@_DocumentTypeCode_tl}
+%    \begin{macrocode}
+\seq_new:N \g_@@_notes_seq
+\tl_new:N \g_@@_id_tl
+\tl_new:N \g_@@_date_tl
+\tl_new:N \g_@@_delivery_date_tl
+\tl_new:N \g_@@_subject_tl
+\tl_new:N \g_@@_fromaddress_tl
+\tl_new:N \g_@@_DocumentTypeCode_tl
+\tl_new:N \l_@@_currency_tl
+
+
+%    \end{macrocode}
+% \end{variable}
+% \end{implementation}
+% \begin{documentation}
 % \subsection{General Invoicing Data}
 % Some of the general data currently supports only one value, which is alreay selected by default.
 % The interface already exists and may be extended later.
 %
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{id, document-type}
+%    \begin{macrocode}
+\keys_define:nn { zugferd } {
+	%TODO define others
+%   \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{document-type=commercial-invoice}{commercial-invoice}
+% Select the document type. The only supported value currently is |commercial-invoice|. This will select the corresponding type code, which is 380.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+	document-type .choice:,
+	document-type / commercial-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {380},
+	document-type .initial:n = commercial-invoice,
+%   \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Invoice number/document ID}
+% \DescribeKeyOption*{id=komavar/\meta{document ID/invoice number}}{initially empty}
+% This has to be set. Leaving it empty will lead to an invalid xml file.
 %
+% The value |komavar| would reference the data provided the KOMA-Script letter variabe |invoice|. In case you don't use \pkg{scrletter} you should not use this setting.
+% More information can be found in the documentation \cite{scrletter}.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+	id .choice:,
+	id / komavar .code:n = \tl_gset:Nf \g_@@_id_tl {\scr@invoice@var},
+	id / unknown .code:n = \tl_gset:Nn \g_@@_id_tl {#1},
+%   \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Currency}
+% \DescribeKeyOption*{currency=EUR/USD/CHF/€}{EUR}
+% Currently \pkg{zugferd} only supports one currency for an invoice. This might be extended later.
+% The currency is pre-configured to use Euro.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+	currency .choices:nn = {EUR, USD, CHF} { \tl_set_eq:NN  \l_@@_currency_tl \l_keys_choice_tl	},
+	currency / € .meta:n = {currency = EUR},
+	currency / unknown .code:n = {
+		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {unit} {\str_uppercase:f {#1}}
+		{\keys_set:nx { zugferd } {unit= {\str_uppercase:f {#1}}}}
+		{
+			\msg_warning:nnn { zugferd } {unknown-value} {currency} {#1}
+			\tl_set:Ne \l_@@_currency_tl {\str_uppercase:f {#1}}
+		}
+	},
+	currency .initial:n = EUR,
+%   \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Dates}
+% \DescribeKeyOption{date=auto/\meta{date formatted as YYYYMMDD}}{auto}*
+% \DescribeKeyOption{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}*
+% \DescribeKeyOption*{due-date=\meta{date formatted as YYYYMMDD}}{initially empty}*
+% Currently there are three kinds of dates implemented.
+% The XML-Standard requires them to use the structure \meta{YYYYMMDD}.
+% For the day this document was compiled this would be: \enquote{\InsertZUGFeRDData{date}} (\today).
+%
+% Instead of providing a date value directly it's also possible to use \cs[no-index]{today}.
+% This is done using the \value{auto} which is the default setting for \option{date} and \option{delivery-date}.
+% Please be aware, that this would change if you rebuild the document later. So you might want to use an actual value here.
+% \end{documentation}
+%
+% \begin{implementation}
+% \begin{optionenv}{date,delivery-date}
+%    \begin{macrocode}
+	date .choice:,
+	date / auto .code:n = \tl_gset:Ne \g_@@_date_tl {
+		\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day
+	},
+	date / unknown .code:n = \tl_gset:Nn  \g_@@_date_tl  {#1},
+	date .initial:n = auto,
+	delivery-date .choice:,
+	delivery-date / auto .code:n = \tl_gset:Ne \g_@@_delivery_date_tl {
+		\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day
+	},
+	delivery-date / unknown .code:n = \tl_gset:Nn  \g_@@_delivery_date_tl  {#1},
+	delivery-date .initial:n = auto,
+	due-date .tl_gset:N = \_@@_due_date_tl,
+	due-date .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption*{subject=komavar/\meta{Tokenlist}}{initially empty}
+% \DescribeKeyOption*{fromaddress=komavar/\meta{Tokenlist}}{initially empty}
+% \DescribeKeyOption*{add-note=\meta{Tokenlist}}{initially empty}*
+% The ZUGFeRD example files use all visible Data to add them to the XML as a note.
+% \option{subject} and \option{fromaddress} are used to support this.
+% The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the XML using the note element.
+% So these fields can be left out but in case they are not empty, they will also be written to the XML.
+%
+% The \value{komavar} corresponds to the mechanism provided by \pkg{scrletter}.
+% It accesses the variable expands it to be used directly.
+% If you don't use this package, you can ignore this setting or add content manually.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{subject,fromaddress,add-note}
+%    \begin{macrocode}
+	payment-terms .str_gset:N = \_@@_payment_terms_str,
+	payment-terms .initial:n =,
+	subject .choice:,
+	subject / komavar .code:n = \tl_gset:Nf \g_@@_subject_tl {\scr@subject@var},
+	subject / unknown .code:n  = \tl_gset:Nn  \g_@@_subject_tl {#1},
+	fromaddress .choice:,
+	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl
+		{\scr@fromaddress@var},
+	fromaddress / unknown .code:n = \tl_gset:Nn \g_@@_fromaddress_tl {#1},
+	add-note .code:n = \seq_gput_right:Nn \g_@@_notes_seq {#1},
+}
+\msg_new:nnnn {zugferd} {unknown-value} {
+	You~selected~a~currency~which~was~not~predefined.\\
+	I~will~directly~use~your~selection~'#1=#2'.
+	Please~ensure~the~selection~is~valid!
+} {
+	For~more~information~see~the~zugferd~documentation.
+}
+%    \end{macrocode}
+% \end{optionenv}
+% Macro to write notes
+%    \begin{macrocode}
+\cs_new:Nn  \_@@_note_if_not_empty:N {%
+	\tl_if_empty:NF #1 {%
+		\_@@_write_note:n {#1}%
+	}%
+}%
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
 % \subsection{Units}
 % \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{initially empty}
 % The Faktur-X standard requires the unit to be selected.
@@ -904,104 +1057,6 @@
 }
 %    \end{macrocode}
 % \end{optionenv}
-% \end{implementation}
-% \begin{implementation}
-% \begin{variable}{\g_@@_notes_seq,\g_@@_id_tl,\g_@@_date_tl,\g_@@_subject_tl,\g_@@_fromaddress_tl,\g_@@_DocumentTypeCode_tl}
-%    \begin{macrocode}
-\seq_new:N \g_@@_notes_seq
-\tl_new:N \g_@@_id_tl
-\tl_new:N \g_@@_date_tl
-\tl_new:N \g_@@_delivery_date_tl
-\tl_new:N \g_@@_subject_tl
-\tl_new:N \g_@@_fromaddress_tl
-\tl_new:N \g_@@_DocumentTypeCode_tl
-%    \end{macrocode}
-% \end{variable}
-% \end{implementation}
-% \begin{documentation}
-%
-% \end{documentation}
-% \begin{implementation}
-% \begin{optionenv}{id, document-type}
-%    \begin{macrocode}
-\keys_define:nn { zugferd } {
-	id .choice:,
-	id / komavar .code:n = \tl_gset:Nf \g_@@_id_tl {\scr@invoice@var},
-	id / unknown .code:n = \tl_gset:Nn \g_@@_id_tl {#1},
-	%TODO define others
-	document-type .choice:,
-	document-type / commercial-invoice .code:n =
-		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {380},
-	document-type .initial:n = commercial-invoice,
-%    \end{macrocode}
-% \end{optionenv}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeKeyOption{date=auto/\meta{date formatted as YYYYMMDD}}{auto}*
-% \DescribeKeyOption{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}*
-% \DescribeKeyOption*{due-date=\meta{date formatted as YYYYMMDD}}{initially empty}*
-% Currently there are three kinds of dates implemented.
-% The XML-Standard requires them to use the structure \meta{YYYYMMDD}.
-% For the day this document was compiled this would be: \enquote{\InsertZUGFeRDData{date}} (\today).
-%
-% Instead of providing a date value directly it's also possible to use \cs[no-index]{today}.
-% This is done using the \value{auto} which is the default setting for \option{date} and \option{delivery-date}.
-% Please be aware, that this would change if you rebuild the document later. So you might want to use an actual value here.
-% \end{documentation}
-%
-% \begin{implementation}
-% \begin{optionenv}{date,delivery-date}
-%    \begin{macrocode}
-	date .choice:,
-	date / auto .code:n = \tl_gset:Ne \g_@@_date_tl {
-		\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day
-	},
-	date / unknown .code:n = \tl_gset:Nn  \g_@@_date_tl  {#1},
-	date .initial:n = auto,
-	delivery-date .choice:,
-	delivery-date / auto .code:n = \tl_gset:Ne \g_@@_delivery_date_tl {
-		\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day
-	},
-	delivery-date / unknown .code:n = \tl_gset:Nn  \g_@@_delivery_date_tl  {#1},
-	delivery-date .initial:n = auto,
-%    \end{macrocode}
-% \end{optionenv}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeKeyOption*{subject=komavar/\meta{Tokenlist}}{initially empty}
-% \DescribeKeyOption*{fromaddress=komavar/\meta{Tokenlist}}{initially empty}
-% \DescribeKeyOption*{add-note=\meta{Tokenlist}}{initially empty}*
-% The ZUGFeRD example files use all visible Data to add them to the XML as a note.
-% \option{subject} and \option{fromaddress} are used to support this.
-% The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the XML using the note element.
-% So these fields can be left out but in case they are not empty, they will also be written to the XML.
-%
-% The \value{komavar} corresponds to the mechanism provided by \pkg{scrletter}.
-% It accesses the variable expands it to be used directly.
-% If you don't use this package, you can ignore this setting or add content manually.
-% \end{documentation}
-% \begin{implementation}
-% \begin{optionenv}{subject,fromaddress,add-note}
-%    \begin{macrocode}
-	subject .choice:,
-	subject / komavar .code:n = \tl_gset:Nf \g_@@_subject_tl {\scr@subject@var},
-	subject / unknown .code:n  = \tl_gset:Nn  \g_@@_subject_tl {#1},
-	fromaddress .choice:,
-	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl
-		{\scr@fromaddress@var},
-	fromaddress / unknown .code:n = \tl_gset:Nn \g_@@_fromaddress_tl {#1},
-	add-note .code:n = \seq_gput_right:Nn \g_@@_notes_seq {#1},
-}
-%    \end{macrocode}
-% \end{optionenv}
-% Macro to write notes
-%    \begin{macrocode}
-\cs_new:Nn  \_@@_note_if_not_empty:N {%
-	\tl_if_empty:NF #1 {%
-		\_@@_write_note:n {#1}%
-	}%
-}%
-%    \end{macrocode}
 % Setting up the catcodes to simplify the xml indentation.
 % \iffalse
 %    \begin{macrocode}
@@ -1388,15 +1443,7 @@
 % ApplicableHeaderTradeSettlement
 %    \begin{macrocode}
 \tl_new:N \l_@@_payment_means_tl
-\tl_new:N \l_@@_currency_tl
 \keys_define:nn {zugferd} {
-	currency .choices:nn = {EUR, USD, CHF} { \tl_set_eq:NN  \l_@@_currency_tl \l_keys_choice_tl	},
-	currency / € .meta:n = {currency = EUR},
-	% add support for all currencies/make case-insensitive/unknown
-	payment-terms .str_gset:N = \_@@_payment_terms_str,
-	payment-terms .initial:n =,
-	due-date .tl_gset:N = \_@@_due_date_tl,
-	due-date .initial:n =,
 	payment-means / type .choices:nn = {10,20,30,42,48,49,57,58,59,97} {\tl_set_eq:NN \l_@@_payment_means_tl \l_keys_choice_tl},
 }
 
