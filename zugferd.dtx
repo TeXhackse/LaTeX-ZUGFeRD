@@ -926,19 +926,22 @@
 % \item SpecifiedLineTradeSettlement
 % \end{itemize}
 % These are implemented as separate commands to be more flexible.
-% The wrapper command is called \cs[no-index]{@@_insert_TradeLineItem:nnnnnn} and is created to be used in your own invoicing package.
+% The wrapper command is called \cs[no-index]{@@_insert_TradeLineItem:nnnnnn} and is created to be used in your own invoicing package-
 %    \begin{macrocode}
 %\begingroup
 % start of xml content - need to ensure to comment all line endings except those written to xml
 \cctab_begin:N  \g_@@_xml_cctab%
+%    \end{macrocode}
 % \subsection{AssociatedDocumentLineDocument}
+%    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_AssociatedDocumentLineDocument:n {%
 		<ram:AssociatedDocumentLineDocument>
 		\_@@_xml_indent: <ram:LineID>#1</ram:LineID>
 		</ram:AssociatedDocumentLineDocument>%
 }%
-%
+%    \end{macrocode}
 % \subsubsection{SpecifiedTradeProduct}
+%    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeProduct:nn {%
 		<ram:SpecifiedTradeProduct>
 		\tl_if_empty:nF {#1} {%
@@ -947,13 +950,17 @@
 		\_@@_xml_indent:<ram:Name>#2</ram:Name>
 		</ram:SpecifiedTradeProduct>%
 }%
-%
+%    \end{macrocode}
+% \subsubsection{ProductTradePrice}
+%    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_ProductTradePrice:nn {%
 	<ram:\str_uppercase:n #1PriceProductTradePrice>
 	\_@@_xml_indent:<ram:ChargeAmount>#2</ram:ChargeAmount>
 	</ram:\str_uppercase:n #1PriceProductTradePrice>%
 }%
+%    \end{macrocode}
 % \subsubsection{SpecifiedLineTradeAgreement}
+%    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeAgreement:nn {%
 					<ram:SpecifiedLineTradeAgreement>
 						<ram:GrossPriceProductTradePrice>
@@ -964,15 +971,18 @@
 						</ram:NetPriceProductTradePrice>
 					</ram:SpecifiedLineTradeAgreement>
 }%
+%    \end{macrocode}
 %\subsubsection{SpecifiedLineTradeDelivery}%:nn <unit code > <number>
+%    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
 	<ram:SpecifiedLineTradeDelivery>
 	% SPACE!
 	\_@@_xml_indent:<ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
 	</ram:SpecifiedLineTradeDelivery>%
 }%
-%
+%    \end{macrocode}
 % \subsubsection{SpecifiedLineTradeSettlement}
+%    \begin{macrocode}
 \_@@_define_xml_content_macro:Nn  \_@@_SpecifiedLineTradeSettlement:nnn {%
 		<ram:SpecifiedLineTradeSettlement>
 		\_@@_xml_indent:<ram:ApplicableTradeTax>
@@ -989,6 +999,8 @@
 		\_@@_xml_indent:</ram:SpecifiedTradeSettlementLineMonetarySummation>
 		</ram:SpecifiedLineTradeSettlement>%
 }%
+%    \end{macrocode}
+%    \begin{macrocode}
 \cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnn {Vnn}
 %    \end{macrocode}
@@ -1004,8 +1016,35 @@
 	\_@@_SpecifiedLineTradeSettlement:nnn {#2} {#3} {#4}
 }
 \cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {VVnn}
-
-% position nummer name einzel-preis anzahl gesamtpreis
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeMacro{\@@_write_TradeLineItem:nnnnnn}
+% This command is the interface to write Items to the XML file. It is provided that way as an interface referencing the internal commands.
+% \begin{syntax}
+% \cs[no-index]{@@_write_TradeLineItem:nnnnn}
+%    \marg{LineID}\marg{optional: SellerAssignedID}\marg{Name}
+%    \marg{NetPriceProductTradePrice}\marg{BilledQuantity}\marg{LineTotalAmount}
+% \end{syntax}
+% Within the product name macros are disabled using \cs[no-index]{zugferd_disable_macros:}, see \autoref{sec:disable_macros}.
+%
+% This command is using the local values of tax information as well as the unit code.
+% If you want to overwrite them, adjust them locally using they corresponding options.
+%
+% Example:
+% \begin{verbatim}
+% \begingroup
+%	\keys_set:nn {zugferd}{tax/rate=19, tax/category=S}
+%	\@@_write_TradeLineItem:nnnnnn {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
+% % Code using the data to actually write the visible part of the invoice item.
+% \endgroup
+% \end{verbatim}
+% This will set the tax rate to 19\,\% unregarding the global setting.
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{ \_@@_insert_TradeLineItem:nnnnnn,\@@_write_TradeLineItem:nnnnnn}
+% Writing an invoice item using the helper commands defined before, to the XML file.
+%    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_insert_TradeLineItem:nnnnnn {
 	\_@@_write_xml:n {<ram:IncludedSupplyChainTradeLineItem>}
 	\int_incr:N  \l_@@_xml_indent_int
@@ -1026,7 +1065,9 @@
 	\int_decr:N  \l_@@_xml_indent_int
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
+\cs_set_eq:NN \@@_write_TradeLineItem:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
 %    \end{macrocode}
+% \end{macro}
 % \end{implementation}
 %
 % \begin{documentation}
@@ -1413,6 +1454,22 @@
 }
 %    \end{macrocode}
 % \end{function}
+% \end{implementation}
+% \begin{documentation}
+% Since we allow the use of \LaTeX-code in some fields there has to be a mechanism to disable macros inside the XML output.
+% The mechanism is created similar to the one by \pkg{hyperref} and we also use some definitions from there to use those as a starting point.
+% To have a detailed list of the redefinitions, please has a look at the implementation of this command.
+%
+% There exists a hook to extend  or overwrite these definitions.
+% \DescribeHook{zugferd/disable-macros}
+% You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
+% \begin{verbatim}
+% \hook_gput_code:nnn {zugferd/disable-macros} {newline-to-LF} {\def\newline{\iow_newline:}}
+% \end{verbatim}
+%
+% \DescribeMacro{\zugferd_disable_macros:}
+% \end{documentation}
+% \begin{implementation}
 % \begin{function}{\zugferd_disable_macros:}
 % The definition was mostly taken from \pkg{hyperref} \cite{hyperref}.
 % Most likely not all of these are required, but it's probably easier to take this as a reasonable choice instead of creating an own collection.
