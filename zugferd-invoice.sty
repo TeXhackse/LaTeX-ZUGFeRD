@@ -74,7 +74,7 @@
 %	}
 %	\fp_gzero:N \g__ptxcd_invoice_sum_fp
 	
-	\cs_gset_eq:NN \__ptxcd_write_TradeLineItem:nnnnnn  \__zugferd_insert_TradeLineItem:nnnnnn
+	\cs_gset_eq:NN \__ptxcd_write_TradeLineItem:nnnnnn  \zugferd_write_TradeLineItem:nnnnnn
 	\cs_gset:Nn 	\__ptxcd_PrintInvoiceSummation:nnnnnnnn {
 		\__zugferd_SpecifiedTradePaymentTerms:
 		\__zugferd_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {##1} {##2} {##3} {##4} {##5} {##6} {##7} {##8}

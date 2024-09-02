@@ -1019,7 +1019,7 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeMacro{\@@_write_TradeLineItem:nnnnnn}
+% \DescribeMacro{\zugferd_write_TradeLineItem:nnnnnn}
 % This command is the interface to write Items to the XML file. It is provided that way as an interface referencing the internal commands.
 % \begin{syntax}
 % \cs[no-index]{@@_write_TradeLineItem:nnnnn}
@@ -1035,7 +1035,7 @@
 % \begin{verbatim}
 % \begingroup
 %	\keys_set:nn {zugferd}{tax/rate=19, tax/category=S}
-%	\@@_write_TradeLineItem:nnnnnn {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
+%	\zugferd_write_TradeLineItem:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
 % % Code using the data to actually write the visible part of the invoice item.
 % \endgroup
 % \end{verbatim}
@@ -1065,7 +1065,7 @@
 	\int_decr:N  \l_@@_xml_indent_int
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
-\cs_set_eq:NN \@@_write_TradeLineItem:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
+\cs_set_eq:NN \zugferd_write_TradeLineItem:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
 %    \end{macrocode}
 % \end{macro}
 % \end{implementation}
@@ -1278,7 +1278,6 @@
 }
 
 \ExplSyntaxOff
-%TODO english
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
@@ -1456,18 +1455,18 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
-% Since we allow the use of \LaTeX-code in some fields there has to be a mechanism to disable macros inside the XML output.
+% \DescribeMacro{\zugferd_disable_macros:}
+% Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the XML output.
 % The mechanism is created similar to the one by \pkg{hyperref} and we also use some definitions from there to use those as a starting point.
 % To have a detailed list of the redefinitions, please has a look at the implementation of this command.
 %
-% There exists a hook to extend  or overwrite these definitions.
-% \DescribeHook{zugferd/disable-macros}
+% There exists a hook to extend  or overwrite these definitions |zugferd/disable-macros|.
 % You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
 % \begin{verbatim}
-% \hook_gput_code:nnn {zugferd/disable-macros} {newline-to-LF} {\def\newline{\iow_newline:}}
+% \hook_gput_code:nnn {zugferd/disable-macros}
+%     {newline-to-LF}
+%     {\def\newline{\iow_newline:}}
 % \end{verbatim}
-%
-% \DescribeMacro{\zugferd_disable_macros:}
 % \end{documentation}
 % \begin{implementation}
 % \begin{function}{\zugferd_disable_macros:}
