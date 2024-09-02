@@ -481,46 +481,12 @@
 % Notes will also be written within this step.
 % Afterwards the environment should include all the mechanisms to write the invoice positions as well as summation.
 %
-% At the end of the environment the open structure of \enquote{ApplicableHeaderTradeSettlement} is closed and the footer is inserted, before the output stream is closed using \cs{stopWritingZUGFeRDxml}.
+% At the end of the environment the footer is inserted, before the output stream is closed using \cs{stopWritingZUGFeRDxml}. Which also attaches the XML to the PDF.
+%
+%
 % \end{documentation}
 % \begin{implementation}
-% Provide public interfaces and the ZUGFeRD environment.
-%     \begin{macrocode}
-\cs_new:Nn \zugferd_enable_XML_interfaces: {
-	\bool_if:NT \g_@@_write_xml_bool {
-			\cs_gset:Nn \zugferd_write_Header: {
-				\_@@_insert_Header:
-				\_@@_insert_FrontMatter:
-			}
-			\cs_gset:Nn  \zugferd_write_Footer: {
-				\_@@_insert_Footer:
-			}
-			\cs_gset_eq:NN \zugferd_write_PaymentTerms: \_@@_SpecifiedTradePaymentTerms:
-			\cs_gset_eq:NN \zugferd_write_TradeLineItem:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
-			\cs_gset:Nn \zugferd_startInvoiceSums: {
-				\_@@_ApplicableHeaderTradeAgreement:
-				\_@@_ApplicableHeaderTradeSettlement_start:
-				\_@@_SpecifiedTradeSettlementPaymentMeans:
-			}
-			\cs_gset:Nn \zugferd_stopInvoiceSums:  {
-				\_@@_ApplicableHeaderTradeSettlement_stop:
-			}
-			\cs_gset_eq:NN \zugferd_writeTradeTax:nnnn \_@@_ApplicableTradeTax:nnnn
-			\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn%
-	}
-}
-\cs_new:Nn \zugferd_disable_XML_interfaces: {
-	\bool_if:NT \g_@@_write_xml_bool {
-		\cs_gset_eq:NN \zugferd_write_Header: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_write_Footer: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_write_PaymentTerms: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_write_TradeLineItem:nnnnnn \use_none:nnnnnn
-		\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_writeTradeTax:nnnn \use_none:nnnn
-		\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \use_none:nnnnnnnn
-	}
-}
+%    \begin{macrocode}
 \NewDocumentEnvironment{ZUGFeRD}{o}{
 	\IfNoValueF{#1}{
 		\SetZUGFeRDData{#1}
@@ -588,6 +554,58 @@
 	}
 }
 %    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+%
+% \DescribeMacro{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
+% As there may be a lot of usecases where code is processed multiple times, it's necessary to provide an interface to temporary disable the XML writing mechanism.
+% A lot of these situations appear within table structures whereas a local adjustmet would not be helpful.
+% Therefore these adjustments have to be done globally.
+%
+% The example package \pkg{zugferd-invoice} provides an example for this to ensure the xml data is not written multiple times.
+% The \env{ZUGFeRD} environment has been constructed that way, that it would automatically enable the interface when it begins and also when it ends, to write the data. So you should ensure this environment is only processed once or use the lower level interfaces directly.
+% \end{documentation}
+% \begin{implementation}
+% Provide public interfaces and the ZUGFeRD environment.
+% \begin{function}{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
+%     \begin{macrocode}
+\cs_new:Nn \zugferd_enable_XML_interfaces: {
+	\bool_if:NT \g_@@_write_xml_bool {
+			\cs_gset:Nn \zugferd_write_Header: {
+				\_@@_insert_Header:
+				\_@@_insert_FrontMatter:
+			}
+			\cs_gset:Nn  \zugferd_write_Footer: {
+				\_@@_insert_Footer:
+			}
+			\cs_gset_eq:NN \zugferd_write_PaymentTerms: \_@@_SpecifiedTradePaymentTerms:
+			\cs_gset_eq:NN \zugferd_write_TradeLineItem:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
+			\cs_gset:Nn \zugferd_startInvoiceSums: {
+				\_@@_ApplicableHeaderTradeAgreement:
+				\_@@_ApplicableHeaderTradeSettlement_start:
+				\_@@_SpecifiedTradeSettlementPaymentMeans:
+			}
+			\cs_gset:Nn \zugferd_stopInvoiceSums:  {
+				\_@@_ApplicableHeaderTradeSettlement_stop:
+			}
+			\cs_gset_eq:NN \zugferd_writeTradeTax:nnnn \_@@_ApplicableTradeTax:nnnn
+			\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn%
+	}
+}
+\cs_new:Nn \zugferd_disable_XML_interfaces: {
+	\bool_if:NT \g_@@_write_xml_bool {
+		\cs_gset_eq:NN \zugferd_write_Header: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_write_Footer: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_write_PaymentTerms: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_write_TradeLineItem:nnnnnn \use_none:nnnnnn
+		\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_writeTradeTax:nnnn \use_none:nnnn
+		\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \use_none:nnnnnnnn
+	}
+}
+%    \end{macrocode}
+% \end{function}
 % \begin{function}{\_@@_write_xml:n,\_@@_define_xml_writing_macro:Nn,\_@@_define_xml_content_macro:Nn}
 % These commands are used to toggle the writing of the xml file. This corresponds to the option \option{write-xml}.
 %    \begin{macrocode}
