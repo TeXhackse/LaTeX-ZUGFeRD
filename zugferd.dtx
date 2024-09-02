@@ -486,24 +486,54 @@
 % \begin{implementation}
 % Provide public interfaces and the ZUGFeRD environment.
 %     \begin{macrocode}
-\cs_new:Nn \zugferd_write_Header: {
-	\_@@_insert_Header:
-	\_@@_insert_FrontMatter:
+\cs_new:Nn \zugferd_enable_XML_interfaces: {
+	\bool_if:NT \g_@@_write_xml_bool {
+			\cs_gset:Nn \zugferd_write_Header: {
+				\_@@_insert_Header:
+				\_@@_insert_FrontMatter:
+			}
+			\cs_gset:Nn  \zugferd_write_Footer: {
+				\_@@_insert_Footer:
+			}
+			\cs_gset_eq:NN \zugferd_write_PaymentTerms: \_@@_SpecifiedTradePaymentTerms:
+			\cs_gset_eq:NN \zugferd_write_TradeLineItem:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
+			\cs_gset:Nn \zugferd_startInvoiceSums: {
+				\_@@_ApplicableHeaderTradeAgreement:
+				\_@@_ApplicableHeaderTradeSettlement_start:
+				\_@@_SpecifiedTradeSettlementPaymentMeans:
+			}
+			\cs_gset:Nn \zugferd_stopInvoiceSums:  {
+				\_@@_ApplicableHeaderTradeSettlement_stop:
+			}
+			\cs_gset_eq:NN \zugferd_writeTradeTax:nnnn \_@@_ApplicableTradeTax:nnnn
+			\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn%
+	}
 }
-\cs_new:Nn  \zugferd_write_Footer: {
-	\_@@_ApplicableHeaderTradeSettlement_stop:
-	\_@@_insert_Footer:
+\cs_new:Nn \zugferd_disable_XML_interfaces: {
+	\bool_if:NT \g_@@_write_xml_bool {
+		\cs_gset_eq:NN \zugferd_write_Header: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_write_Footer: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_write_PaymentTerms: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_write_TradeLineItem:nnnnnn \use_none:nnnnnn
+		\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
+		\cs_gset_eq:NN \zugferd_writeTradeTax:nnnn \use_none:nnnn
+		\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \use_none:nnnnnnnn
+	}
 }
 \NewDocumentEnvironment{ZUGFeRD}{o}{
 	\IfNoValueF{#1}{
 		\SetZUGFeRDData{#1}
 	}
+	\zugferd_enable_XML_interfaces:
 	\startWritingZUGFeRDxml
 	\zugferd_write_Header:
 	\ignorespaces
 }{
+	\zugferd_enable_XML_interfaces:
 	\zugferd_write_Footer:
 	\stopWritingZUGFeRDxml
+	\zugferd_disable_XML_interfaces:
 }
 %    \end{macrocode}
 % \end{implementation}
@@ -1103,7 +1133,6 @@
 	\int_decr:N  \l_@@_xml_indent_int
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
-\cs_set_eq:NN \zugferd_write_TradeLineItem:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
 %    \end{macrocode}
 % \end{macro}
 % \end{implementation}
@@ -1386,7 +1415,6 @@
 	\int_decr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
 }%
-
 % ApplicableTradeTax CategoryCode Rate BaseAmount Result
 \_@@_define_xml_writing_macro:Nn \_@@_ApplicableTradeTax:nnnn {%
 	\_@@_write_xml:n {<ram:ApplicableTradeTax>}
