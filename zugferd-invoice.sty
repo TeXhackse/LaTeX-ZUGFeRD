@@ -109,7 +109,6 @@
 	}
 	\PrintInvoiceSum{brutto}{\fp_eval:n {\g__ptxcd_tax_total_fp +  \g__ptxcd_invoice_total_fp }}
 	% TODO add support for allowance, chargeTotal, and prepaid
-	 \zugferd_write_PaymentTerms:
 	 \zugferd_write_Summation:nnnnnnnn
 		{\fp_use:N  \g__ptxcd_invoice_sum_fp}% LineTotalAmount
 		{0} %ChargeTotalAmount
