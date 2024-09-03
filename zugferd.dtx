@@ -46,32 +46,50 @@
 \setminted{breaksymbol={\BeginAccSupp{method=escape,ActualText={}}\tiny\ensuremath{\hookrightarrow}\EndAccSupp{}},breaklines}
 
 \ExplSyntaxOn
+\makeatletter
 \tl_new:N  \l__ptxtools_doc_values_tl
 \newcommand*{\codefamily}{\MacroFont}
 \DeclareTextFontCommand{\codefont}{\codefamily}
 \providecommand{\option}[1]{\codefont{#1}}
 
+
 \cs_new:Npn \__ptxctools_parse_key_option:w #1 #2  #3 #4 = #5  \q_stop {
-	\par
-	\dim_compare:nNnF {\parskip} > {\c_zero_dim} {\medskip}
 	\begingroup
 	\let\PrintDescribeOption\PrintDescribeKeyOption
-	\tl_set:Nn \l__ptxtools_doc_values_tl {\IfBooleanTF{#3}{\textsf{#5}}{\textsf{(#5)}}}
+	\tl_set:Nn \l__ptxtools_doc_values_tl {\small\IfBooleanTF{#3}{\textsf{#5}}{\textsf{(\codefont{#5})}}}
 	\noindent\DescribeOption{#4}\hfill
-			\IfBooleanTF{#1}
-				{#2}
-				{(default:~\codefont{#2})}\strut\par
+	\small
+	\tl_if_blank:nTF {#2} {\meta{\textrm{initially~unset}}} {
+		\IfBooleanTF{#1}
+			{#2}
+			{(default:~\codefont{#2})}
+	}\strut\par
 	\endgroup
-	\use:c {@afterheading}
 }
 
 \newcommand*{\PrintDescribeKeyOption}[1]{
 	{\MacroFont #1=}\rlap{\hskip\marginparsep\l__ptxtools_doc_values_tl}
 }
 
+\bool_new:N \l_ptxtools_last_was_describe_bool
+
 \NewDocumentCommand{\DescribeKeyOption}{smms}{
+	\bool_if:NTF  \l_ptxtools_last_was_describe_bool  {
+		\vskip -\lastskip
+	}{
+		\par
+		\dim_compare:nNnF {\parskip} > {\c_zero_dim} {\medskip}
+	}
 	\__ptxctools_parse_key_option:w  #1 {#3} #4 #2 \q_stop
+
+	\bool_set_true:N  \l_ptxtools_last_was_describe_bool
+	\AddToHookNext{para/begin}{
+		\bool_set_false:N  \l_ptxtools_last_was_describe_bool
+		\OmitIndent
+	}
+	\smallskip
 }
+
 
 \newenvironment{valuelist}
                {\list{}{\labelwidth0pt\itemindent0pt\leftmargin0pt
@@ -85,6 +103,7 @@
 		\end{tabular}
 	}
 }
+\makeatother
 \ExplSyntaxOff
 
 \usepackage{underscore-ltx}
@@ -137,6 +156,16 @@
 	subtitle={Download page},
 	url={https://ferd-net.de/standards/zugferd-2.2/zugferd-2.2.html},
 	urldate={2024-09-02},
+}
+@manual{scrletter,
+  title = {The scrletter package},
+  subtitle = {Letter extension to KOMA-Script classes},
+  author = {Kohm, Markus},
+  url = {https://komascript.de/},
+  urldate = {2024-09-03},
+  documentation = {ctan://macros/latex/contrib/koma-script/doc/scrguide-en.pdf},
+  date = {2023-07-07},
+  version = {3.41},
 }
 \end{filecontents}
 \addbibresource{zugferd.bib}
@@ -847,7 +876,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Invoice number/document ID}
-% \DescribeKeyOption*{id=komavar/\meta{document ID/invoice number}}{initially empty}
+% \DescribeKeyOption*{id=komavar/\meta{document ID/invoice number}}{}
 % This has to be set. Leaving it empty will lead to an invalid xml file.
 %
 % The value |komavar| would reference the data provided the KOMA-Script letter variabe |invoice|. In case you don't use \pkg{scrletter} you should not use this setting.
@@ -862,7 +891,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Currency}
-% \DescribeKeyOption*{currency=EUR/USD/CHF/€}{EUR}
+% \DescribeKeyOption{currency=EUR/USD/CHF/€}{EUR}
 % Currently \pkg{zugferd} only supports one currency for an invoice. This might be extended later.
 % The currency is pre-configured to use Euro.
 % \end{documentation}
@@ -883,9 +912,9 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Dates}
-% \DescribeKeyOption{date=auto/\meta{date formatted as YYYYMMDD}}{auto}*
-% \DescribeKeyOption{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}*
-% \DescribeKeyOption*{due-date=\meta{date formatted as YYYYMMDD}}{initially empty}*
+% \DescribeKeyOption{date=auto/\meta{date formatted as YYYYMMDD}}{auto}
+% \DescribeKeyOption{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}
+% \DescribeKeyOption*{due-date=\meta{date formatted as YYYYMMDD}}{}*
 % Currently there are three kinds of dates implemented.
 % The XML-Standard requires them to use the structure \meta{YYYYMMDD}.
 % For the day this document was compiled this would be: \enquote{\InsertZUGFeRDData{date}} (\today).
@@ -917,9 +946,9 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Notes: Adding additional information}
-% \DescribeKeyOption*{subject=komavar/\meta{Tokenlist}}{initially empty}
-% \DescribeKeyOption*{fromaddress=komavar/\meta{Tokenlist}}{initially empty}
-% \DescribeKeyOption*{add-note=\meta{Tokenlist}}{initially empty}*
+% \DescribeKeyOption{subject=komavar/\meta{Tokenlist}}{}
+% \DescribeKeyOption{fromaddress=komavar/\meta{Tokenlist}}{}
+% \DescribeKeyOption{add-note=\meta{Tokenlist}}{}*
 % The ZUGFeRD example files\cite{zugferd-download} use all visible data to add them to the XML as a note.
 % \option{subject} and \option{fromaddress} are used to support this.
 % The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the XML using the note element.
@@ -972,12 +1001,11 @@
 % \item SellerTaxRepresentative
 % \end{itemize}
 %
-% Currently \pkg{zugferd} supports only Buyer and Seller but can be easily extended to support the others as well.
+% \noindent Currently \pkg{zugferd} supports only Buyer and Seller but can be easily extended to support the others as well.
 % The data for each party follows the same structure, except the \enquote{BuyerReference} which is described later in this section.
 %
-% Some of the data is optional for specific TradeParties.
+% Some of the data is optional for specific parties.
 % As this also depends on the selected scheme and version we will not list the details.
-%
 % All fields for a trade party can be set using the \enquote{group} named by the party.
 % For example setting all the seller data is done in the following listing:
 % \begin{examplecode}
@@ -992,7 +1020,7 @@
 %	seller/country = {DE},
 % }
 % \end{examplecode}
-% All this data is saved within a property list, which is internally called \cs[no-index]{g_@@_\meta{seller/buyer}_prop}.
+% \noindent All this data is saved within a property list, which is internally called \cs[no-index]{g_@@_\meta{seller/buyer}_prop}.
 % By default this property list is empty.
 % The users themselves have to ensure to add the required data.
 %
@@ -1000,18 +1028,19 @@
 % In case the final data is unknown, it's recommended to use them anyway.
 %
 % \DescribeKeyOption*{\meta{party}/name=\meta{name}}{}*
-% \DescribeKeyOption*{\meta{email}/name=\meta{email address}}{}*
-% \DescribeKeyOption*{\meta{vatid}/name=\meta{VAT ID}}{}*
+% \DescribeKeyOption*{\meta{party}/email=\meta{email address}}{}*
+% \DescribeKeyOption*{\meta{party}/vatid=\meta{VAT ID}}{}*
 %
-% \DescribeKeyOption*{\meta{address}/name=\meta{address}}{}*
+% \DescribeKeyOption*{\meta{party}/address=\meta{address}}{}*
 % As shown in the example \option{address} can use two lines separted by |\\|.
 %
 % Alternatively it's also possible to use \option{\meta{party}/lineone} and \option{\meta{party/linetwo}} separately.
 % This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using  \cs[no-index]{zugferd_disable_macros:}.
 %
-% \DescribeKeyOption*{\meta{postcode}/name=\meta{postal code}}{}*
-% \DescribeKeyOption*{\meta{city}/name=\meta{city}}{}*
-% \DescribeKeyOption*{\meta{country}/name=\meta{country code \cite{country-codes}}}{}*
+% \DescribeKeyOption*{\meta{party}/postcode=\meta{postal code}}{}*
+% \DescribeKeyOption*{\meta{party}/city=\meta{city}}{}*
+% \DescribeKeyOption*{\meta{party}/country=\meta{country code}}{}*
+% The two letter country codes allowed here can be found in \cite{country-codes}.
 %
 % % \DescribeKeyOption*{\meta{party}/contact=\meta{Combined contact data}}{}*
 % The contact person can either be set using the combined structure similar to \option{\meta{party}/address}.
@@ -1021,8 +1050,8 @@
 % \SetZUGFeRDData{
 %	seller/contact = {
 %		|\meta{contact-name}|\\
-%		|\meta{contact-phone}|
-%		\\|\meta{contact-email}|
+%		|\meta{contact-phone}|\\
+%		|\meta{contact-email}|
 %	},
 %	seller/contact = {
 %		|\meta{contact-name}|\\
@@ -1054,7 +1083,7 @@
 % \end{documentation}
 % \begin{documentation}
 % \subsection{Units}
-% \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{initially empty}
+% \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{}
 % The Faktur-X standard requires the unit to be selected.
 % These are called \enquote{/UN/CEFACT Common Codes} and can be found withtin \cite{unit-codes}.
 %
@@ -1102,7 +1131,7 @@
 % \begin{documentation}
 % \subsection{Tax category and rate}
 % \DescribeKeyOption{tax/category=\meta{category code/alias}}{standard}*
-% The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g.][]{spec-xrechnung}.
+% The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g. at][]{spec-xrechnung}.
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
 % The example file includes 2 different VAT values using the same category.
 %
@@ -1112,8 +1141,8 @@
 % \item[standard] Standard rate and reduced rate item, |category=S|
 % \item[zero] Zero rated sale,  |category=Z|
 % \item[exempt] Exempted from VAT. This requires a reason via \option{exemption-reason},|category=E|
-% \DescribeKeyOption*{tax/exemption-reason=\meta{Text}}{initially empty}*
-% \DescribeKeyOption*{tax/exemption-reason-code=\meta{exemption reason code}}{initially empty}*
+% \DescribeKeyOption*{tax/exemption-reason=\meta{Text}}{}*
+% \DescribeKeyOption*{tax/exemption-reason-code=\meta{exemption reason code}}{}*
 % Add Reasons for a tax exempt, as required by |category=E|.
 % This can either be added using a text (|exemption-reason|) or a predefined code (|exemption-reason-code|).
 % The codes are listed at \cite{VAT-exemption-codes}.
@@ -1125,7 +1154,7 @@
 % \item[ceuta\\\textnormal{or} melilla] Ceuta and Melilla, |category=M|
 % \end{valuelist}
 %
-% \DescribeKeyOption*{tax/rate=\meta{floating point}}{19}
+% \DescribeKeyOption{tax/rate=\meta{floating point}}{19}*
 % The value given will be used for tax calculation.
 %
 % By default it's configured to |19| to match the German standard VAT rate.
