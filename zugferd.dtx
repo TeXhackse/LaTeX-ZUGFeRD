@@ -22,7 +22,7 @@
 %<package>\ProvidesExplPackage{zugferd}{2024-08-22}{0.4}{ZUGFerd Invoice and Faktur-X}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
-\documentclass[lm-default=false]{l3doc}
+\documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
 \usepackage{zugferd}[2024-08-22]
 \EnableCrossrefs
 %\CodelineIndex
@@ -962,6 +962,97 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
+% \subsection{Trade parties}
+% The XML scheme knows 6 different Trade Parties:
+% \begin{itemize}
+% \item Seller
+% \item Buyer
+% \item Payee
+% \item ShipTo
+% \item SellerTaxRepresentative
+% \end{itemize}
+%
+% Currently \pkg{zugferd} supports only Buyer and Seller but can be easily extended to support the others as well.
+% The data for each party follows the same structure, except the \enquote{BuyerReference} which is described later in this section.
+%
+% Some of the data is optional for specific TradeParties.
+% As this also depends on the selected scheme and version we will not list the details.
+%
+% All fields for a trade party can be set using the \enquote{group} named by the party.
+% For example setting all the seller data is done in the following listing:
+% \begin{examplecode}
+% \SetZUGFeRDData{
+%	seller/name = {peiTeX (Marei Peischl)},
+%	seller/email = {invoicing@peitex.de},
+%	seller/vatid = {DE123456789},
+%	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
+%	seller/address = {Address Line 1\\Address Line 2},
+%	seller/postcode = {20253},
+%	seller/city ={Hamburg},
+%	seller/country = {DE},
+% }
+% \end{examplecode}
+% All this data is saved within a property list, which is internally called \cs[no-index]{g_@@_\meta{seller/buyer}_prop}.
+% By default this property list is empty.
+% The users themselves have to ensure to add the required data.
+%
+% The outer braces are not required, if the data does not container an equal sign or a comma.
+% In case the final data is unknown, it's recommended to use them anyway.
+%
+% \DescribeKeyOption*{\meta{party}/name=\meta{name}}{}*
+% \DescribeKeyOption*{\meta{email}/name=\meta{email address}}{}*
+% \DescribeKeyOption*{\meta{vatid}/name=\meta{VAT ID}}{}*
+%
+% \DescribeKeyOption*{\meta{address}/name=\meta{address}}{}*
+% As shown in the example \option{address} can use two lines separted by |\\|.
+%
+% Alternatively it's also possible to use \option{\meta{party}/lineone} and \option{\meta{party/linetwo}} separately.
+% This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using  \cs[no-index]{zugferd_disable_macros:}.
+%
+% \DescribeKeyOption*{\meta{postcode}/name=\meta{postal code}}{}*
+% \DescribeKeyOption*{\meta{city}/name=\meta{city}}{}*
+% \DescribeKeyOption*{\meta{country}/name=\meta{country code \cite{country-codes}}}{}*
+%
+% % \DescribeKeyOption*{\meta{party}/contact=\meta{Combined contact data}}{}*
+% The contact person can either be set using the combined structure similar to \option{\meta{party}/address}.
+% It either consists of 3 or 4 entries, depending on if a department should be used or not.
+%
+% \begin{examplecode}
+% \SetZUGFeRDData{
+%	seller/contact = {
+%		|\meta{contact-name}|\\
+%		|\meta{contact-phone}|
+%		\\|\meta{contact-email}|
+%	},
+%	seller/contact = {
+%		|\meta{contact-name}|\\
+%		|\meta{contact-department}|\\
+%		|\meta{contact-phone}|\\
+%		|\meta{contact-email}|
+%	}
+% }
+% \end{examplecode}
+% \noindent As for \option{seller/address} it's also possible to set the keys directly:
+% \begin{examplecode}
+% \SetZUGFeRDData{
+%	seller/contact-name= {|\meta{contact-name}|},
+%	seller/contact-department = {|\meta{contact-department}|},
+%	seller/cotact-phone ={|\meta{contact-phone}|},
+%	seller/contact-email= {|\meta{contact-email}|}
+% }
+% \end{examplecode}
+%
+% \subsubsection{Buyer Reference}
+% \DescribeKeyOption*{buyer/reference=komavar/\meta{Reference}}{}
+% The reference field only exists for the |buyer| trade party.
+% Depending on the process it's required to use some unique identifier referring to the |buyer|.
+% Within Germany these numbers are called \enquote{Leitweg-ID}\cite{leitweg-id}.
+%
+% In any way the |buyer| may choose what is used here. Also may be some PO number or similar reference.
+%
+% As defined for other variables the \option{reference} can also use the \value{komavar} value to refer to the value of komavar |yourref|\cite{scrletter}.
+% \end{documentation}
+% \begin{documentation}
 % \subsection{Units}
 % \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{initially empty}
 % The Faktur-X standard requires the unit to be selected.
@@ -972,7 +1063,7 @@
 % Other units can be selected using the codes listed in \cite{unit-codes}.
 %
 % This option is not case sensitive
-%  The value is automatically converted to uppercase.
+% The value is automatically converted to uppercase.
 % If the selected option is different from the predefined ones, there will be a warning, as \pkg{zugferd} does not know if the selection is valid or not.
 % \begin{NOTE}
 % additional source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
