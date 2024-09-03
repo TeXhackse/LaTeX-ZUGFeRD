@@ -200,12 +200,11 @@
 %<*package>
 %    \end{macrocode}
 % \fi
-% \begin{implementation}
-% \section{Implementation}
-
 %    \begin{macrocode}
 %<@@=zugferd>
 %    \end{macrocode}
+% \begin{implementation}
+% \section{Implementation}
 % \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_conformance_level_str}
 %    \begin{macrocode}
 \tl_new:N \l_@@_tmp_tl
@@ -387,7 +386,6 @@
 %    \end{macrocode}
 % \end{function}
 % \end{implementation}
-%
 % \begin{documentation}
 %
 % \DescribeMacro{\InsertZUGFeRDData}
@@ -529,7 +527,7 @@
 % \DescribeMacro{\stopWritingZUGFeRDxml}
 % Here the output stream is closed and the xml file is attached.
 % In case \option{write-xml} is not active, the attachment will be made if that's not deactivated separately using \option{zugferd}.
-% I also ends the group started by \cs[no-index]{startWritingZUGFeRDxml}.
+% It also ends the group started by \cs[no-index]{startWritingZUGFeRDxml}.
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
@@ -630,7 +628,7 @@
 % In the example package this is done automatically, but the interface needs to support manual input as a lot of usecases for \LaTeX{} invoicing use it only to create the output file.
 %
 % \DescribeMacro{\zugferd_write_Summation:nnnnnnnn}\par
-% \noindent The Sums are collected all within a single macro.
+% \noindent The total values are all collected with a single macro.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Summation:nnnnnnnn}
 %	\marg{LineTotalAmount}\marg{ChargeTotalAmount}\marg{AllowanceTotalAmount}
@@ -786,10 +784,13 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
-% \section{Adding Data to the XML}
+% \section{Adding data to the XML}
 % All data which does not directly depend on amounts or specific items is provided using a key-value interface.
 % For some fields there is the option to define a global preset but locally overwrite it for a specific item.
 % This only applies to data fields used by the writing interfaces described in \autoref{sec:xml-interfaces}.
+%
+% This package is using the UN/CEFACT Cross Industry Invoice Syntax for the data.
+% Currently it is not planned to implement the UBL syntax as well, but generally this would be possible.
 %
 % In most cases this functionality will be used to change the tax setting or unit for a single item.
 % \autoref{sec:xml-interfaces} also provided an example for this.
@@ -808,8 +809,6 @@
 \tl_new:N \g_@@_fromaddress_tl
 \tl_new:N \g_@@_DocumentTypeCode_tl
 \tl_new:N \l_@@_currency_tl
-
-
 %    \end{macrocode}
 % \end{variable}
 % \end{implementation}
@@ -820,23 +819,24 @@
 %
 % \end{documentation}
 % \begin{implementation}
-% \begin{optionenv}{id, document-type}
 %    \begin{macrocode}
 \keys_define:nn { zugferd } {
 	%TODO define others
-%   \end{macrocode}
+%    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
 % \DescribeKeyOption{document-type=commercial-invoice}{commercial-invoice}
 % Select the document type. The only supported value currently is |commercial-invoice|. This will select the corresponding type code, which is 380.
 % \end{documentation}
 % \begin{implementation}
+% \begin{optionenv}{id, document-type}
 %    \begin{macrocode}
 	document-type .choice:,
 	document-type / commercial-invoice .code:n =
 		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {380},
 	document-type .initial:n = commercial-invoice,
-%   \end{macrocode}
+%    \end{macrocode}
+% \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Invoice number/document ID}
@@ -851,7 +851,7 @@
 	id .choice:,
 	id / komavar .code:n = \tl_gset:Nf \g_@@_id_tl {\scr@invoice@var},
 	id / unknown .code:n = \tl_gset:Nn \g_@@_id_tl {#1},
-%   \end{macrocode}
+%    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Currency}
@@ -872,7 +872,7 @@
 		}
 	},
 	currency .initial:n = EUR,
-%   \end{macrocode}
+%    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Dates}
@@ -909,10 +909,11 @@
 % \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
+% \subsubsection{Notes: Adding additional information}
 % \DescribeKeyOption*{subject=komavar/\meta{Tokenlist}}{initially empty}
 % \DescribeKeyOption*{fromaddress=komavar/\meta{Tokenlist}}{initially empty}
 % \DescribeKeyOption*{add-note=\meta{Tokenlist}}{initially empty}*
-% The ZUGFeRD example files use all visible Data to add them to the XML as a note.
+% The ZUGFeRD example files\cite{zugferd-download} use all visible data to add them to the XML as a note.
 % \option{subject} and \option{fromaddress} are used to support this.
 % The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the XML using the note element.
 % So these fields can be left out but in case they are not empty, they will also be written to the XML.
@@ -1297,7 +1298,7 @@
 %
 % Contains information on seller and buyer trade party:
 % \begin{itemize}
-% \item  BuyerReference
+% \item BuyerReference
 % \item SellerTradeParty
 % \item BuyerTradeParty
 % \end{itemize}
@@ -1368,9 +1369,11 @@
 \_@@_define_xml_content_macro:Nn \_@@_PostalTradeAddress:nnnnnnn {%
         <ram:PostalTradeAddress>
          \_@@_xml_indent:<ram:PostcodeCode>#1</ram:PostcodeCode>
-         \_@@_xml_indent:<ram:LineOne>#2</ram:LineOne>
+         \tl_if_empty:nF {#2} {%
+           \_@@_xml_indent:<ram:LineOne>#2</ram:LineOne>
+         }%
          \tl_if_empty:nF {#3} {%
-		\_@@_xml_indent:<ram:LineTwo>#3</ram:LineTwo>
+          \_@@_xml_indent:<ram:LineTwo>#3</ram:LineTwo>
          }%
          \_@@_xml_indent:<ram:CityName>#4</ram:CityName>
          \_@@_xml_indent:<ram:CountryID>#5</ram:CountryID>
@@ -1497,9 +1500,10 @@
 % \setupZUGFeRDStrings{payment-means}{
 %	10 = Bargeld,
 %	58 = Zahlung per SEPA Überweisung.,
-%	}
+% }
 % \end{examplecode}
 % The language selection is done using at hook executed at |\begin{document}|.
+%
 % Internally the commands are predefined as a key-value list like the argument in the example above.
 % They macros are called \cs[no-index]{zugferd@paymentMeans@\meta{languagename}}.
 % Currently \pkg{zugferd} defines these for |english| and |german| (also |ngerman| as an compatibility alias).
@@ -1654,6 +1658,7 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
+%
 % \DescribeMacro{\zugferd_disable_macros:}
 % Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the XML output.
 % The mechanism is created similar to the one by \pkg{hyperref} and we also use some definitions from there to use those as a starting point.
