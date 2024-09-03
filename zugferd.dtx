@@ -132,6 +132,12 @@
 	url={https://www.xrepository.de/details/urn:xoev-de:kosit:codeliste:vatex_1},
 	urldate={2024-08-20}
 }
+@online{zugferd-download,
+	title={ZUGFeRD 2.2},
+	subtitle={Download page},
+	url={https://ferd-net.de/standards/zugferd-2.2/zugferd-2.2.html},
+	urldate={2024-09-02},
+}
 \end{filecontents}
 \addbibresource{zugferd.bib}
 \begin{document}
@@ -454,6 +460,7 @@
 %    \begin{macrocode}
 		\str_set:Ne \l_tmpa_str {#2}
 		\str_replace_all:Nnn \l_tmpa_str {-} {_}
+		\str_replace_all:Nnn \l_tmpa_str {/} {_}
 		\bool_set_true:N  \g_tmpa_bool
 		\clist_map_inline:nn {tl, str} {
 			\clist_map_inline:nn {g, l} {
@@ -1305,8 +1312,11 @@
 % Seller and Buyer are specified the same way.
 %    \begin{macrocode}
 %\begingroup
+\tl_new:N  \g_@@_buyer_reference_tl
 \keys_define:nn {zugferd/buyer} {
-	reference .tl_gset:N = \g_@@_buyer_reference_tl,
+	reference .choice:,
+	reference / komavar .code:n = \tl_gset:Nf \g_@@_buyer_reference_tl {\scr@yourref@var},
+	reference / unknown .code:n = \tl_gset:Nn \g_@@_buyer_reference_tl {#1},
 }
 
 \clist_map_inline:nn {seller,buyer} {

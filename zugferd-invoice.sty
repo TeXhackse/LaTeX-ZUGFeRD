@@ -58,12 +58,10 @@
 \fp_new:N  \g__ptxcd_invoice_item_vat_fp
 \fp_new:N \g__ptxcd_invoice_sum_vat_fp
 
-
 \newcommand*{\PrintInvoiceTabular}{
 \bool_gset_true:N \g_ptxcd_first_run_bool
 	\begin{ZUGFeRD}
 	\sisetup{round-precision=2,round-mode=places,round-pad=false,table-number-alignment=right,minimum-decimal-digits=2,mode=text}
-
 	\begin{xltabular}{\linewidth}{@{}rS[round-precision=1,table-format=2.1]>{\RaggedRight}XPP@{}}
 	\toprule[\lightrulewidth]
 	\noalign{\global\let\PrintTableCurrency\relax}%
