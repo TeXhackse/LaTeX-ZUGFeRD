@@ -28,6 +28,23 @@
 %\CodelineIndex
 \RecordChanges
 \usepackage{biblatex}
+
+\usepackage{shellesc}
+\ifnum\ShellEscapeStatus=1\relax\else
+	\PassOptionsToPackage{draft}{minted}
+\fi
+\usepackage{minted}
+\newcounter{codelist}
+\newenvironment{examplecode}{%
+	\VerbatimEnvironment%
+	\fvset{gobble=0}%
+	\begin{VerbatimOut}[tabsize=3,gobble=1]{minted.doc.out}}
+	{\end{VerbatimOut}%
+	\inputminted[autogobble, escapeinside=||]{latex}{minted.doc.out}%
+}
+\usepackage{accsupp}
+\setminted{breaksymbol={\BeginAccSupp{method=escape,ActualText={}}\tiny\ensuremath{\hookrightarrow}\EndAccSupp{}},breaklines}
+
 \ExplSyntaxOn
 \tl_new:N  \l__ptxtools_doc_values_tl
 \newcommand*{\codefamily}{\MacroFont}
@@ -381,11 +398,11 @@
 % ZUGFerd uses the same data as the XML inside the PDF.
 % To simplify the reuse of data this command is designed to simplify the access to data fields, for example:
 %
-% \begin{verbatim}
+% \begin{examplecode}
 % \InsertZUGFeRDData{id}
 % {\InsertZUGFeRDData[set-today]{date}\today}
 % \InsertZUGFeRDData[AddressData]{seller}
-% \end{verbatim}
+% \end{examplecode}
 % As special modes the command currently supports the following:
 %
 % By default \pkg{zugferd} tries to find the variable holding the data itself.
@@ -563,7 +580,7 @@
 % The minimal example below would create a valid XML.
 % The interface commands are described afterwards.
 %
-% \begin{verbatim}
+% \begin{examplecode}
 % \begin{ZUGFeRD}
 %	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
 %	\zugferd_startInvoiceSums:
@@ -571,7 +588,7 @@
 %	\zugferd_write_Summation:nnnnnnnn {63.78} {0} {0} {63.78} {12.12} {75.90} {0} {75.90}
 %	\zugferd_stopInvoiceSums:
 % \end{ZUGFeRD}
-% \end{verbatim}
+% \end{examplecode}
 %
 % \DescribeMacro{\zugferd_write_Item:nnnnnn}
 % This command is the interface to write invoice items to the XML file.
@@ -587,13 +604,13 @@
 %
 % This command is using the local values of tax information as well as the unit code.
 % If you want to overwrite them, adjust them locally using they corresponding options, e.g.:
-% \begin{verbatim}
+% \begin{examplecode}
 % \begingroup
 %	\keys_set:nn {zugferd}{tax/rate=19, tax/category=S}
 %	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
-%	% Code using the data to actually write the visible part of the invoice item.
+%	% Code using the data for visible representation
 % \endgroup
-% \end{verbatim}
+% \end{examplecode}
 % This will set the tax rate to 19\,\% unregarding the global setting.
 %
 % \DescribeMacro{\zugferd_startInvoiceSums:}
@@ -1476,12 +1493,12 @@
 % The initial version only included German strings, but currently they are also included in English.
 % It's possible to overwrite them using the same structure:
 %
-% \begin{verbatim}
+% \begin{examplecode}
 % \setupZUGFeRDStrings{payment-means}{
 %	10 = Bargeld,
 %	58 = Zahlung per SEPA Überweisung.,
 %	}
-% \end{verbatim}
+% \end{examplecode}
 % The language selection is done using at hook executed at |\begin{document}|.
 % Internally the commands are predefined as a key-value list like the argument in the example above.
 % They macros are called \cs[no-index]{zugferd@paymentMeans@\meta{languagename}}.
@@ -1644,11 +1661,11 @@
 %
 % There exists a hook to extend  or overwrite these definitions |zugferd/disable-macros|.
 % You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
-% \begin{verbatim}
+% \begin{examplecode}
 % \hook_gput_code:nnn {zugferd/disable-macros}
 %     {newline-to-LF}
 %     {\def\newline{\iow_newline:}}
-% \end{verbatim}
+% \end{examplecode}
 % \end{documentation}
 % \begin{implementation}
 % \begin{function}{\zugferd_disable_macros:}
