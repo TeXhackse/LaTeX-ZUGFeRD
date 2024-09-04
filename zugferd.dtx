@@ -657,7 +657,7 @@
 % Within the product name macros are disabled using \cs[no-index]{zugferd_disable_macros:}, see \autoref{sec:disable_macros}.
 %
 % This command is using the local values of tax information as well as the unit code.
-% If you want to overwrite them, adjust them locally using they corresponding options, e.g.:
+% If you want to overwrite them, adjust them locally using the corresponding options, e.g.:
 % \begin{examplecode}
 % \begingroup
 %	\keys_set:nn {zugferd}{tax/rate=19, tax/category=S}
@@ -1105,7 +1105,8 @@
 %	seller/contact-email= {|\meta{contact-email}|}
 % }
 % \end{examplecode}
-%
+% \end{documentation}
+% \begin{documentation}
 % \subsubsection{Buyer Reference}
 % \DescribeKeyOption*{buyer/reference=komavar/\meta{Reference}}{}
 % The reference field only exists for the |buyer| trade party.
@@ -1116,8 +1117,114 @@
 %
 % As defined for other variables the \option{reference} can also use the \value{komavar} value to refer to the value of komavar |yourref|\cite{scrletter}.
 % \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{buyer/reference}
+%    \begin{macrocode}
+\tl_new:N \g_@@_buyer_reference_tl
+\keys_define:nn {zugferd/buyer} {
+	reference .choice:,
+	reference / komavar .code:n = {
+		\tl_gset:Nf \g_@@_buyer_reference_tl {\scr@yourref@var}
+	},
+	reference / unknown .code:n = {
+		\tl_gset:Nn \g_@@_buyer_reference_tl {#1}
+	}
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
 % \begin{documentation}
-% \subsection{Units}
+% \subsubsection{Payment Means}
+% The payment means are selected by numeric codes.
+% Currently we support:
+% \begin{itemize}
+% \UseName{exp_args:Nnnc} \UseName{exp_args:co} {clist_map_inline:nn} {zugferd@paymentMeans@english} {\item #1}
+% \end{itemize}
+% Others may be added in the future but it's not planned to include a full list.
+%
+% The codes will automatically add the corresponding string inside the \enquote{Information} field.
+% The initial version only included German strings, but currently they are also included in English.
+% It's possible to overwrite them using the same structure:
+%
+% \begin{examplecode}
+% \setupZUGFeRDStrings{payment-means}{
+%	10 = Bargeld,
+%	58 = Zahlung per SEPA Überweisung.,
+% }
+% \end{examplecode}
+% The language selection is done using at hook executed at |\begin{document}| and will try to use the document's language.
+% If this is not defined English will be used.
+%
+% Internally the commands are predefined as a key-value list like the argument in the example above.
+% They macros are called \cs[no-index]{zugferd@paymentMeans@\meta{languagename}}.
+% Currently \pkg{zugferd} defines these for |english| and |german| (also |ngerman| as an compatibility alias).
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{payment-means}
+%    \begin{macrocode}
+\ExplSyntaxOff
+\providecommand*{\zugferd@paymentMeans@german}{
+	  1 = Keine Zahlungsart definiert,
+	10 = Bargeld,
+	30 = Überweisung,
+	42 = Zahlung an Bankkonto,
+	48 = Kartenzahlung,
+	49 = Lastschriftverfahren,
+	57 = Dauerauftrag,
+	58 = Zahlung per SEPA Überweisung.,
+	59 = SEPA Lastschrift,
+	97 = Ausgleich zwischen Partnern
+}
+\def\zugferd@paymentMeans@ngerman{\zugferd@paymentMeans@german}
+\providecommand*{\zugferd@paymentMeans@english}{
+	  1 = Instrument not defined,
+	10 = In cash,
+	30 = Credit Transfer,
+	31 = Debit Transfer,
+	42 = Payment to bank account,
+	48 = Bank card,
+	49 = Direct Debit,
+	57 = Standing agreement,
+	58 = SEPA credit transfer,
+	59 = SEPA direct debit,
+	97 = Clearing between partners
+}
+\ExplSyntaxOn
+\tl_new:N \l_@@_payment_means_tl
+\keys_define:nn {zugferd} {
+	payment-means / type .choices:nn = {10,20,30,42,48,49,57,58,59,97} {\tl_set_eq:NN \l_@@_payment_means_tl \l_keys_choice_tl},
+}
+
+\clist_map_inline:nn {iban,account-holder,bic} {
+	\keys_define:nn {zugferd/payment-means} {
+		#1 .tl_gset:c = {g_@@_payment_#1_tl}
+	}
+}
+
+\prop_new:c {g_@@_payment-means_names_prop}
+\newcommand*{\setupZUGFeRDStrings}[2]{
+	\prop_gset_from_keyval:cn {g_@@_#1_names_prop} {
+		#2
+	}
+}
+
+\hook_gput_code:nnn {begindocument/end}{zugferd/payment-means}{
+		\prop_if_empty:cT {g_@@_payment-means_names_prop} {
+				\exp_args:Nne \setupZUGFeRDStrings{payment-means}{
+					\use:c {zugferd@paymentMeans@\cs_if_exist:cTF {zugferd@paymentMeans@\languagename} {\languagename} {english}}
+				}
+		}
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsection{Variables which may be changed per invoice item}
+% Some settings may have the same value for all invoice items.
+% These are defined to take some preset but are set locally.
+% So it's possible to adjust them for a single invoice item if necessary.
+% An example is shown in \autoref{sec:xml-interfaces}.
+% \subsubsection{Units}
 % \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{}
 % The Faktur-X standard requires the unit to be selected.
 % These are called \enquote{/UN/CEFACT Common Codes} and can be found withtin \cite{unit-codes}.
@@ -1173,7 +1280,7 @@
 % \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
-% \subsection{Tax category and rate}
+% \subsubsection{Tax category and rate}
 % \DescribeKeyOption{tax/category=\meta{category code/alias}}{standard}*
 % The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g. at][]{spec-xrechnung}.
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
@@ -1488,16 +1595,6 @@
 % Seller and Buyer are specified the same way.
 %    \begin{macrocode}
 %\begingroup
-\tl_new:N \g_@@_buyer_reference_tl
-\keys_define:nn {zugferd/buyer} {
-	reference .choice:,
-	reference / komavar .code:n = {
-		\tl_gset:Nf \g_@@_buyer_reference_tl {\scr@yourref@var}
-	},
-	reference / unknown .code:n = {
-		\tl_gset:Nn \g_@@_buyer_reference_tl {#1}
-	},
-}
 
 \clist_map_inline:nn {seller,buyer} {
 	\prop_new:c {g_@@_#1_AddressData_prop}
@@ -1662,91 +1759,6 @@
 %    \end{macrocode}
 % ApplicableHeaderTradeSettlement
 %    \begin{macrocode}
-\tl_new:N \l_@@_payment_means_tl
-\keys_define:nn {zugferd} {
-	payment-means / type .choices:nn = {10,20,30,42,48,49,57,58,59,97} {\tl_set_eq:NN \l_@@_payment_means_tl \l_keys_choice_tl},
-}
-
-\clist_map_inline:nn {iban,account-holder,bic} {
-	\keys_define:nn {zugferd/payment-means} {
-		#1 .tl_gset:c = {g_@@_payment_#1_tl}
-	}
-}
-
-\prop_new:c {g_@@_payment-means_names_prop}
-\newcommand*{\setupZUGFeRDStrings}[2]{
-	\prop_gset_from_keyval:cn {g_@@_#1_names_prop} {
-		#2
-	}
-}
-
-\ExplSyntaxOff
-%    \end{macrocode}
-% \end{implementation}
-% \begin{documentation}
-% \subsection{Payment Means}
-% The payment means are selected by numeric codes.
-% Currently we support:
-% \begin{itemize}
-% \UseName{exp_args:Nnnc} \UseName{exp_args:co} {clist_map_inline:nn} {zugferd@paymentMeans@english} {\item #1}
-% \end{itemize}
-% Others may be added in the future but it's not planned to include a full list.
-%
-% The codes will automatically add the corresponding string inside the \enquote{Information} field.
-% The initial version only included German strings, but currently they are also included in English.
-% It's possible to overwrite them using the same structure:
-%
-% \begin{examplecode}
-% \setupZUGFeRDStrings{payment-means}{
-%	10 = Bargeld,
-%	58 = Zahlung per SEPA Überweisung.,
-% }
-% \end{examplecode}
-% The language selection is done using at hook executed at |\begin{document}|.
-%
-% Internally the commands are predefined as a key-value list like the argument in the example above.
-% They macros are called \cs[no-index]{zugferd@paymentMeans@\meta{languagename}}.
-% Currently \pkg{zugferd} defines these for |english| and |german| (also |ngerman| as an compatibility alias).
-% \end{documentation}
-% \begin{implementation}
-%    \begin{macrocode}
-\providecommand*{\zugferd@paymentMeans@german}{
-	  1 = Keine Zahlungsart definiert,
-	10 = Bargeld,
-	30 = Überweisung,
-	42 = Zahlung an Bankkonto,
-	48 = Kartenzahlung,
-	49 = Lastschriftverfahren,
-	57 = Dauerauftrag,
-	58 = Zahlung per SEPA Überweisung.,
-	59 = SEPA Lastschrift,
-	97 = Ausgleich zwischen Partnern
-}
-\def\zugferd@paymentMeans@ngerman{\zugferd@paymentMeans@german}
-\providecommand*{\zugferd@paymentMeans@english}{
-	  1 = Instrument not defined,
-	10 = In cash,
-	30 = Credit Transfer,
-	31 = Debit Transfer,
-	42 = Payment to bank account,
-	48 = Bank card,
-	49 = Direct Debit,
-	57 = Standing agreement,
-	58 = SEPA credit transfer,
-	59 = SEPA direct debit,
-	97 = Clearing between partners
-}
-%    \end{macrocode}
-%    \begin{macrocode}
-\ExplSyntaxOn
-\hook_gput_code:nnn {begindocument/end}{zugferd/payment-means}{
-		\prop_if_empty:cT {g_@@_payment-means_names_prop} {
-				\exp_args:Nne \setupZUGFeRDStrings{payment-means}{
-					\use:c {zugferd@paymentMeans@\cs_if_exist:cTF {zugferd@paymentMeans@\languagename} {\languagename} {english}}
-				}
-		}
-}
-
 % sums
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
