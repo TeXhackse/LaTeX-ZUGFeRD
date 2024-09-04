@@ -1539,7 +1539,7 @@
 %    \begin{macrocode}
 \ExplSyntaxOff
 \providecommand*{\zugferd@paymentMeans@german}{
-	  1 = Keine Zahlungsart definiert,
+	 1 = Keine Zahlungsart definiert,
 	10 = Bargeld,
 	30 = Überweisung,
 	42 = Zahlung an Bankkonto,
@@ -1552,7 +1552,7 @@
 }
 \def\zugferd@paymentMeans@ngerman{\zugferd@paymentMeans@german}
 \providecommand*{\zugferd@paymentMeans@english}{
-	  1 = Instrument not defined,
+	 1 = Instrument not defined,
 	10 = In cash,
 	30 = Credit Transfer,
 	31 = Debit Transfer,
@@ -1565,11 +1565,15 @@
 	97 = Clearing between partners
 }
 \ExplSyntaxOn
-\tl_new:N \l_@@_payment_means_tl
+\tl_new:N \g_@@_payment_means_tl
 \keys_define:nn {zugferd} {
-	payment-means / type .choices:nn = {10,20,30,42,48,49,57,58,59,97} {
-		\tl_set_eq:NN \l_@@_payment_means_tl \l_keys_choice_tl
+	payment-means / type .choices:nn = {1,10,30,42,48,49,57,58,59,97} {
+		\tl_gset_eq:NN \g_@@_payment_means_tl \l_keys_choice_tl
 	},
+	payment-means / unknown .code:n = {
+		\msg_warning:nnn { zugferd } {unknown-value} {payment-means} {#1}
+		\tl_gset:Nn \g_@@_payment_means_tl {\int_eval:n {#1}}
+	}
 }
 
 \clist_map_inline:nn {iban,account-holder,bic} {
@@ -1735,6 +1739,15 @@
 %    \end{macrocode}
 % \end{optionenv}
 %    \begin{macrocode}
+\_@@_define_xml_writer:Nn \_@@_write_inline:nn {
+	\tl_if_blank:nF {#2} {
+	<#1>#2</#1>
+	}
+}
+\cs_generate_variant:Nn \_@@_write_inline:nn {ne}
+\_@@_define_xml_writer:Nn  \_@@_write_inline_i:nn {
+	\_@@_indent: \_@@_write_inline:nn {#1} {#2}
+}
 \cctab_begin:N \g_@@_xml_cctab%
 %
 \_@@_define_xml_writer:Nn \_@@_write_note:n {%
@@ -2033,25 +2046,27 @@
 %
 % sums
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {%
-\bool_if:NT \g_@@_writePaymentMeans_bool {%
-	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
-	\int_gincr:N \g_@@_indent_int%
-	\_@@_write_xml:e {%
-		<ram:TypeCode>\l_@@_payment_means_tl</ram:TypeCode>
-		\prop_if_in:cVT {g_@@_payment-means_names_prop} \l_@@_payment_means_tl {%
-			<ram:Information>\prop_item:cV {g_@@_payment-means_names_prop} \l_@@_payment_means_tl</ram:Information>
+	\bool_if:NT \g_@@_writePaymentMeans_bool {%
+		\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
+		\int_gincr:N \g_@@_indent_int%
+		\_@@_write_xml:e {%
+			<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>
+			\_@@_write_inline:ne {ram:Information} {\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl}
+			\tl_if_blank:nF {#1#2} {%
+				<ram:PayeePartyCreditorFinancialAccount>
+				\_@@_write_inline_i:nn {ram:IBANID} {#2}
+				\_@@_write_inline_i:nn {ram:AccountName} {#1}
+				</ram:PayeePartyCreditorFinancialAccount>
+			}%
+			\tl_if_blank:nF {#3} {%
+				<ram:PayeeSpecifiedCreditorFinancialInstitution>
+				\_@@_write_inline_i:nn {ram:BICID} {#3}
+				</ram:PayeeSpecifiedCreditorFinancialInstitution>%
+			}%
 		}%
-		<ram:PayeePartyCreditorFinancialAccount>
-			\_@@_indent: <ram:IBANID>#2</ram:IBANID>
-			\_@@_indent: <ram:AccountName>#1</ram:AccountName>
-		</ram:PayeePartyCreditorFinancialAccount>
-		<ram:PayeeSpecifiedCreditorFinancialInstitution>
-			\_@@_indent: <ram:BICID>#3</ram:BICID>
-		</ram:PayeeSpecifiedCreditorFinancialInstitution>%
+		\int_gdecr:N \g_@@_indent_int%
+		\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
 	}%
-	\int_gdecr:N \g_@@_indent_int%
-	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
-}%
 }%
 \cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nn {VV}
@@ -2061,10 +2076,11 @@
 %    \end{macrocode}
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
 %    \begin{macrocode}
+\cs_generate_variant:Nn  \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {vvv}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
-	\tl_if_empty:cF {g_@@_payment_account-holder_tl} {
-	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn
-		{g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
+	\tl_if_blank:VF \g_@@_payment_means_tl {
+		\_@@_SpecifiedTradeSettlementPaymentMeans:vvv
+			{g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
 	}
 }
 %    \end{macrocode}
