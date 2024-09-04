@@ -1592,10 +1592,11 @@
 % \item SellerTradeParty
 % \item BuyerTradeParty
 % \end{itemize}
+%
+% \begin{optionenv}{\meta{party}/address}
+% \begin{variable}{\g_@@_seller_AddressData_prop,\g_@@_buyer_AddressData_prop}
 % Seller and Buyer are specified the same way.
 %    \begin{macrocode}
-%\begingroup
-
 \clist_map_inline:nn {seller,buyer} {
 	\prop_new:c {g_@@_#1_AddressData_prop}
 	\keys_define:nn {zugferd / #1} {
@@ -1607,35 +1608,34 @@
 				linetwo=\seq_item:Nn \l_tmpa_seq {2}
 			}
 		},
+		contact .code:n = {
+			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
+			\int_compare:nNnTF {\seq_count:N \l_tmpa_seq} > {3}
+				{
+					\keys_set:ne {zugferd/#1} {
+						contact-name = \seq_item:Nn \l_tmpa_seq {1},
+						contact-department = \seq_item:Nn \l_tmpa_seq {2},
+						contact-phone = \seq_item:Nn \l_tmpa_seq {3},
+						contact-email= \seq_item:Nn \l_tmpa_seq {4}
+					}
+				}{
+					\keys_set:ne {zugferd/#1} {
+						contact-name = \seq_item:Nn \l_tmpa_seq {1},
+						contact-phone = \seq_item:Nn \l_tmpa_seq {2},
+						contact-email= \seq_item:Nn \l_tmpa_seq {3}
+					}
+				}
+		},
 		unknown .code:n = \tl_if_blank:nF {##1} {
 			\prop_gput:cVe {g_@@_#1_AddressData_prop}
 				\l_keys_key_tl {\tl_trim_spaces:n {##1}}
 		}
 	}
 }
-
-\keys_define:nn {zugferd/seller} {
-	contact .code:n = {
-		\seq_set_split:Nnn \l_tmpa_seq {\\} {#1}
-		\int_compare:nNnTF {\seq_count:N \l_tmpa_seq} > {3}
-			{
-				\keys_set:ne {zugferd/seller} {
-					contact-name = \seq_item:Nn \l_tmpa_seq {1},
-					contact-department = \seq_item:Nn \l_tmpa_seq {2},
-					contact-phone = \seq_item:Nn \l_tmpa_seq {3},
-					contact-email= \seq_item:Nn \l_tmpa_seq {4}
-				}
-			}{
-				\keys_set:ne {zugferd/seller} {
-					contact-name = \seq_item:Nn \l_tmpa_seq {1},
-					contact-phone = \seq_item:Nn \l_tmpa_seq {2},
-					contact-email= \seq_item:Nn \l_tmpa_seq {3}
-				}
-			}
-	}
-}
 %    \end{macrocode}
-% \begin{function}{\_@@_PostalTradeAddress:nnnnnn,\_@@_DefinedTradeContact:N}
+% \end{variable}
+% \end{optionenv}
+% \begin{function}{\_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
 % Wrappers to map the property list items to the writing macro.
 %    \begin{macrocode}
 \cs_new:Nn \_@@_PostalTradeAddress:N {%
@@ -1687,25 +1687,29 @@
 %
 % Contact data phone/email to a specific contact person
 \_@@_define_xml_content:Nn \_@@_DefinedTradeContact:nnnn {%
-\bool_if:NTF \g_@@_writeTradeContact_bool {%
-	<ram:DefinedTradeContact>
-	\_@@_indent: <ram:PersonName>#1</ram:PersonName>
-	\tl_if_blank:nF {#2} {%
-	\_@@_indent: <ram:DepartmentName>#2</ram:DepartmentName>
+	% Do not print if name is empty
+	\tl_if_blank:nTF {#1} \use_iv:nnnn \use:n %
+	{%
+	\bool_if:NTF \g_@@_writeTradeContact_bool {%
+		<ram:DefinedTradeContact>
+		\_@@_indent: <ram:PersonName>#1</ram:PersonName>
+		\tl_if_blank:nF {#2} {%
+		\_@@_indent: <ram:DepartmentName>#2</ram:DepartmentName>
+		}%
+		\tl_if_blank:nF {#3} {%
+		\_@@_indent: <ram:TelephoneUniversalCommunication>
+		\_@@_indent:n {2} <ram:CompleteNumber>#3</ram:CompleteNumber>
+		\_@@_indent: </ram:TelephoneUniversalCommunication>
+		}%
+		\tl_if_blank:nF {#4} {%
+		\_@@_indent: <ram:EmailURIUniversalCommunication>
+		\_@@_indent:n {2} <ram:URIID>#4</ram:URIID>
+		\_@@_indent: </ram:EmailURIUniversalCommunication>
+		}%
+		</ram:DefinedTradeContact>%
+		}{\use_none:n}%
 	}%
-	\tl_if_blank:nF {#3} {%
-	\_@@_indent: <ram:TelephoneUniversalCommunication>
-	\_@@_indent:n {2} <ram:CompleteNumber>#3</ram:CompleteNumber>
-	\_@@_indent: </ram:TelephoneUniversalCommunication>
-	}%
-	\tl_if_blank:nF {#4} {%
-	\_@@_indent: <ram:EmailURIUniversalCommunication>
-	\_@@_indent:n {2} <ram:URIID>#4</ram:URIID>
-	\_@@_indent: </ram:EmailURIUniversalCommunication>
-	}%
-	</ram:DefinedTradeContact>%
-	}{\use_none:n}%
-}%
+}
 %
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeAgreement: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}%
@@ -1717,7 +1721,6 @@
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		<ram:Name>\prop_item:Nn \g_@@_seller_AddressData_prop {name}</ram:Name>
-		% Trade Contract
 			\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop
 			\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop%
 	}%
@@ -1729,6 +1732,7 @@
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 			<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>
+			\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop
 			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop
 		</ram:BuyerTradeParty>%
 	}%
