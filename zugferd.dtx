@@ -817,9 +817,9 @@
 % The indentation of the XML does not really matter.
 % For debugging it's a lot simpler to have it included and this also helped maintaining the structure of the code during development, so I decided to keep it.
 % The indentation is created using s bunch of auxiliary commands and variables which are defined here.
-% \begin{variable}{\l_@@_indent_int}
+% \begin{variable}{\g_@@_indent_int}
 %    \begin{macrocode}
-\int_new:N \l_@@_indent_int
+\int_new:N \g_@@_indent_int
 %    \end{macrocode}
 % \end{variable}
 % \begin{function}{\_@@_indent:,\_@@_xml_auto_indent:,\_@@_xml_newline_indent: }
@@ -831,7 +831,7 @@
 	\prg_replicate:nn {#1} {\_@@_indent:}
 }
 \cs_new:Nn \_@@_xml_auto_indent: {
-	\_@@_indent:n {\l_@@_indent_int}
+	\_@@_indent:n {\g_@@_indent_int}
 }
 %    \end{macrocode}
 % \end{function}
@@ -1288,9 +1288,9 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema" %
 		xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
 	}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:n {<rsm:ExchangedDocumentContext>}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		\str_if_empty:NF \g_@@_businessProcessId_str {%
 			<ram:BusinessProcessSpecifiedDocumentContextParameter>
@@ -1301,12 +1301,13 @@
 		\_@@_indent: <ram:ID>\g_@@_format_str</ram:ID>
 		</ram:GuidelineSpecifiedDocumentContextParameter>%
 	}%
+	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</rsm:ExchangedDocumentContext>}%
 }%
 \endgroup%
 \_@@_define_xml_writer:Nn \_@@_insert_FrontMatter: {%
 	\_@@_write_xml:n {<rsm:ExchangedDocument>}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		<ram:ID>\g_@@_id_tl</ram:ID>
 		<ram:TypeCode>\g_@@_DocumentTypeCode_tl</ram:TypeCode>
@@ -1320,18 +1321,19 @@
 	\seq_map_inline:Nn \g_@@_notes_seq {%
 		\_@@_write_note:n {##1}%
 	}%
-	\int_decr:N \l_@@_indent_int%
+	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		</rsm:ExchangedDocument>
 		<rsm:SupplyChainTradeTransaction>%
 	}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
  }%
  %
  % footer
 \_@@_define_xml_writer:Nn \_@@_insert_Footer: {%
+	 \int_gdecr:N \g_@@_indent_int%
 	 \_@@_write_xml:n {</rsm:SupplyChainTradeTransaction>}%
-	 \int_decr:N \l_@@_indent_int%
+	 \int_gdecr:N \g_@@_indent_int%
 	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%
  }%
 \cctab_end:
@@ -1450,7 +1452,7 @@
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_insert_TradeLineItem:nnnnnn {
 	\_@@_write_xml:n {<ram:IncludedSupplyChainTradeLineItem>}
-	\int_incr:N \l_@@_indent_int
+	\int_gincr:N \g_@@_indent_int
 	\_@@_write_xml:e {\_@@_AssociatedDocumentLineDocument:n {#1}}%
 
 	\begingroup
@@ -1459,16 +1461,16 @@
 	\endgroup
 
 	\_@@_write_xml:n {<ram:SpecifiedLineTradeAgreement>}
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {\_@@_ProductTradePrice:nn {net} {#4}}
-	\int_decr:N \l_@@_indent_int%
+	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeAgreement>}
 	\_@@_write_xml:e {%
 		\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}
 		\_@@_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl %
 			{ \fp_use:N \l_@@_tax_rate_fp} {#6}
 	}%
-	\int_decr:N \l_@@_indent_int
+	\int_gdecr:N \g_@@_indent_int
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
 %    \end{macrocode}
@@ -1610,28 +1612,33 @@
 %
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeAgreement: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		<ram:BuyerReference>\g_@@_buyer_reference_tl</ram:BuyerReference>
 		<ram:SellerTradeParty>%
 	}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		<ram:Name>\prop_item:Nn \g_@@_seller_AddressData_prop {name}</ram:Name>
 		% Trade Contract
 			\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop
-			\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop
+			\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop%
+	}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:e {%
 		</ram:SellerTradeParty>
-		<ram:BuyerTradeParty>
+		<ram:BuyerTradeParty>%
+	}%
+	\int_gincr:N \g_@@_indent_int%
+	\_@@_write_xml:e {%
 			<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>
 			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop
 		</ram:BuyerTradeParty>%
 	}%
-	\int_decr:N \l_@@_indent_int%
-	\_@@_write_xml:e {%
-		</ram:ApplicableHeaderTradeAgreement>%
-		\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl%
-	}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:e {\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl}
 }%
 %
 %
@@ -1743,7 +1750,7 @@
 % sums
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
-    \int_incr:N \l_@@_indent_int%
+    \int_gincr:N \g_@@_indent_int%
     %TODO check if all need to be rounded to 2 decimals
     \_@@__write_xml_number_round:nnn {2} {LineTotalAmount} {#1}
     \_@@__write_xml_number_round:nnn {2} {ChargeTotalAmount} {#2}
@@ -1753,13 +1760,13 @@
 	\_@@__write_xml_number_round:nnn {2} {GrandTotalAmount} {#6}
 	\_@@__write_xml_number_round:nnn {2} {TotalPrepaidAmount} {#7}
 	\_@@__write_xml_number_round:nnn {2} {DuePayableAmount} {#8}
-	\int_decr:N \l_@@_indent_int%
+	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
 }%
 % ApplicableTradeTax CategoryCode Rate BaseAmount Result
 \_@@_define_xml_writer:Nn \_@@_ApplicableTradeTax:nnnn {%
 	\_@@_write_xml:n {<ram:ApplicableTradeTax>}
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 		\_@@__write_xml_number_round:nnn {2} {CalculatedAmount} {#4}%BT117
 		\_@@_write_xml:n {<ram:TypeCode>VAT</ram:TypeCode>}%BT118
 		\tl_if_blank:VF \l_@@_tax_exemption_reason_tl {%BT-120
@@ -1775,7 +1782,7 @@
 				</ram:ExemptionReasonCode>}
 		}
 		\_@@_write_xml:n {<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>}%BT-119
-	\int_decr:N \l_@@_indent_int%
+	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
 }%
 %
@@ -1788,17 +1795,17 @@
 % ApplicableHeaderTradeSettlement Need to be splitted to be used in separate parts of the tabular
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}%
 }%
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {%
-	\int_decr:N \l_@@_indent_int%
+	\int_gdecr:N \g_@@_indent_int%
 	  \_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}%
 }%
 % SpecifiedTradePaymentTerms
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms:nn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradePaymentTerms>}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		\tl_if_blank:nF {#1} {%
 			<ram:Description>#1</ram:Description>%
@@ -1809,7 +1816,7 @@
 			</ram:DueDateDateTime>%
 		}%
 	}%
-	\int_decr:N \l_@@_indent_int%
+	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradePaymentTerms>}%
 }%
 %
@@ -1818,7 +1825,7 @@
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {%
 \bool_if:NT \g_@@_writePaymentMeans_bool {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
-	\int_incr:N \l_@@_indent_int%
+	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		<ram:TypeCode>\l_@@_payment_means_tl</ram:TypeCode>
 		\prop_if_in:cVT {g_@@_payment-means_names_prop} \l_@@_payment_means_tl {%
@@ -1832,7 +1839,7 @@
 			\_@@_indent: <ram:BICID>#3</ram:BICID>
 		</ram:PayeeSpecifiedCreditorFinancialInstitution>%
 	}%
-	\int_decr:N \l_@@_indent_int%
+	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
 }%
 }%
