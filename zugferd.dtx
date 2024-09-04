@@ -235,8 +235,9 @@
 %<*package>
 %<@@=zugferd>
 %    \end{macrocode}
+% Workaround to replace module name without having a visible <@@=zugferd> in the documentation
 % \fi
-% \UseName{tl_gset:cn} {g__codedoc_module_name_tl} {zugferd}% Workaround to replace module name without having a visible <@@=zugferd> in the documentation
+% \UseName{tl_gset:cn} {g__codedoc_module_name_tl} {zugferd}
 % \begin{implementation}
 % \section{Implementation}
 % \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_conformance_level_str}
@@ -853,6 +854,162 @@
 \endgroup
 %    \end{macrocode}
 % \fi
+% \begin{documentation}
+% \subsection{Escaping macros inside XML data}
+% \DescribeMacro{\zugferd_disable_macros:}
+% Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the XML output.
+% The mechanism is created similar to the one by \pkg{hyperref} and we also use some definitions from there to use those as a starting point.
+% To have a detailed list of the redefinitions, please has a look at the implementation of this command.
+%
+% There exists a hook to extend or overwrite these definitions |zugferd/disable-macros|.
+% You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
+% \begin{examplecode}
+% \hook_gput_code:nnn {zugferd/disable-macros}
+%     {newline-to-LF}
+%     {\def\newline{\iow_newline:}}
+% \end{examplecode}
+% \end{documentation}
+% \begin{implementation}
+% \begin{function}{\zugferd_disable_macros:}
+% The definition was mostly taken from \pkg{hyperref} \cite{hyperref}.
+% Most likely not all of these are required, but it's probably easier to take this as a reasonable choice instead of creating an own collection.
+% \iffalse
+%    \begin{macrocode}
+%% modified list taken from hyperref.sty v7.01i
+%% Copyright
+%% 1995-2001 Sebastian Rahtz, with portions written by David Carlisle and Heiko Oberdiek
+%% 2001-2015 Heiko Oberdiek
+%% 2016-2019 Oberdiek Package Support Group
+%% 2019-2024 LaTeX Project
+%% modifications have been made to support the mechanism if hyperref is not loaded
+%    \end{macrocode}
+% \fi
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_disable_macros: {
+    \let\{\textbraceleft
+    \let\}\textbraceright
+    \let\\\textbackslash
+    \let\#\textnumbersign
+    \let\$\textdollar
+%    \end{macrocode}
+% This only is a part of the list.
+% There is no real use of printing the whole list, it's inside zugferd.sty anyway.
+% \comment
+%    \begin{macrocode}
+    \let\%\textpercent
+    \let\&\textampersand
+    \let\_\textunderscore
+    \let\P\textparagraph
+    \let\ldots\textellipsis
+    \let\dots\textellipsis
+    \def\\{\space}%
+    \def\newline{\space}%
+    \def\TeX{TeX}%
+    \def\LaTeX{La\TeX}%
+    \def\LaTeXe{\LaTeX2e}%
+    \def\eTeX{e-\TeX}%
+    \def\SliTeX{Sli\TeX}%
+    \def\MF{Metafont}%
+    \def\MP{Metapost}%
+    \let\fontencoding\@gobble
+    \let\fontfamily\@gobble
+    \let\fontseries\@gobble
+    \let\fontshape\@gobble
+    \let\fontsize\@gobbletwo
+    \let\selectfont\@empty
+    \let\usefont\@gobblefour
+    \let\emph\@firstofone
+    \let\textnormal\@firstofone
+    \let\textrm\@firstofone
+    \let\textsf\@firstofone
+    \let\texttt\@firstofone
+    \let\textbf\@firstofone
+    \let\textmd\@firstofone
+    \let\textit\@firstofone
+    \let\textsc\@firstofone
+    \let\textsl\@firstofone
+    \let\textup\@firstofone
+    \let\normalfont\@empty
+    \let\rmfamily\@empty
+    \let\sffamily\@empty
+    \let\ttfamily\@empty
+    \let\bfseries\@empty
+    \let\mdseries\@empty
+    \let\itshape\@empty
+    \let\scshape\@empty
+    \let\slshape\@empty
+    \let\upshape\@empty
+    \let\em\@empty
+    \let\rm\@empty
+    \let\Huge\@empty
+    \let\LARGE\@empty
+    \let\Large\@empty
+    \let\footnotesize\@empty
+    \let\huge\@empty
+    \let\large\@empty
+    \let\normalsize\@empty
+    \let\scriptsize\@empty
+    \let\small\@empty
+    \let\tiny\@empty
+    \let\mathversion\@gobble
+    \let\phantom\@gobble
+    \let\vphantom\@gobble
+    \let\hphantom\@gobble
+    \let\ding\HyPsd@ding
+    \let\Cube\HyPsd@DieFace
+    \def\begin##1{\csname##1\endcsname}%
+    \def\end##1{\csname end##1\endcsname}%
+    \def\textcolor##1##{\@secondoftwo}%
+   \def\TextOrMath{\ifmmode\expandafter\@secondoftwo\else\expandafter\@firstoftwo\fi}%
+    \let\foreignlanguage\@secondoftwo
+    \let\textlatin\@firstofone
+    \let\cyr\relax
+    \let\glqq\textglqq
+    \let\grqq\textgrqq
+    \let\glq\textglq
+    \let\grq\textgrq
+    \let\flqq\textflqq
+    \let\frqq\textfrqq
+    \let\flq\textflq
+    \let\frq\textfrq
+    \let\if@mid@expandable\@firstoftwo
+    \let\hspace\@gobble
+    \let\label\@gobble
+    \let\index\@gobble
+    \let\glossary\@gobble
+    \let\@mkboth\@gobbletwo
+    \let\leavevmode\@empty
+    \let\mbox\@empty
+    \def\halign{\@gobble}%
+	\let\Hy@SectionAnchorHref\@gobble
+    \@ifpackageloaded{hyperref} {
+    \let\ref\HyPsd@ref
+    \let\href\HyPsd@href
+    \let\pageref\HyPsd@pageref
+    \let\nameref\HyPsd@nameref
+    \let\autoref\HyPsd@autoref
+    \let\ignorespaces\HyPsd@ignorespaces
+    } {
+        \let\ref\@gobble
+        \let\href\@gobble
+        \let\pageref\@gobble
+        \let\nameref\@gobble
+        \let\autoref\@gobble
+        \let\ignorespaces\relax
+    }
+    \let\ensuremath\@firstofone
+    \hook_use:n {zugferd/disable-macros}
+%    \end{macrocode}
+% \endcomment
+%    \begin{macrocode}
+}
+%    \end{macrocode}
+% To provide a possibility to extend or overwrite the macro list a hook is added.
+%    \begin{macrocode}
+\hook_new:n {zugferd/disable-macros}
+%    \end{macrocode}
+% \end{function}
+% \end{implementation}
 % \begin{documentation}
 % \section{Adding data to the XML}
 % All data which does not directly depend on amounts or specific items is provided using a key-value interface.
@@ -1872,162 +2029,6 @@
 	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
 	}
 }
-%    \end{macrocode}
-% \end{function}
-% \end{implementation}
-% \begin{documentation}
-%
-% \DescribeMacro{\zugferd_disable_macros:}
-% Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the XML output.
-% The mechanism is created similar to the one by \pkg{hyperref} and we also use some definitions from there to use those as a starting point.
-% To have a detailed list of the redefinitions, please has a look at the implementation of this command.
-%
-% There exists a hook to extend or overwrite these definitions |zugferd/disable-macros|.
-% You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
-% \begin{examplecode}
-% \hook_gput_code:nnn {zugferd/disable-macros}
-%     {newline-to-LF}
-%     {\def\newline{\iow_newline:}}
-% \end{examplecode}
-% \end{documentation}
-% \begin{implementation}
-% \begin{function}{\zugferd_disable_macros:}
-% The definition was mostly taken from \pkg{hyperref} \cite{hyperref}.
-% Most likely not all of these are required, but it's probably easier to take this as a reasonable choice instead of creating an own collection.
-% \iffalse
-%    \begin{macrocode}
-%% modified list taken from hyperref.sty v7.01i
-%% Copyright
-%% 1995-2001 Sebastian Rahtz, with portions written by David Carlisle and Heiko Oberdiek
-%% 2001-2015 Heiko Oberdiek
-%% 2016-2019 Oberdiek Package Support Group
-%% 2019-2024 LaTeX Project
-%% modifications have been made to support the mechanism if hyperref is not loaded
-%    \end{macrocode}
-% \fi
-%    \begin{macrocode}
-\cs_new:Nn \zugferd_disable_macros: {
-    \let\{\textbraceleft
-    \let\}\textbraceright
-    \let\\\textbackslash
-    \let\#\textnumbersign
-    \let\$\textdollar
-%    \end{macrocode}
-% This only is a part of the list.
-% There is no real use of printing the whole list, it's inside zugferd.sty anyway.
-% \comment
-%    \begin{macrocode}
-    \let\%\textpercent
-    \let\&\textampersand
-    \let\_\textunderscore
-    \let\P\textparagraph
-    \let\ldots\textellipsis
-    \let\dots\textellipsis
-    \def\\{\space}%
-    \def\newline{\space}%
-    \def\TeX{TeX}%
-    \def\LaTeX{La\TeX}%
-    \def\LaTeXe{\LaTeX2e}%
-    \def\eTeX{e-\TeX}%
-    \def\SliTeX{Sli\TeX}%
-    \def\MF{Metafont}%
-    \def\MP{Metapost}%
-    \let\fontencoding\@gobble
-    \let\fontfamily\@gobble
-    \let\fontseries\@gobble
-    \let\fontshape\@gobble
-    \let\fontsize\@gobbletwo
-    \let\selectfont\@empty
-    \let\usefont\@gobblefour
-    \let\emph\@firstofone
-    \let\textnormal\@firstofone
-    \let\textrm\@firstofone
-    \let\textsf\@firstofone
-    \let\texttt\@firstofone
-    \let\textbf\@firstofone
-    \let\textmd\@firstofone
-    \let\textit\@firstofone
-    \let\textsc\@firstofone
-    \let\textsl\@firstofone
-    \let\textup\@firstofone
-    \let\normalfont\@empty
-    \let\rmfamily\@empty
-    \let\sffamily\@empty
-    \let\ttfamily\@empty
-    \let\bfseries\@empty
-    \let\mdseries\@empty
-    \let\itshape\@empty
-    \let\scshape\@empty
-    \let\slshape\@empty
-    \let\upshape\@empty
-    \let\em\@empty
-    \let\rm\@empty
-    \let\Huge\@empty
-    \let\LARGE\@empty
-    \let\Large\@empty
-    \let\footnotesize\@empty
-    \let\huge\@empty
-    \let\large\@empty
-    \let\normalsize\@empty
-    \let\scriptsize\@empty
-    \let\small\@empty
-    \let\tiny\@empty
-    \let\mathversion\@gobble
-    \let\phantom\@gobble
-    \let\vphantom\@gobble
-    \let\hphantom\@gobble
-    \let\ding\HyPsd@ding
-    \let\Cube\HyPsd@DieFace
-    \def\begin##1{\csname##1\endcsname}%
-    \def\end##1{\csname end##1\endcsname}%
-    \def\textcolor##1##{\@secondoftwo}%
-   \def\TextOrMath{\ifmmode\expandafter\@secondoftwo\else\expandafter\@firstoftwo\fi}%
-    \let\foreignlanguage\@secondoftwo
-    \let\textlatin\@firstofone
-    \let\cyr\relax
-    \let\glqq\textglqq
-    \let\grqq\textgrqq
-    \let\glq\textglq
-    \let\grq\textgrq
-    \let\flqq\textflqq
-    \let\frqq\textfrqq
-    \let\flq\textflq
-    \let\frq\textfrq
-    \let\if@mid@expandable\@firstoftwo
-    \let\hspace\@gobble
-    \let\label\@gobble
-    \let\index\@gobble
-    \let\glossary\@gobble
-    \let\@mkboth\@gobbletwo
-    \let\leavevmode\@empty
-    \let\mbox\@empty
-    \def\halign{\@gobble}%
-	\let\Hy@SectionAnchorHref\@gobble
-    \@ifpackageloaded{hyperref} {
-    \let\ref\HyPsd@ref
-    \let\href\HyPsd@href
-    \let\pageref\HyPsd@pageref
-    \let\nameref\HyPsd@nameref
-    \let\autoref\HyPsd@autoref
-    \let\ignorespaces\HyPsd@ignorespaces
-    } {
-        \let\ref\@gobble
-        \let\href\@gobble
-        \let\pageref\@gobble
-        \let\nameref\@gobble
-        \let\autoref\@gobble
-        \let\ignorespaces\relax
-    }
-    \let\ensuremath\@firstofone
-    \hook_use:n {zugferd/disable-macros}
-%    \end{macrocode}
-% \endcomment
-%    \begin{macrocode}
-}
-%    \end{macrocode}
-% To provide a possibility to extend or overwrite the macro list a hook is added.
-%    \begin{macrocode}
-\hook_new:n {zugferd/disable-macros}
 %    \end{macrocode}
 % \end{function}
 % \end{implementation}
