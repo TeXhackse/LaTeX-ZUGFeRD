@@ -782,7 +782,7 @@
 		\cs_new:Nn #1 {}
 		\use_none:n {#2}
 	}
-	\cs_seq_eq:NN \_@@_define_xml_content:Nn \use_none:n
+	\cs_set_eq:NN \_@@_define_xml_content:Nn \use_none:n
 }
 
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
