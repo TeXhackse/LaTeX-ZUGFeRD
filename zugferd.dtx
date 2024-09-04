@@ -47,13 +47,13 @@
 
 \ExplSyntaxOn
 \makeatletter
-\tl_new:N  \l__ptxtools_doc_values_tl
+\tl_new:N \l__ptxtools_doc_values_tl
 \newcommand*{\codefamily}{\MacroFont}
 \DeclareTextFontCommand{\codefont}{\codefamily}
 \providecommand{\option}[1]{\codefont{#1}}
 
 
-\cs_new:Npn \__ptxctools_parse_key_option:w #1 #2  #3 #4 = #5  \q_stop {
+\cs_new:Npn \__ptxctools_parse_key_option:w #1 #2 #3 #4 = #5 \q_stop {
 	\begingroup
 	\let\PrintDescribeOption\PrintDescribeKeyOption
 	\tl_set:Nn \l__ptxtools_doc_values_tl {\small\IfBooleanTF{#3}{\textsf{#5}}{\textsf{(\codefont{#5})}}}
@@ -74,17 +74,17 @@
 \bool_new:N \l_ptxtools_last_was_describe_bool
 
 \NewDocumentCommand{\DescribeKeyOption}{smms}{
-	\bool_if:NTF  \l_ptxtools_last_was_describe_bool  {
+	\bool_if:NTF \l_ptxtools_last_was_describe_bool {
 		\vskip -\lastskip
 	}{
 		\par
 		\dim_compare:nNnF {\parskip} > {\c_zero_dim} {\medskip}
 	}
-	\__ptxctools_parse_key_option:w  #1 {#3} #4 #2 \q_stop
+	\__ptxctools_parse_key_option:w #1 {#3} #4 #2 \q_stop
 
-	\bool_set_true:N  \l_ptxtools_last_was_describe_bool
+	\bool_set_true:N \l_ptxtools_last_was_describe_bool
 	\AddToHookNext{para/begin}{
-		\bool_set_false:N  \l_ptxtools_last_was_describe_bool
+		\bool_set_false:N \l_ptxtools_last_was_describe_bool
 		\OmitIndent
 	}
 	\smallskip
@@ -479,7 +479,7 @@
 %    \begin{macrocode}
 		{AddressData} {
 			\clist_map_inline:nn {name, lineone, linetwo} {
-				\prop_if_in:cnT  {g_@@_#2_AddressData_prop } {##1} {
+				\prop_if_in:cnT {g_@@_#2_AddressData_prop } {##1} {
 					\prop_item:cn {g_@@_#2_AddressData_prop } {##1}\\
 				}
 			}
@@ -505,7 +505,7 @@
 		\str_set:Ne \l_tmpa_str {#2}
 		\str_replace_all:Nnn \l_tmpa_str {-} {_}
 		\str_replace_all:Nnn \l_tmpa_str {/} {_}
-		\bool_set_true:N  \g_tmpa_bool
+		\bool_set_true:N \g_tmpa_bool
 		\clist_map_inline:nn {tl, str} {
 			\clist_map_inline:nn {g, l} {
 				\use:c {##1 _if_exist:cT} {####1_@@_ \l_tmpa_str _##1}
@@ -513,9 +513,9 @@
 						\use:c {####1_@@_ \l_tmpa_str _##1}
 						\bool_gset_false:N \g_tmpa_bool
 					}
-				\bool_if:NF  \g_tmpa_bool {\clist_map_break:}
+				\bool_if:NF \g_tmpa_bool {\clist_map_break:}
 			}
-			\bool_if:NF  \g_tmpa_bool {\clist_map_break:}
+			\bool_if:NF \g_tmpa_bool {\clist_map_break:}
 		}
 	}
 }
@@ -528,7 +528,7 @@
 \cs_new:Nn \_@@_set_today:n {
 	\_@@_set_today_aux:w #1 \q_stop
 }
-\cs_generate_variant:Nn \_@@_set_today:n  {v}
+\cs_generate_variant:Nn \_@@_set_today:n {v}
 \cs_new:Npn \_@@_set_today_aux:w #1 #2 #3 #4 #5 #6 #7 #8 \q_stop{
 	\int_set:Nn \year {#1#2#3#4}
 	\int_set:Nn \month {#5#6}
@@ -590,7 +590,7 @@
 	\bool_if:NTF \g_@@_write_xml_bool
 		{
 			\char_set_active_eq:nN {13} \_@@_xml_newline_indent:
-			\iow_open:Nn  \_@@_xml_writer_iow {\g_@@_xml_file_tl}
+			\iow_open:Nn \_@@_xml_writer_iow {\g_@@_xml_file_tl}
 		}{
 			\msg_info:nn {zugferd} {no-xml-write}
 		}
@@ -606,9 +606,9 @@
 %% https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
 \newcommand*{\stopWritingZUGFeRDxml}{%
 	\bool_if:NT \g_@@_write_xml_bool
-		{\iow_close:N  \_@@_xml_writer_iow}%
+		{\iow_close:N \_@@_xml_writer_iow}%
 	\endgroup
-	\bool_if:NT  \g_@@_active_bool {
+	\bool_if:NT \g_@@_active_bool {
 		\group_begin:
 			\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative}
 			%or /Source in some cases
@@ -636,7 +636,7 @@
 %
 % \begin{examplecode}
 % \begin{ZUGFeRD}
-%	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
+%	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
 %	\zugferd_startInvoiceSums:
 %	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
 %	\zugferd_write_Summation:nnnnnnnn {63.78} {0} {0} {63.78} {12.12} {75.90} {0} {75.90}
@@ -661,7 +661,7 @@
 % \begin{examplecode}
 % \begingroup
 %	\keys_set:nn {zugferd}{tax/rate=19, tax/category=S}
-%	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
+%	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
 %	% Code using the data for visible representation
 % \endgroup
 % \end{examplecode}
@@ -719,7 +719,7 @@
 			\_@@_insert_Header:
 			\_@@_insert_FrontMatter:
 		}
-		\cs_gset:Nn  \zugferd_write_Footer: {
+		\cs_gset:Nn \zugferd_write_Footer: {
 			\_@@_insert_Footer:
 		}
 		\cs_gset_eq:NN \zugferd_write_Item:nnnnnn
@@ -748,7 +748,7 @@
 		\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
 		\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
 		\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
-		\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn  \use_none:nnnnnnnn
+		\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn \use_none:nnnnnnnn
 	}
 }
 %    \end{macrocode}
@@ -766,8 +766,8 @@
 			}
 		}
 	}
-	\cs_new_eq:NN \_@@_define_xml_writing_macro:Nn  \cs_new:Nn
-	\cs_new_eq:NN \_@@_define_xml_content_macro:Nn  \cs_new:Nn
+	\cs_new_eq:NN \_@@_define_xml_writing_macro:Nn \cs_new:Nn
+	\cs_new_eq:NN \_@@_define_xml_content_macro:Nn \cs_new:Nn
 } {
 	\cs_set_eq:NN \_@@_write_xml:n \use_none:n
 	\cs_new:Nn \_@@_define_xml_writing_macro:Nn {
@@ -799,7 +799,7 @@
 	}
 	\siunitx_number_format:nN {#3} #2
 }
-\cs_generate_variant:Nn  \_@@_number_format:nNn  {nNe}
+\cs_generate_variant:Nn \_@@_number_format:nNn {nNe}
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@__write_xml_number_round:nnnn,\_@@__write_xml_number_round:nnn}
@@ -831,7 +831,7 @@
 	\prg_replicate:nn {#1} {\_@@_xml_indent:}
 }
 \cs_new:Nn \_@@_xml_auto_indent: {
-	\_@@_xml_indent:n  {\l_@@_xml_indent_int}
+	\_@@_xml_indent:n {\l_@@_xml_indent_int}
 }
 %    \end{macrocode}
 % \end{function}
@@ -921,7 +921,7 @@
 % \begin{implementation}
 %    \begin{macrocode}
 	currency .choices:nn = {EUR, USD, CHF} {
-		\tl_set_eq:NN  \l_@@_currency_tl \l_keys_choice_tl
+		\tl_set_eq:NN \l_@@_currency_tl \l_keys_choice_tl
 	},
 	currency / € .meta:n = {currency = EUR},
 	currency / unknown .code:n = {
@@ -957,15 +957,15 @@
 	date .choice:,
 	date / auto .code:n = \tl_gset:Ne \g_@@_date_tl {
 		\the\year
-		\int_compare:nNnT {\month} < {10}  {0} \the\month
+		\int_compare:nNnT {\month} < {10} {0} \the\month
 		\int_compare:nNnT {\day} < {10} {0}\the\day
 	},
-	date / unknown .code:n = \tl_gset:Nn  \g_@@_date_tl  {#1},
+	date / unknown .code:n = \tl_gset:Nn \g_@@_date_tl {#1},
 	date .initial:n = auto,
 	delivery-date .choice:,
 	delivery-date / auto .code:n = \tl_gset:Ne \g_@@_delivery_date_tl {
 		\the\year
-		\int_compare:nNnT {\month} < {10}  {0} \the\month
+		\int_compare:nNnT {\month} < {10} {0} \the\month
 		\int_compare:nNnT {\day} < {10} {0}\the\day
 	},
 	delivery-date / unknown .code:n = {
@@ -1000,7 +1000,7 @@
 	subject / komavar .code:n = {
 		\tl_gset:Nf \g_@@_subject_tl {\scr@subject@var}
 	},
-	subject / unknown .code:n  = \tl_gset:Nn  \g_@@_subject_tl {#1},
+	subject / unknown .code:n  = \tl_gset:Nn \g_@@_subject_tl {#1},
 	fromaddress .choice:,
 	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl
 		{\scr@fromaddress@var},
@@ -1018,7 +1018,7 @@
 % \end{optionenv}
 % Macro to write notes
 %    \begin{macrocode}
-\cs_new:Nn  \_@@_note_if_not_empty:N {%
+\cs_new:Nn \_@@_note_if_not_empty:N {%
 	\tl_if_empty:NF #1 {%
 		\_@@_write_note:n {#1}%
 	}%
@@ -1070,7 +1070,7 @@
 % As shown in the example \option{address} can use two lines separted by |\\|.
 %
 % Alternatively it's also possible to use \option{\meta{party}/lineone} and \option{\meta{party/linetwo}} separately.
-% This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using  \cs[no-index]{zugferd_disable_macros:}.
+% This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using \cs[no-index]{zugferd_disable_macros:}.
 %
 % \DescribeKeyOption*{\meta{party}/postcode=\meta{postal code}}{}*
 % \DescribeKeyOption*{\meta{party}/city=\meta{city}}{}*
@@ -1251,7 +1251,7 @@
 % Setting up the catcodes to simplify the xml indentation.
 % \iffalse
 %    \begin{macrocode}
-\cctab_new:N  \g_@@_xml_cctab
+\cctab_new:N \g_@@_xml_cctab
 \begingroup%
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
@@ -1260,15 +1260,15 @@
 %    \end{macrocode}
 % \fi
 %    \begin{macrocode}
-\cctab_begin:N  \g_@@_xml_cctab%
+\cctab_begin:N \g_@@_xml_cctab%
 %
 \_@@_define_xml_writing_macro:Nn \_@@_write_note:n {%
 	\begingroup%
 		\let\\\iow_newline:%
 		\_@@_write_xml:e {%
 			<ram:IncludedNote>
-				\_@@_xml_indent:<ram:Content>#1
-				\_@@_xml_indent:</ram:Content>
+				\_@@_xml_indent: <ram:Content>#1
+				\_@@_xml_indent: </ram:Content>
 			</ram:IncludedNote>%
 		}%
 	\endgroup%
@@ -1294,11 +1294,11 @@
 	\_@@_write_xml:e {%
 		\str_if_empty:NF \g_@@_businessProcessId_str {%
 			<ram:BusinessProcessSpecifiedDocumentContextParameter>
-			\_@@_xml_indent:<ram:ID>\g_@@_businessProcessId_str</ram:ID>
+			\_@@_xml_indent: <ram:ID>\g_@@_businessProcessId_str</ram:ID>
 			</ram:BusinessProcessSpecifiedDocumentContextParameter>
 		}%
 		<ram:GuidelineSpecifiedDocumentContextParameter>
-		\_@@_xml_indent:<ram:ID>\g_@@_format_str</ram:ID>
+		\_@@_xml_indent: <ram:ID>\g_@@_format_str</ram:ID>
 		</ram:GuidelineSpecifiedDocumentContextParameter>%
 	}%
 	\_@@_write_xml:n {</rsm:ExchangedDocumentContext>}%
@@ -1315,7 +1315,7 @@
 			<udt:DateTimeString~format="102">\g_@@_date_tl</udt:DateTimeString>
 		</ram:IssueDateTime>%
 	}%
-	\_@@_note_if_not_empty:N  \g_@@_subject_tl%
+	\_@@_note_if_not_empty:N \g_@@_subject_tl%
 	\_@@_note_if_not_empty:N \g_@@_fromaddress_tl%
 	\seq_map_inline:Nn \g_@@_notes_seq {%
 		\_@@_write_note:n {##1}%
@@ -1349,7 +1349,7 @@
 % These are implemented as separate commands to be more flexible.
 % The wrapper command is called \cs[no-index]{@@_insert_TradeLineItem:nnnnnn} and is created to be used in your own invoicing package-
 %    \begin{macrocode}
-\cctab_begin:N  \g_@@_xml_cctab%
+\cctab_begin:N \g_@@_xml_cctab%
 %    \end{macrocode}
 % \begin{function}{\_@@_AssociatedDocumentLineDocument:n}
 %    \begin{macrocode}
@@ -1365,9 +1365,9 @@
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeProduct:nn {%
 		<ram:SpecifiedTradeProduct>
 		\tl_if_empty:nF {#1} {%
-			\_@@_xml_indent:<ram:SellerAssignedID>#1</ram:SellerAssignedID>
+			\_@@_xml_indent: <ram:SellerAssignedID>#1</ram:SellerAssignedID>
 		}%
-		\_@@_xml_indent:<ram:Name>#2</ram:Name>
+		\_@@_xml_indent: <ram:Name>#2</ram:Name>
 		</ram:SpecifiedTradeProduct>%
 }%
 %    \end{macrocode}
@@ -1376,7 +1376,7 @@
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_ProductTradePrice:nn {%
 	<ram:\str_uppercase:n #1PriceProductTradePrice>
-	\_@@_xml_indent:<ram:ChargeAmount>#2</ram:ChargeAmount>
+	\_@@_xml_indent: <ram:ChargeAmount>#2</ram:ChargeAmount>
 	</ram:\str_uppercase:n #1PriceProductTradePrice>%
 }%
 %    \end{macrocode}
@@ -1401,27 +1401,27 @@
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
 	<ram:SpecifiedLineTradeDelivery>
 	% SPACE!
-	\_@@_xml_indent:<ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
+	\_@@_xml_indent: <ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
 	</ram:SpecifiedLineTradeDelivery>
 }%
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_SpecifiedLineTradeSettlement:nnn,\_@@_SpecifiedLineTradeSettlement:Vnn}
 %    \begin{macrocode}
-\_@@_define_xml_content_macro:Nn  \_@@_SpecifiedLineTradeSettlement:nnn {%
+\_@@_define_xml_content_macro:Nn \_@@_SpecifiedLineTradeSettlement:nnn {%
 		<ram:SpecifiedLineTradeSettlement>
-		\_@@_xml_indent:<ram:ApplicableTradeTax>
+		\_@@_xml_indent: <ram:ApplicableTradeTax>
 		%BT-151
-		\_@@_xml_indent:n {2}<ram:TypeCode>VAT</ram:TypeCode>
+		\_@@_xml_indent:n {2} <ram:TypeCode>VAT</ram:TypeCode>
 		%BT-151
 		\_@@_xml_indent:n {2} <ram:CategoryCode>#1</ram:CategoryCode>
 		%BT-152
 		\_@@_xml_indent:n {2} <ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
-		\_@@_xml_indent:</ram:ApplicableTradeTax>
-		\_@@_xml_indent:<ram:SpecifiedTradeSettlementLineMonetarySummation>
+		\_@@_xml_indent: </ram:ApplicableTradeTax>
+		\_@@_xml_indent: <ram:SpecifiedTradeSettlementLineMonetarySummation>
 		% BT-131
-		\_@@_xml_indent:n {2}<ram:LineTotalAmount>#3</ram:LineTotalAmount>
-		\_@@_xml_indent:</ram:SpecifiedTradeSettlementLineMonetarySummation>
+		\_@@_xml_indent:n {2} <ram:LineTotalAmount>#3</ram:LineTotalAmount>
+		\_@@_xml_indent: </ram:SpecifiedTradeSettlementLineMonetarySummation>
 		</ram:SpecifiedLineTradeSettlement>%
 }%
 %    \end{macrocode}
@@ -1450,7 +1450,7 @@
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_insert_TradeLineItem:nnnnnn {
 	\_@@_write_xml:n {<ram:IncludedSupplyChainTradeLineItem>}
-	\int_incr:N  \l_@@_xml_indent_int
+	\int_incr:N \l_@@_xml_indent_int
 	\_@@_write_xml:e {\_@@_AssociatedDocumentLineDocument:n {#1}}%
 
 	\begingroup
@@ -1459,16 +1459,16 @@
 	\endgroup
 
 	\_@@_write_xml:n {<ram:SpecifiedLineTradeAgreement>}
-	\int_incr:N  \l_@@_xml_indent_int%
+	\int_incr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:e {\_@@_ProductTradePrice:nn {net} {#4}}
-	\int_decr:N  \l_@@_xml_indent_int%
+	\int_decr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeAgreement>}
 	\_@@_write_xml:e {%
 		\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}
 		\_@@_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl %
 			{ \fp_use:N \l_@@_tax_rate_fp} {#6}
 	}%
-	\int_decr:N  \l_@@_xml_indent_int
+	\int_decr:N \l_@@_xml_indent_int
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
 %    \end{macrocode}
@@ -1486,7 +1486,7 @@
 % Seller and Buyer are specified the same way.
 %    \begin{macrocode}
 %\begingroup
-\tl_new:N  \g_@@_buyer_reference_tl
+\tl_new:N \g_@@_buyer_reference_tl
 \keys_define:nn {zugferd/buyer} {
 	reference .choice:,
 	reference / komavar .code:n = {
@@ -1559,50 +1559,50 @@
 %    \end{macrocode}
 % \end{function}
 %    \begin{macrocode}
-\cctab_begin:N  \g_@@_xml_cctab%
+\cctab_begin:N \g_@@_xml_cctab%
 %\_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
 \_@@_define_xml_content_macro:Nn \_@@_PostalTradeAddress:nnnnnnn {%
         <ram:PostalTradeAddress>
-         \_@@_xml_indent:<ram:PostcodeCode>#1</ram:PostcodeCode>
+         \_@@_xml_indent: <ram:PostcodeCode>#1</ram:PostcodeCode>
          \tl_if_empty:nF {#2} {%
-           \_@@_xml_indent:<ram:LineOne>#2</ram:LineOne>
+           \_@@_xml_indent: <ram:LineOne>#2</ram:LineOne>
          }%
          \tl_if_empty:nF {#3} {%
-          \_@@_xml_indent:<ram:LineTwo>#3</ram:LineTwo>
+          \_@@_xml_indent: <ram:LineTwo>#3</ram:LineTwo>
          }%
-         \_@@_xml_indent:<ram:CityName>#4</ram:CityName>
-         \_@@_xml_indent:<ram:CountryID>#5</ram:CountryID>
+         \_@@_xml_indent: <ram:CityName>#4</ram:CityName>
+         \_@@_xml_indent: <ram:CountryID>#5</ram:CountryID>
         </ram:PostalTradeAddress>%
         \tl_if_empty:nF {#6} {%
 		<ram:URIUniversalCommunication>
-		\_@@_xml_indent:<ram:URIID~schemeID="EM">#6</ram:URIID>
+		\_@@_xml_indent: <ram:URIID~schemeID="EM">#6</ram:URIID>
 		</ram:URIUniversalCommunication>%
         }%
 % TODO add support local tax id: schemaID="FC"
         \tl_if_empty:nF {#7} {
 	        <ram:SpecifiedTaxRegistration>
-	        \_@@_xml_indent:<ram:ID~schemeID="VA">#7</ram:ID>
+	        \_@@_xml_indent: <ram:ID~schemeID="VA">#7</ram:ID>
 	        </ram:SpecifiedTaxRegistration>%
         }%
 }%
 %
 % Contact data phone/email to a specific contact person
-\_@@_define_xml_content_macro:Nn  \_@@_DefinedTradeContact:nnnn {%
-\bool_if:NTF  \g_@@_writeTradeContact_bool {%
+\_@@_define_xml_content_macro:Nn \_@@_DefinedTradeContact:nnnn {%
+\bool_if:NTF \g_@@_writeTradeContact_bool {%
 	<ram:DefinedTradeContact>
-	\_@@_xml_indent:<ram:PersonName>#1</ram:PersonName>
+	\_@@_xml_indent: <ram:PersonName>#1</ram:PersonName>
 	\tl_if_blank:nF {#2} {%
-	\_@@_xml_indent:<ram:DepartmentName>#2</ram:DepartmentName>
+	\_@@_xml_indent: <ram:DepartmentName>#2</ram:DepartmentName>
 	}%
 	\tl_if_blank:nF {#3} {%
-	\_@@_xml_indent:<ram:TelephoneUniversalCommunication>
-	\_@@_xml_indent:n {2}<ram:CompleteNumber>#3</ram:CompleteNumber>
-	\_@@_xml_indent:</ram:TelephoneUniversalCommunication>
+	\_@@_xml_indent: <ram:TelephoneUniversalCommunication>
+	\_@@_xml_indent:n {2} <ram:CompleteNumber>#3</ram:CompleteNumber>
+	\_@@_xml_indent: </ram:TelephoneUniversalCommunication>
 	}%
 	\tl_if_blank:nF {#4} {%
-	\_@@_xml_indent:<ram:EmailURIUniversalCommunication>
-	\_@@_xml_indent:n {2}<ram:URIID>#4</ram:URIID>
-	\_@@_xml_indent:</ram:EmailURIUniversalCommunication>
+	\_@@_xml_indent: <ram:EmailURIUniversalCommunication>
+	\_@@_xml_indent:n {2} <ram:URIID>#4</ram:URIID>
+	\_@@_xml_indent: </ram:EmailURIUniversalCommunication>
 	}%
 	</ram:DefinedTradeContact>%
 	}{\use_none:n}%
@@ -1620,11 +1620,11 @@
 		<ram:Name>\prop_item:Nn \g_@@_seller_AddressData_prop {name}</ram:Name>
 		% Trade Contract
 			\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop
-			\_@@_PostalTradeAddress:N  \g_@@_seller_AddressData_prop
+			\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop
 		</ram:SellerTradeParty>
 		<ram:BuyerTradeParty>
 			<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>
-			\_@@_PostalTradeAddress:N  \g_@@_buyer_AddressData_prop
+			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop
 		</ram:BuyerTradeParty>%
 	}%
 	\int_decr:N \l_@@_xml_indent_int%
@@ -1639,18 +1639,18 @@
 \_@@_define_xml_content_macro:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
 	\tl_if_blank:nF {#1} {
 	<ram:ApplicableHeaderTradeDelivery>
-		\_@@_xml_indent:<ram:ActualDeliverySupplyChainEvent>
-			\_@@_xml_indent:n {2}<ram:OccurrenceDateTime>
+		\_@@_xml_indent: <ram:ActualDeliverySupplyChainEvent>
+			\_@@_xml_indent:n {2} <ram:OccurrenceDateTime>
 				\_@@_xml_indent:n {3}<udt:DateTimeString~format="102">#1</udt:DateTimeString>
 			\_@@_xml_indent:n {2} </ram:OccurrenceDateTime>
-		\_@@_xml_indent:</ram:ActualDeliverySupplyChainEvent>
+		\_@@_xml_indent: </ram:ActualDeliverySupplyChainEvent>
 	</ram:ApplicableHeaderTradeDelivery>%
 	}%
 }%
 %
 \cctab_end:
-\cs_generate_variant:Nn  \_@@_DefinedTradeContact:nnnn {eeee}%
-\cs_generate_variant:Nn  \_@@_PostalTradeAddress:nnnnnnn {eeeeeee}%
+\cs_generate_variant:Nn \_@@_DefinedTradeContact:nnnn {eeee}%
+\cs_generate_variant:Nn \_@@_PostalTradeAddress:nnnnnnn {eeeeeee}%
 \cs_generate_variant:Nn \_@@_ApplicableHeaderTradeDelivery:n {V}
 %    \end{macrocode}
 % ApplicableHeaderTradeSettlement
@@ -1733,7 +1733,7 @@
 %    \begin{macrocode}
 \ExplSyntaxOn
 \hook_gput_code:nnn {begindocument/end}{zugferd/payment-means}{
-		\prop_if_empty:cT  {g_@@_payment-means_names_prop} {
+		\prop_if_empty:cT {g_@@_payment-means_names_prop} {
 				\exp_args:Nne \setupZUGFeRDStrings{payment-means}{
 					\use:c {zugferd@paymentMeans@\cs_if_exist:cTF {zugferd@paymentMeans@\languagename} {\languagename} {english}}
 				}
@@ -1779,7 +1779,7 @@
 	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
 }%
 %
-\cctab_begin:N  \g_@@_xml_cctab%
+\cctab_begin:N \g_@@_xml_cctab%
 % ApplicableHeaderTradeSettlement
 \_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeSettlement:nnnnnnnn {%
 
@@ -1805,7 +1805,7 @@
 		}%
 		\tl_if_blank:nF {#2} {
 			<ram:DueDateDateTime>
-			\_@@_xml_indent:<udt:DateTimeString~format="102">#2</udt:DateTimeString>
+			\_@@_xml_indent: <udt:DateTimeString~format="102">#2</udt:DateTimeString>
 			</ram:DueDateDateTime>%
 		}%
 	}%
@@ -1816,7 +1816,7 @@
 %
 % sums
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {%
-\bool_if:NT  \g_@@_writePaymentMeans_bool {%
+\bool_if:NT \g_@@_writePaymentMeans_bool {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
 	\int_incr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:e {%
@@ -1825,11 +1825,11 @@
 			<ram:Information>\prop_item:cV {g_@@_payment-means_names_prop} \l_@@_payment_means_tl</ram:Information>
 		}%
 		<ram:PayeePartyCreditorFinancialAccount>
-			\_@@_xml_indent:<ram:IBANID>#2</ram:IBANID>
-			\_@@_xml_indent:<ram:AccountName>#1</ram:AccountName>
+			\_@@_xml_indent: <ram:IBANID>#2</ram:IBANID>
+			\_@@_xml_indent: <ram:AccountName>#1</ram:AccountName>
 		</ram:PayeePartyCreditorFinancialAccount>
 		<ram:PayeeSpecifiedCreditorFinancialInstitution>
-			\_@@_xml_indent:<ram:BICID>#3</ram:BICID>
+			\_@@_xml_indent: <ram:BICID>#3</ram:BICID>
 		</ram:PayeeSpecifiedCreditorFinancialInstitution>%
 	}%
 	\int_decr:N \l_@@_xml_indent_int%
@@ -1843,8 +1843,8 @@
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
-	\tl_if_empty:cF {g_@@_payment_account-holder_tl}  {
-	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl}  {g_@@_payment_bic_tl}
+	\tl_if_empty:cF {g_@@_payment_account-holder_tl} {
+	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
 	}
 }
 %    \end{macrocode}
