@@ -523,6 +523,7 @@
 \providecommand{\InsertZugferdData}{\InsertZUGFeRDData}
 \providecommand{\insertZugferdData}{\InsertZUGFeRDData}
 %    \end{macrocode}
+% \end{function}
 % \begin{function}{\_@@_set_today:c}
 % Auxiliary function to use a date variable within the current group to be used as \cs[no-index]{today}.
 %    \begin{macrocode}
@@ -536,7 +537,6 @@
 	\int_set:Nn \day {#7#8}
 }
 %    \end{macrocode}
-% \end{function}
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
@@ -1146,6 +1146,22 @@
 % \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
+% \subsubsection{Payment terms}
+% \DescribeKeyOption{payment-terms=\meta{string}}{}
+% One option to set payment terms is the \option{due-date} mentioned before.
+% If this is not set or the setting is more complex one can use \option{payment-terms} to add more information.
+%
+% This setting is a string. In case there is expansion required this has to be done before.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{payment-terms}
+%    \begin{macrocode}
+	payment-terms .str_gset:N = \_@@_payment_terms_str,
+	payment-terms .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
 % \subsubsection{Notes: Adding additional information}
 % \DescribeKeyOption{subject=komavar/\meta{Tokenlist}}{}
 % \DescribeKeyOption{fromaddress=komavar/\meta{Tokenlist}}{}
@@ -1162,8 +1178,6 @@
 % \begin{implementation}
 % \begin{optionenv}{subject,fromaddress,add-note}
 %    \begin{macrocode}
-	payment-terms .str_gset:N = \_@@_payment_terms_str,
-	payment-terms .initial:n =,
 	subject .choice:,
 	subject / komavar .code:n = {
 		\tl_gset:Nf \g_@@_subject_tl {\scr@subject@var}
@@ -1350,7 +1364,11 @@
 % \end{function}
 %    \begin{macrocode}
 \cctab_begin:N \g_@@_xml_cctab%
-%\_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
+%    \end{macrocode}
+% \iffalse
+% \_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
+% \fi
+%    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
         <ram:PostalTradeAddress>
          \_@@_indent: <ram:PostcodeCode>#1</ram:PostcodeCode>
@@ -1430,7 +1448,9 @@
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}%
 	\int_gdecr:N \g_@@_indent_int%
-	\_@@_write_xml:e {\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl}
+	\_@@_write_xml:e {%
+		\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl%
+	}%
 }%
 %
 %
@@ -1539,7 +1559,9 @@
 \ExplSyntaxOn
 \tl_new:N \l_@@_payment_means_tl
 \keys_define:nn {zugferd} {
-	payment-means / type .choices:nn = {10,20,30,42,48,49,57,58,59,97} {\tl_set_eq:NN \l_@@_payment_means_tl \l_keys_choice_tl},
+	payment-means / type .choices:nn = {10,20,30,42,48,49,57,58,59,97} {
+		\tl_set_eq:NN \l_@@_payment_means_tl \l_keys_choice_tl
+	},
 }
 
 \clist_map_inline:nn {iban,account-holder,bic} {
@@ -1558,7 +1580,9 @@
 \hook_gput_code:nnn {begindocument/end}{zugferd/payment-means}{
 		\prop_if_empty:cT {g_@@_payment-means_names_prop} {
 				\exp_args:Nne \setupZUGFeRDStrings{payment-means}{
-					\use:c {zugferd@paymentMeans@\cs_if_exist:cTF {zugferd@paymentMeans@\languagename} {\languagename} {english}}
+					\use:c {zugferd@paymentMeans@
+						\cs_if_exist:cTF {zugferd@paymentMeans@\languagename} {\languagename} {english}
+					}
 				}
 		}
 }
@@ -1654,8 +1678,8 @@
 %
 % \DescribeKeyOption{tax/rate=\meta{floating point}}{19}*
 % The value given will be used for tax calculation.
-%
 % By default it's configured to |19| to match the German standard VAT rate.
+%
 % \end{documentation}
 % \begin{implementation}
 % \begin{optionenv}{category, exemption-reason,rate}
@@ -1922,7 +1946,6 @@
 % \begin{implementation}
 % ApplicableHeaderTradeSettlement
 %    \begin{macrocode}
-% sums
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
     \int_gincr:N \g_@@_indent_int%
@@ -1966,8 +1989,9 @@
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement:nnnnnnnn {%
 
 }%
-%
-% ApplicableHeaderTradeSettlement Need to be splitted to be used in separate parts of the tabular
+%    \end{macrocode}
+% ApplicableHeaderTradeSettlement needs to be splitted to be used in separate parts of the tabular.
+%    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}%
 	\int_gincr:N \g_@@_indent_int%
@@ -1977,7 +2001,9 @@
 	\int_gdecr:N \g_@@_indent_int%
 	  \_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}%
 }%
+%    \end{macrocode}
 % SpecifiedTradePaymentTerms
+%    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms:nn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradePaymentTerms>}%
 	\int_gincr:N \g_@@_indent_int%
@@ -2020,13 +2046,16 @@
 }%
 \cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nn {VV}
-\_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms: {\_@@_SpecifiedTradePaymentTerms:VV \_@@_payment_terms_str \_@@_due_date_tl}
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms: {
+	\_@@_SpecifiedTradePaymentTerms:VV \_@@_payment_terms_str \_@@_due_date_tl
+}
 %    \end{macrocode}
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
 	\tl_if_empty:cF {g_@@_payment_account-holder_tl} {
-	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
+	\exp_args:Nccc \_@@_SpecifiedTradeSettlementPaymentMeans:nnn
+		{g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
 	}
 }
 %    \end{macrocode}
