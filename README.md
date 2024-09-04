@@ -2,7 +2,7 @@
 
 Package to create Faktur-X and ZUGFeRD invoices using LaTeX
 
-Version 0.4 (2024-08-22)
+Version 0.5 (2024-09-04)
 
 ––––––––––––––––––––––––––
 
