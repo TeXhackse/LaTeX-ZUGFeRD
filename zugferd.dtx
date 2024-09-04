@@ -781,11 +781,8 @@
 	\cs_new_eq:NN \_@@_define_xml_content:Nn \cs_new:Nn
 } {
 	\cs_set_eq:NN \_@@_write_xml:n \use_none:n
-	\cs_new:Nn \_@@_define_xml_writer:Nn {
-		\cs_new:Nn #1 {}
-		\use_none:n {#2}
-	}
-	\cs_set_eq:NN \_@@_define_xml_content:Nn \use_none:n
+	\cs_set:Nn \_@@_define_xml_writer:Nn {\cs_new:Nn #1 {}}
+	\cs_set:Nn \_@@_define_xml_content:Nn {\cs_new:Nn #1 {}}
 }
 
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
