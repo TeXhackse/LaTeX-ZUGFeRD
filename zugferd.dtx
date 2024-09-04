@@ -52,7 +52,6 @@
 \DeclareTextFontCommand{\codefont}{\codefamily}
 \providecommand{\option}[1]{\codefont{#1}}
 
-
 \cs_new:Npn \__ptxctools_parse_key_option:w #1 #2 #3 #4 = #5 \q_stop {
 	\begingroup
 	\let\PrintDescribeOption\PrintDescribeKeyOption
@@ -167,8 +166,16 @@
   date = {2023-07-07},
   version = {3.41},
 }
+@online{leitweg-id,
+	title={Xeinkauf FAQ},
+	subtitle={Leitweg ID},
+	author={{Koordinierungsstelle für IT Standards (KoSIT)}},
+	url={https://xeinkauf.de/faq/xrechnung#leitweg-id},
+	urldate={2024-09-04}
+}
 \end{filecontents}
 \addbibresource{zugferd.bib}
+\nocite{cl-recommendations}
 \begin{document}
   \EnableDocumentation\DisableImplementation
   \DocInput{zugferd.dtx}
@@ -198,7 +205,7 @@
 % First Invoices based on the Implementation here have been created back in 2021.
 % And this is now the trial to create a more universal and public package to support the current Version of ZUGFeRD and therefore also X-Rechung and Faktur-X.
 %
-% \indent The basis idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the XML file for the attachment on the fly.
+% The fundamental idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the XML file for the attachment on the fly.
 % To match typical setups there is a wrapper package which usually would also hold the personal Invoicing layout configuration.
 % \end{abstract}
 %
@@ -673,7 +680,7 @@
 % There is some global data which is placed in the XML file after the invoice items have been placed.
 % Typically in \LaTeX{} this block is started after the items have been printed and will enclose the summation block.
 %
-% The starting includes the so called \enquote{ApplicableHeaderTradeAgreement} which contains the address data of both trade parties, see \autoref{sec:AddressData}
+% The starting includes the so called \enquote{ApplicableHeaderTradeAgreement} which contains the address data of both trade parties, see \autoref{sec:TradeParties}
 % And this will also print the \enquote{SpecifiedTradeSettlementPaymentMeans}, see \autoref{sec:PaymentMeans}.
 %
 % \DescribeMacro{\zugferd_write_TaxEntry:nnnn}
@@ -856,6 +863,7 @@
 % \fi
 % \begin{documentation}
 % \subsection{Escaping macros inside XML data}
+% \label{sec:disable_macros}
 % \DescribeMacro{\zugferd_disable_macros:}
 % Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the XML output.
 % The mechanism is created similar to the one by \pkg{hyperref} and we also use some definitions from there to use those as a starting point.
@@ -1209,6 +1217,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsection{Trade parties}
+% \label{sec:TradeParties}
 % The XML scheme knows 6 different Trade Parties:
 % \begin{itemize}
 % \item Seller
@@ -1500,6 +1509,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Payment Means}
+% \label{sec:PaymentMeans}
 % The payment means are selected by numeric codes.
 % Currently we support:
 % \begin{itemize}
