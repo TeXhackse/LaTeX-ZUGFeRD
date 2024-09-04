@@ -1397,9 +1397,8 @@
 % Contact data phone/email to a specific contact person
 \_@@_define_xml_content:Nn \_@@_DefinedTradeContact:nnnn {%
 	% Do not print if name is empty
-	\tl_if_blank:nTF {#1} \use_iv:nnnn \use:n %
-	{%
-	\bool_if:NTF \g_@@_writeTradeContact_bool {%
+	\tl_if_blank:nT {#1} {\use_none:nnn} %
+	\bool_if:NT \g_@@_writeTradeContact_bool {%
 		<ram:DefinedTradeContact>
 		\_@@_indent: <ram:PersonName>#1</ram:PersonName>
 		\tl_if_blank:nF {#2} {%
@@ -1416,9 +1415,8 @@
 		\_@@_indent: </ram:EmailURIUniversalCommunication>
 		}%
 		</ram:DefinedTradeContact>%
-		}{\use_none:n}%
 	}%
-}
+}%
 %
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeAgreement: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}%
@@ -1430,7 +1428,7 @@
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		<ram:Name>\prop_item:Nn \g_@@_seller_AddressData_prop {name}</ram:Name>
-			\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop
+			\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop%
 			\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop%
 	}%
 	\int_gdecr:N \g_@@_indent_int%
@@ -1441,14 +1439,14 @@
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 			<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>
-			\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop
-			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop
-		</ram:BuyerTradeParty>%
+			\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop%
+			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop%
 	}%
 	\int_gdecr:N \g_@@_indent_int%
-	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}%
+	\_@@_write_xml:n {</ram:BuyerTradeParty>}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
+		</ram:ApplicableHeaderTradeAgreement>
 		\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl%
 	}%
 }%
@@ -1456,7 +1454,7 @@
 %
 % delivery date
 \_@@_define_xml_content:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
-	\tl_if_blank:nF {#1} {
+	\tl_if_blank:nF {#1} {%
 	<ram:ApplicableHeaderTradeDelivery>
 		\_@@_indent: <ram:ActualDeliverySupplyChainEvent>
 			\_@@_indent:n {2} <ram:OccurrenceDateTime>
@@ -1734,7 +1732,8 @@
 		\let\\\iow_newline:%
 		\_@@_write_xml:e {%
 			<ram:IncludedNote>
-				\_@@_indent: <ram:Content>#1
+				\_@@_indent: <ram:Content>
+				#1
 				\_@@_indent: </ram:Content>
 			</ram:IncludedNote>%
 		}%
