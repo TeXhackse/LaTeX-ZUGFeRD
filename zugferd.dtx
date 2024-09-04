@@ -749,15 +749,18 @@
 	}
 }
 \cs_new:Nn \zugferd_disable_XML_interfaces: {
-	\bool_if:NT \g_@@_write_xml_bool {
-		\cs_gset_eq:NN \zugferd_write_Header: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_write_Footer: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_write_Item:nnnnnn \use_none:nnnnnn
-		\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
-		\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
-		\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn \use_none:nnnnnnnn
-	}
+	\cs_gset_eq:NN \zugferd_write_Header: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_write_Footer: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_write_Item:nnnnnn \use_none:nnnnnn
+	\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
+	\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn \use_none:nnnnnnnn
+}
+\bool_if:NTF \g_@@_write_xml_bool {
+	\zugferd_enable_XML_interfaces:
+}{
+	\zugferd_disable_XML_interfaces:
 }
 %    \end{macrocode}
 % \end{function}
