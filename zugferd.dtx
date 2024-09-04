@@ -233,11 +233,10 @@
 % \iffalse
 %    \begin{macrocode}
 %<*package>
-%    \end{macrocode}
-% \fi
-%    \begin{macrocode}
 %<@@=zugferd>
 %    \end{macrocode}
+% \fi
+% \UseName{tl_gset:cn} {g__codedoc_module_name_tl} {zugferd}% Workaround to replace module name without having a visible <@@=zugferd> in the documentation
 % \begin{implementation}
 % \section{Implementation}
 % \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_conformance_level_str}
@@ -256,9 +255,9 @@
 % The package supports a few fundamental settings.
 % These have to be set when the package is loaded as they are used internally to setup the scheme or activate the xml mechanism.
 %
-%  \DescribeKeyOption{format=xrechnung/xrechung3.0/xrechnung2.3/basic}{xrechung}
+%  \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic}{xrechunng}
 % \option{format} selects the scheme to be used for the zugferd invoice.
-% Currently xrechung3.0, xrechnung2.3 and the basic scheme are supported.
+% Currently xrechnung3.0, xrechnung2.3 and the basic scheme are supported.
 %
 % The value |xrechnung| is set as an alias to |xrechnung3.0| and will always use the latest version supported by \pkg{zugferd}.
 %
@@ -285,19 +284,31 @@
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
-	xrechnung .code:n = {\bool_gset_true:N \g_@@_writeTradeContact_bool\bool_gset_true:N \g_@@_writePaymentMeans_bool\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}},
+	xrechnung .code:n = {
+		\bool_gset_true:N \g_@@_writeTradeContact_bool
+		\bool_gset_true:N \g_@@_writePaymentMeans_bool
+		\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}
+	},
 	format .choice:,
 	format / xrechnung3.0 .code:n = {
-		\str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0}
-		\str_gset:Nx \g_@@_businessProcessId_str {urn:fdc:peppol.eu:2017:poacc:billing:01:1.0}
+		\str_gset:Nx \g_@@_format_str {
+			urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0
+		}
+		\str_gset:Nx \g_@@_businessProcessId_str {
+			urn:fdc:peppol.eu:2017:poacc:billing:01:1.0
+		}
 		\keys_set:nn {zugferd}{xrechnung}
 	},
 	format / xrechnung2.3 .code:n = {
-		\str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3}
+		\str_gset:Nx \g_@@_format_str {
+			urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3
+		}
 		\keys_set:nn {zugferd}{xrechnung}
 	},
 	format  / basic .code:n = {
-		\str_gset:Nx \g_@@_format_str {urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic}
+		\str_gset:Nx \g_@@_format_str {
+			urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic
+		}
 		\bool_gset_false:N \g_@@_writeTradeContact_bool
 		\bool_gset_false:N \g_@@_writePaymentMeans_bool
 		\str_gset:Nn \g_@@_conformance_level_str {BASIC}
@@ -337,14 +348,17 @@
 \bool_if:NT \g_@@_active_bool {
 \cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
 	\msg_new:nnnn {zugferd} {PDFmanagement-not-active} {
-		The~\LaTeX~PDF~management~is~not~active.~Activate~it~using~\string\DocumentMetadata.
+		The~\LaTeX~PDF~management~is~not~active.\\
+		Activate~it~using~\string\DocumentMetadata.
 	} {
 		See~ZUGFeRD~or~PDFmanagement~documentation~for~more~information.
 	}
 	\msg_error:nn{zugferd} {PDFmanagement-not-active}
 }
 %% based on experiments for l3pdfmeta by Ulrike Fischer
-\pdfmeta_xmp_xmlns_new:nn {fx}{urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
+\pdfmeta_xmp_xmlns_new:nn {fx}{
+	urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str
+}
 
 \cs_generate_variant:Nn \__pdfmeta_xmp_schema_new:nnn {nne}
 
@@ -389,14 +403,15 @@
 		<fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>\iow_newline:
 		% fix schema version
 		<fx:Version>1.0</fx:Version>\iow_newline:
-		% variable (zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG)
-		<fx:ConformanceLevel>\g_@@_conformance_level_str</fx:ConformanceLevel>\iow_newline:
+		% zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG
+		<fx:ConformanceLevel>\g_@@_conformance_level_str</fx:ConformanceLevel>%
+		\iow_newline:
 		%
 	 }
 }
 %    \end{macrocode}
 % \end{implementation}
-% \begin{documentation}
+%countr \begin{documentation}
 % \section{User Commands}
 % The end user is only asked to set or access the data to be used by \pkg{zugferd}.
 %
@@ -426,7 +441,7 @@
 % \DescribeMacro{\InsertZUGFeRDData}
 % \DescribeMacro[noindex]{\InsertZugferdData}
 % \begin{syntax}
-% \cs[no-index]{insertZugferdData}\oarg{special mode option}\marg{data-selection}
+% \cs[no-index]{InsertZugferdData}\oarg{special mode option}\marg{data-selection}
 % \end{syntax}
 % ZUGFerd uses the same data as the XML inside the PDF.
 % To simplify the reuse of data this command is designed to simplify the access to data fields, for example:
@@ -494,7 +509,10 @@
 		\clist_map_inline:nn {tl, str} {
 			\clist_map_inline:nn {g, l} {
 				\use:c {##1 _if_exist:cT} {####1_@@_ \l_tmpa_str _##1}
-					{ \use:c {####1_@@_ \l_tmpa_str _##1} \bool_gset_false:N \g_tmpa_bool}
+					{
+						\use:c {####1_@@_ \l_tmpa_str _##1}
+						\bool_gset_false:N \g_tmpa_bool
+					}
 				\bool_if:NF  \g_tmpa_bool {\clist_map_break:}
 			}
 			\bool_if:NF  \g_tmpa_bool {\clist_map_break:}
@@ -587,14 +605,16 @@
 %% The metadata elements are taken by Ulrike Fischer's faktur-x experiments
 %% https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
 \newcommand*{\stopWritingZUGFeRDxml}{%
-	\bool_if:NT \g_@@_write_xml_bool {\iow_close:N  \_@@_xml_writer_iow}%
+	\bool_if:NT \g_@@_write_xml_bool
+		{\iow_close:N  \_@@_xml_writer_iow}%
 	\endgroup
 	\bool_if:NT  \g_@@_active_bool {
 		\group_begin:
-		\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative}
-		%or /Source in some cases
-		\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
-		\pdffile_embed_file:nnn {\g_@@_xml_file_tl}{factur-x.xml}{zugferd/rechnung}
+			\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative}
+			%or /Source in some cases
+			\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
+			\pdffile_embed_file:nnn {\g_@@_xml_file_tl}{factur-x.xml}
+				{zugferd/rechnung}
 		\group_end:
 		\pdfmanagement_add:nnx
 			  {Catalog/Names}
@@ -695,27 +715,29 @@
 %     \begin{macrocode}
 \cs_new:Nn \zugferd_enable_XML_interfaces: {
 	\bool_if:NT \g_@@_write_xml_bool {
-			\cs_gset:Nn \zugferd_write_Header: {
-				\_@@_insert_Header:
-				\_@@_insert_FrontMatter:
-			}
-			\cs_gset:Nn  \zugferd_write_Footer: {
-				\_@@_insert_Footer:
-			}
-			\cs_gset_eq:NN \zugferd_write_Item:nnnnnn  \_@@_insert_TradeLineItem:nnnnnn
-			\cs_gset:Nn \zugferd_startInvoiceSums: {
-				\_@@_ApplicableHeaderTradeAgreement:
-				\_@@_ApplicableHeaderTradeSettlement_start:
-				\_@@_SpecifiedTradeSettlementPaymentMeans:
-			}
-			\cs_gset:Nn \zugferd_stopInvoiceSums:  {
-				\_@@_ApplicableHeaderTradeSettlement_stop:
-			}
-			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
-			\cs_gset:Nn \zugferd_write_Summation:nnnnnnnn {
-				\_@@_SpecifiedTradePaymentTerms:
-				\_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {##1} {##2} {##3} {##4} {##5} {##6} {##7} {##8}
-			}
+		\cs_gset:Nn \zugferd_write_Header: {
+			\_@@_insert_Header:
+			\_@@_insert_FrontMatter:
+		}
+		\cs_gset:Nn  \zugferd_write_Footer: {
+			\_@@_insert_Footer:
+		}
+		\cs_gset_eq:NN \zugferd_write_Item:nnnnnn
+			\_@@_insert_TradeLineItem:nnnnnn
+		\cs_gset:Nn \zugferd_startInvoiceSums: {
+			\_@@_ApplicableHeaderTradeAgreement:
+			\_@@_ApplicableHeaderTradeSettlement_start:
+			\_@@_SpecifiedTradeSettlementPaymentMeans:
+		}
+		\cs_gset:Nn \zugferd_stopInvoiceSums:  {
+			\_@@_ApplicableHeaderTradeSettlement_stop:
+		}
+		\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
+		\cs_gset:Nn \zugferd_write_Summation:nnnnnnnn {
+			\_@@_SpecifiedTradePaymentTerms:
+			\_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn
+				{##1} {##2} {##3} {##4} {##5} {##6} {##7} {##8}
+		}
 	}
 }
 \cs_new:Nn \zugferd_disable_XML_interfaces: {
@@ -739,14 +761,19 @@
 		\tl_if_head_eq_charcode:nNTF {#1} \^^M {
 			\iow_now:Nn \_@@_xml_writer_iow {#1}
 		} {
-			\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: \exp_not:n {#1}}
+			\iow_now:Ne \_@@_xml_writer_iow {
+				\_@@_xml_auto_indent: \exp_not:n {#1}
+			}
 		}
 	}
 	\cs_new_eq:NN \_@@_define_xml_writing_macro:Nn  \cs_new:Nn
 	\cs_new_eq:NN \_@@_define_xml_content_macro:Nn  \cs_new:Nn
 } {
 	\cs_set_eq:NN \_@@_write_xml:n \use_none:n
-	\cs_new:Nn \_@@_define_xml_writing_macro:Nn {\cs_new:Nn #1{} \use_none:n {#2}}
+	\cs_new:Nn \_@@_define_xml_writing_macro:Nn {
+		\cs_new:Nn #1 {}
+		\use_none:n {#2}
+	}
 	\cs_seq_eq:NN \_@@_define_xml_content_macro:Nn \use_none:n
 }
 
@@ -758,7 +785,7 @@
 %    \begin{macrocode}
 \RequirePackage{siunitx}
 %    \end{macrocode}
-% \begin{function}{\_@@_number_format:nNn,\_@@__write_xml_number_round:nnnn,\_@@__write_xml_number_round:nnn}
+% \begin{function}{\_@@_number_format:nNn,\_@@_number_format:nNe}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_number_format:nNn {
 	\sisetup{
@@ -772,16 +799,15 @@
 	}
 	\siunitx_number_format:nN {#3} #2
 }
-
 \cs_generate_variant:Nn  \_@@_number_format:nNn  {nNe}
 %    \end{macrocode}
+% \end{function}
+% \begin{function}{\_@@__write_xml_number_round:nnnn,\_@@__write_xml_number_round:nnn}
 %    \begin{macrocode}
 \cs_new:Nn \_@@__write_xml_number_round:nnnn {
 	\_@@_number_format:nNe {#1} \l_@@_tmp_tl {#4}
 	\_@@_write_xml:e {<ram:#2#3>\l_@@_tmp_tl</ram:#2>}
 }
-%    \end{macrocode}
-%    \begin{macrocode}
 \cs_new:Nn \_@@__write_xml_number_round:nnn {
 	 \_@@__write_xml_number_round:nnnn {#1} {#2} {} {#3}
 }
@@ -796,27 +822,24 @@
 \int_new:N \l_@@_xml_indent_int
 %    \end{macrocode}
 % \end{variable}
-% \begin{function}{\_@@_xml_indent:,\_@@_xml_auto_indent:,\_@@_xml_add_indent:,\_@@_xml_newline_indent: }
+% \begin{function}{\_@@_xml_indent:,\_@@_xml_auto_indent:,\_@@_xml_newline_indent: }
 %    \begin{macrocode}
 \cs_new:Nn \_@@_xml_indent: {
 	\space\space
 }
-%    \end{macrocode}
-%    \begin{macrocode}
-\cs_new:Nn \_@@_xml_auto_indent: {
-	\prg_replicate:nn {\l_@@_xml_indent_int} {\_@@_xml_indent:}
+\cs_new:Nn \_@@_xml_indent:n {
+	\prg_replicate:nn {#1} {\_@@_xml_indent:}
 }
-%    \end{macrocode}
-%    \begin{macrocode}
-\cs_new:Nn \_@@_xml_add_indent: {
-	\prg_replicate:nn {\l_@@_xml_indent_int} {\_@@_xml_indent:}
-	\space\space
+\cs_new:Nn \_@@_xml_auto_indent: {
+	\_@@_xml_indent:n  {\l_@@_xml_indent_int}
 }
 %    \end{macrocode}
 % \end{function}
 % The idea was to redefine the \cs[no-index]{newlinechar} to automatically indent the following line.
 %    \begin{macrocode}
-\cs_new:Nn \_@@_xml_newline_indent: {\iow_newline: \_@@_xml_auto_indent:}
+\cs_new:Nn \_@@_xml_newline_indent: {
+	\iow_newline: \_@@_xml_auto_indent:
+}
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
@@ -897,10 +920,14 @@
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
-	currency .choices:nn = {EUR, USD, CHF} { \tl_set_eq:NN  \l_@@_currency_tl \l_keys_choice_tl	},
+	currency .choices:nn = {EUR, USD, CHF} {
+		\tl_set_eq:NN  \l_@@_currency_tl \l_keys_choice_tl
+	},
 	currency / € .meta:n = {currency = EUR},
 	currency / unknown .code:n = {
-		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {unit} {\str_uppercase:f {#1}}
+		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {unit} {
+			\str_uppercase:f {#1}
+		}
 		{\keys_set:nx { zugferd } {unit= {\str_uppercase:f {#1}}}}
 		{
 			\msg_warning:nnn { zugferd } {unknown-value} {currency} {#1}
@@ -929,15 +956,21 @@
 %    \begin{macrocode}
 	date .choice:,
 	date / auto .code:n = \tl_gset:Ne \g_@@_date_tl {
-		\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day
+		\the\year
+		\int_compare:nNnT {\month} < {10}  {0} \the\month
+		\int_compare:nNnT {\day} < {10} {0}\the\day
 	},
 	date / unknown .code:n = \tl_gset:Nn  \g_@@_date_tl  {#1},
 	date .initial:n = auto,
 	delivery-date .choice:,
 	delivery-date / auto .code:n = \tl_gset:Ne \g_@@_delivery_date_tl {
-		\the\year\int_compare:nNnT {\month} < {10}  {0} \the\month\int_compare:nNnT {\day} < {10} {0}\the\day
+		\the\year
+		\int_compare:nNnT {\month} < {10}  {0} \the\month
+		\int_compare:nNnT {\day} < {10} {0}\the\day
 	},
-	delivery-date / unknown .code:n = \tl_gset:Nn  \g_@@_delivery_date_tl  {#1},
+	delivery-date / unknown .code:n = {
+		\tl_gset:Nn \g_@@_delivery_date_tl {#1}
+	},
 	delivery-date .initial:n = auto,
 	due-date .tl_gset:N = \_@@_due_date_tl,
 	due-date .initial:n =,
@@ -964,7 +997,9 @@
 	payment-terms .str_gset:N = \_@@_payment_terms_str,
 	payment-terms .initial:n =,
 	subject .choice:,
-	subject / komavar .code:n = \tl_gset:Nf \g_@@_subject_tl {\scr@subject@var},
+	subject / komavar .code:n = {
+		\tl_gset:Nf \g_@@_subject_tl {\scr@subject@var}
+	},
 	subject / unknown .code:n  = \tl_gset:Nn  \g_@@_subject_tl {#1},
 	fromaddress .choice:,
 	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl
@@ -1109,11 +1144,19 @@
 	unit / day .meta:n = {unit=DAY},
 	unit / one .meta:n= {unit= C62},
 	unit / piece .meta:n = {unit=H87},
-	% make selection case insensitive
+%    \end{macrocode}
+% If unknown, the value is converted to uppercase and we use the selection directly.
+% There is a warning in that case
+%    \begin{macrocode}
 	unit / unknown .code:n = {
-		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {unit} {\str_uppercase:f {#1}}
-		{\keys_set:nx { zugferd } {unit= {\str_uppercase:f {#1}}}}
-		{\msg_warning:nnn { zugferd } {unknown-unit} {#1}}
+		\tl_set:Nx \l_tmpa_tl {\str_uppercase:f {#1}}
+		\exp_args:NnnV \keys_if_choice_exist:nnnTF {zugferd} {unit}
+			\l_tmpa_tl
+			{\keys_set:ne { zugferd } {unit= {\l_tmpa_tl}}}
+			{
+				\msg_warning:nnn { zugferd } {unknown-unit} {#1}
+				\tl_set_eq:NN \l_@@_unit_code_tl \l_tmpa_tl
+			}
 	},
 	unit .usage:n = general,
 }
@@ -1123,7 +1166,8 @@
 	I~~will~directly~use~your~selection~'unit=#1'~as~Common~Code.
 	Please~ensure~the~selection~is~valid!
 } {
-	For~more~information~see~the~zugferd~documentation and the /UN/CEFACT Common Code list.
+	For~more~information~see~the~zugferd~documentation\\
+	and~the~/UN/CEFACT~Common~Code~list.
 }
 %    \end{macrocode}
 % \end{optionenv}
@@ -1177,9 +1221,10 @@
 	ceuta .meta:n = {category=M},
 	melilla .meta:n = {category=M},
 	category / unknown .code:n = {
-		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {category} {\str_uppercase:f {#1}}
-		{\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}}
-		{\msg_warning:nnn { zugferd } {unknown-tax-category} {#1}}
+		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {category}
+			{\str_uppercase:f {#1}}
+			{\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}}
+			{\msg_warning:nnn { zugferd } {unknown-tax-category} {#1}}
 	},
 	category .initial:n =  S,
 	category .usage:n = general,
@@ -1198,7 +1243,8 @@
 	I~~will~directly~use~your~selection~'category=#1'~as~Code.\\
 	Please~ensure~the~selection~is~valid!
 } {
-	For~more~information~see~the~zugferd~documentation and the corresponding code list.
+	For~more~information~see~the~zugferd~documentation\\
+	and~the~corresponding~code~list.
 }
 %    \end{macrocode}
 % \end{optionenv}
@@ -1206,7 +1252,7 @@
 % \iffalse
 %    \begin{macrocode}
 \cctab_new:N  \g_@@_xml_cctab
-\begingroup% start of xml content - need to ensure to comment all line endings except those written to xml
+\begingroup%
 \endlinechar=13%
 \char_set_catcode:nn {13}{13}%
 \cctab_gsave_current:N \g_@@_xml_cctab%
@@ -1214,7 +1260,6 @@
 %    \end{macrocode}
 % \fi
 %    \begin{macrocode}
-% start of xml content - need to ensure to comment all line endings except those written to xml
 \cctab_begin:N  \g_@@_xml_cctab%
 %
 \_@@_define_xml_writing_macro:Nn \_@@_write_note:n {%
@@ -1234,9 +1279,14 @@
 \char_set_catcode_other:N \#%
 \char_set_catcode:nn {32}{10}%
 \_@@_define_xml_writing_macro:Nn \_@@_insert_Header: {%
-	\_@@_write_xml:e {%
+	\_@@_write_xml:n {%
 		<?xml version='1.0' encoding='UTF-8' ?>
-		<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
+		<rsm:CrossIndustryInvoice %
+		xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" %
+		xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" %
+		xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" %
+		xmlns:xs="http://www.w3.org/2001/XMLSchema" %
+		xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
 	}%
 	\int_incr:N \l_@@_xml_indent_int%
 	\_@@_write_xml:n {<rsm:ExchangedDocumentContext>}%
@@ -1299,11 +1349,9 @@
 % These are implemented as separate commands to be more flexible.
 % The wrapper command is called \cs[no-index]{@@_insert_TradeLineItem:nnnnnn} and is created to be used in your own invoicing package-
 %    \begin{macrocode}
-%\begingroup
-% start of xml content - need to ensure to comment all line endings except those written to xml
 \cctab_begin:N  \g_@@_xml_cctab%
 %    \end{macrocode}
-% \subsection{AssociatedDocumentLineDocument}
+% \begin{function}{\_@@_AssociatedDocumentLineDocument:n}
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_AssociatedDocumentLineDocument:n {%
 		<ram:AssociatedDocumentLineDocument>
@@ -1311,7 +1359,8 @@
 		</ram:AssociatedDocumentLineDocument>%
 }%
 %    \end{macrocode}
-% \subsubsection{SpecifiedTradeProduct}
+% \end{function}
+% \begin{function}{\_@@_SpecifiedTradeProduct:nn}
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedTradeProduct:nn {%
 		<ram:SpecifiedTradeProduct>
@@ -1322,7 +1371,8 @@
 		</ram:SpecifiedTradeProduct>%
 }%
 %    \end{macrocode}
-% \subsubsection{ProductTradePrice}
+% \end{function}
+% \begin{function}{\_@@_ProductTradePrice:nn}
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_ProductTradePrice:nn {%
 	<ram:\str_uppercase:n #1PriceProductTradePrice>
@@ -1330,7 +1380,8 @@
 	</ram:\str_uppercase:n #1PriceProductTradePrice>%
 }%
 %    \end{macrocode}
-% \subsubsection{SpecifiedLineTradeAgreement}
+% \end{function}
+% \begin{function}{\_@@_SpecifiedLineTradeAgreement:nn}
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeAgreement:nn {%
 					<ram:SpecifiedLineTradeAgreement>
@@ -1343,30 +1394,33 @@
 					</ram:SpecifiedLineTradeAgreement>
 }%
 %    \end{macrocode}
-%\subsubsection{SpecifiedLineTradeDelivery}%:nn <unit code > <number>
+% \end{function}
+%%%\subsubsection{SpecifiedLineTradeDelivery}%:nn <unit code > <number>
+% \begin{function}{\_@@_SpecifiedLineTradeDelivery:nn}
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
 	<ram:SpecifiedLineTradeDelivery>
 	% SPACE!
 	\_@@_xml_indent:<ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
-	</ram:SpecifiedLineTradeDelivery>%
+	</ram:SpecifiedLineTradeDelivery>
 }%
 %    \end{macrocode}
-% \subsubsection{SpecifiedLineTradeSettlement}
+% \end{function}
+% \begin{function}{\_@@_SpecifiedLineTradeSettlement:nnn,\_@@_SpecifiedLineTradeSettlement:Vnn}
 %    \begin{macrocode}
 \_@@_define_xml_content_macro:Nn  \_@@_SpecifiedLineTradeSettlement:nnn {%
 		<ram:SpecifiedLineTradeSettlement>
 		\_@@_xml_indent:<ram:ApplicableTradeTax>
 		%BT-151
-		\_@@_xml_indent:\_@@_xml_indent:<ram:TypeCode>VAT</ram:TypeCode>
+		\_@@_xml_indent:n {2}<ram:TypeCode>VAT</ram:TypeCode>
 		%BT-151
-		\_@@_xml_indent:\_@@_xml_indent:<ram:CategoryCode>#1</ram:CategoryCode>
+		\_@@_xml_indent:n {2} <ram:CategoryCode>#1</ram:CategoryCode>
 		%BT-152
-		\_@@_xml_indent:\_@@_xml_indent:<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
+		\_@@_xml_indent:n {2} <ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
 		\_@@_xml_indent:</ram:ApplicableTradeTax>
 		\_@@_xml_indent:<ram:SpecifiedTradeSettlementLineMonetarySummation>
 		% BT-131
-		\_@@_xml_indent:\_@@_xml_indent:<ram:LineTotalAmount>#3</ram:LineTotalAmount>
+		\_@@_xml_indent:n {2}<ram:LineTotalAmount>#3</ram:LineTotalAmount>
 		\_@@_xml_indent:</ram:SpecifiedTradeSettlementLineMonetarySummation>
 		</ram:SpecifiedLineTradeSettlement>%
 }%
@@ -1375,12 +1429,13 @@
 \cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnn {Vnn}
 %    \end{macrocode}
+% \end{function}
 % The exemption reason was placed wrong with the pre-CTAN release.
 % This was fixed in August 2024.
 % The old macro will be kept for a bit longer but will be removed soon.
 % Please update your own implementations accordingly.
 %    \begin{macrocode}
-\cs_new:Nn\_@@_SpecifiedLineTradeSettlement:nnnn {
+\cs_new:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {
 	\msg_warning:nnnn {zugferd} {macro-deprecated}
 		{ \_@@_SpecifiedLineTradeSettlement:nnnn }
 		{ \_@@_SpecifiedLineTradeSettlement:nnn }
@@ -1390,7 +1445,7 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{implementation}
-% \begin{macro}{ \_@@_insert_TradeLineItem:nnnnnn,\@@_write_TradeLineItem:nnnnnn}
+% \begin{function}{ \_@@_insert_TradeLineItem:nnnnnn,\@@_write_TradeLineItem:nnnnnn}
 % Writing an invoice item using the helper commands defined before, to the XML file.
 %    \begin{macrocode}
 \_@@_define_xml_writing_macro:Nn \_@@_insert_TradeLineItem:nnnnnn {
@@ -1408,18 +1463,17 @@
 	\_@@_write_xml:e {\_@@_ProductTradePrice:nn {net} {#4}}
 	\int_decr:N  \l_@@_xml_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeAgreement>}
-	\_@@_write_xml:e {\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}}
-	\_@@_write_xml:e {\_@@_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl  { \fp_use:N \l_@@_tax_rate_fp} {#6} }
+	\_@@_write_xml:e {%
+		\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}
+		\_@@_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl %
+			{ \fp_use:N \l_@@_tax_rate_fp} {#6}
+	}%
 	\int_decr:N  \l_@@_xml_indent_int
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
 %    \end{macrocode}
-% \end{macro}
+% \end{function}
 % \end{implementation}
-%
-% \begin{documentation}
-%
-% \end{documentation}
 % \begin{implementation}
 % ApplicableHeaderTradeAgreement
 %
@@ -1435,8 +1489,12 @@
 \tl_new:N  \g_@@_buyer_reference_tl
 \keys_define:nn {zugferd/buyer} {
 	reference .choice:,
-	reference / komavar .code:n = \tl_gset:Nf \g_@@_buyer_reference_tl {\scr@yourref@var},
-	reference / unknown .code:n = \tl_gset:Nn \g_@@_buyer_reference_tl {#1},
+	reference / komavar .code:n = {
+		\tl_gset:Nf \g_@@_buyer_reference_tl {\scr@yourref@var}
+	},
+	reference / unknown .code:n = {
+		\tl_gset:Nn \g_@@_buyer_reference_tl {#1}
+	},
 }
 
 \clist_map_inline:nn {seller,buyer} {
@@ -1445,9 +1503,15 @@
 		address .code:n = {
 			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
 			%TODO error if more than 2 lines or only 1
-			\keys_set:nx {zugferd / #1} {lineone=\seq_item:Nn \l_tmpa_seq {1},linetwo=\seq_item:Nn \l_tmpa_seq {2}}
+			\keys_set:nx {zugferd / #1} {
+				lineone=\seq_item:Nn \l_tmpa_seq {1},
+				linetwo=\seq_item:Nn \l_tmpa_seq {2}
+			}
 		},
-		unknown .code:n = \tl_if_blank:nF {##1} { \prop_gput:cVe {g_@@_#1_AddressData_prop} \l_keys_key_tl {\tl_trim_spaces:n {##1}}}
+		unknown .code:n = \tl_if_blank:nF {##1} {
+			\prop_gput:cVe {g_@@_#1_AddressData_prop}
+				\l_keys_key_tl {\tl_trim_spaces:n {##1}}
+		}
 	}
 }
 
@@ -1471,8 +1535,10 @@
 			}
 	}
 }
-
-%\_@@_PostalTradeAddress:nnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
+%    \end{macrocode}
+% \begin{function}{\_@@_PostalTradeAddress:nnnnnn,\_@@_DefinedTradeContact:N}
+% Wrappers to map the property list items to the writing macro.
+%    \begin{macrocode}
 \cs_new:Nn \_@@_PostalTradeAddress:N {%
 	\_@@_PostalTradeAddress:eeeeeee
 		{\prop_item:Nn #1 {postcode}}
@@ -1483,8 +1549,6 @@
 		{\prop_item:Nn #1 {email}}
 		{\prop_item:Nn #1 {vatid}}
 }%
-%
-% Contact data phone/email to a specific contact person
 \cs_new:Nn \_@@_DefinedTradeContact:N {%
 	\_@@_DefinedTradeContact:eeee
 		{\prop_item:Nn #1 {contact-name}}
@@ -1492,8 +1556,9 @@
 		{\prop_item:Nn #1 {contact-phone}}
 		{\prop_item:Nn #1 {contact-email}}
 }%
-%
-% start of xml content - need to ensure to comment all line endings except those written to xml
+%    \end{macrocode}
+% \end{function}
+%    \begin{macrocode}
 \cctab_begin:N  \g_@@_xml_cctab%
 %\_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
 \_@@_define_xml_content_macro:Nn \_@@_PostalTradeAddress:nnnnnnn {%
@@ -1531,19 +1596,17 @@
 	}%
 	\tl_if_blank:nF {#3} {%
 	\_@@_xml_indent:<ram:TelephoneUniversalCommunication>
-	\_@@_xml_indent:\_@@_xml_indent:<ram:CompleteNumber>#3</ram:CompleteNumber>
+	\_@@_xml_indent:n {2}<ram:CompleteNumber>#3</ram:CompleteNumber>
 	\_@@_xml_indent:</ram:TelephoneUniversalCommunication>
 	}%
 	\tl_if_blank:nF {#4} {%
 	\_@@_xml_indent:<ram:EmailURIUniversalCommunication>
-	\_@@_xml_indent:\_@@_xml_indent:<ram:URIID>#4</ram:URIID>
+	\_@@_xml_indent:n {2}<ram:URIID>#4</ram:URIID>
 	\_@@_xml_indent:</ram:EmailURIUniversalCommunication>
 	}%
 	</ram:DefinedTradeContact>%
 	}{\use_none:n}%
 }%
-%
-%
 %
 \_@@_define_xml_writing_macro:Nn \_@@_ApplicableHeaderTradeAgreement: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}%
@@ -1577,9 +1640,9 @@
 	\tl_if_blank:nF {#1} {
 	<ram:ApplicableHeaderTradeDelivery>
 		\_@@_xml_indent:<ram:ActualDeliverySupplyChainEvent>
-			\_@@_xml_indent:\_@@_xml_indent:<ram:OccurrenceDateTime>
-				\_@@_xml_indent:\_@@_xml_indent:\_@@_xml_indent:<udt:DateTimeString~format="102">#1</udt:DateTimeString>
-			\_@@_xml_indent:\_@@_xml_indent: </ram:OccurrenceDateTime>
+			\_@@_xml_indent:n {2}<ram:OccurrenceDateTime>
+				\_@@_xml_indent:n {3}<udt:DateTimeString~format="102">#1</udt:DateTimeString>
+			\_@@_xml_indent:n {2} </ram:OccurrenceDateTime>
 		\_@@_xml_indent:</ram:ActualDeliverySupplyChainEvent>
 	</ram:ApplicableHeaderTradeDelivery>%
 	}%
@@ -1794,7 +1857,7 @@
 % The mechanism is created similar to the one by \pkg{hyperref} and we also use some definitions from there to use those as a starting point.
 % To have a detailed list of the redefinitions, please has a look at the implementation of this command.
 %
-% There exists a hook to extend  or overwrite these definitions |zugferd/disable-macros|.
+% There exists a hook to extend or overwrite these definitions |zugferd/disable-macros|.
 % You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
 % \begin{examplecode}
 % \hook_gput_code:nnn {zugferd/disable-macros}
@@ -1808,7 +1871,7 @@
 % Most likely not all of these are required, but it's probably easier to take this as a reasonable choice instead of creating an own collection.
 % \iffalse
 %    \begin{macrocode}
-%% modified list taken from hyperref.sty  v7.01i
+%% modified list taken from hyperref.sty v7.01i
 %% Copyright
 %% 1995-2001 Sebastian Rahtz, with portions written by David Carlisle and Heiko Oberdiek
 %% 2001-2015 Heiko Oberdiek
