@@ -18,7 +18,7 @@ jobs:
       - name: Install TeX Live
         uses: zauguin/install-texlive@v3
         with:
-           package_file: tl_packages
+           package_file: .tl_packages
       - run: l3build ctan
       - run: bash validate_zugferd.sh build/doc/DEMO*.pdf
       - name: Upload build artifats
