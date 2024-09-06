@@ -201,8 +201,9 @@
 % \maketitle
 %
 % \begin{abstract}
-% Invoicing is getting more and more automated. Starting with public sector there already is a requirement to stick to the Faktur-X Standard.
-% First Invoices based on the Implementation here have been created back in 2021.
+% Invoicing is getting more and more automated.
+% Starting with public sector, within Germany there already is a requirement to stick to the Faktur-X Standard.
+% First Invoices based on this implementation here have been created back in 2021.
 % And this is now the trial to create a more universal and public package to support the current Version of ZUGFeRD and therefore also X-Rechung and Faktur-X.
 %
 % The fundamental idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the XML file for the attachment on the fly.
@@ -232,9 +233,18 @@
 % This includes a basic setup for a valid X-Rechnung currently matching Version 3.0.1 of the standard.
 % Details on the requirements can be found in the documentation at \cite{x-rechnung}.
 %
+% \subsection{Disclaimer concerning the zugferd-invoice Package}
 % The included package \pkg{zugferd-invoice} is an example project which might match your own invoicing structure.
-% It hold all the layout information which is static accross all the invoices.
+% It holds all the layout information which is static accross all the invoices.
+% This package is an example implementation and should not be used in production.
+% It is published as a part of the documentation.
+%
 % The idea is to create your own version of this package to use your own layout and internally load the zugferd package that way.
+% Of course it's possible to use a copy of this package within your personal setup.
+% But the syntax used in the DEMO file may change, so you have to ensure yourself to be compatible with updates.
+%
+% The interfaces for \pkg{zugferd} will hopefully stay the same.
+% At least changes will be announced and build compatible during a deprecation period.
 %
 % \end{documentation}
 % \iffalse
