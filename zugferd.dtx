@@ -137,7 +137,7 @@
 	title={Rec 20 – Codes for Units of Measure Used in International Trade},
 	url={https://unece.org/sites/default/files/2023-10/rec20_Rev17e-2021.xlsx},
 	urldate={2024-08-20},
-	note={Link directory to xlsx. All Revisions can be found in \cite{cl-recommendations}.}
+	note={Link directly to xlsx. \cite[see][for all revisions]{cl-recommendations}.}
 }
 @online{cl-recommendations,
 	author={United Nations Economic Commission for Europe (UNECE)},
@@ -176,6 +176,11 @@
 \end{filecontents}
 \addbibresource{zugferd.bib}
 \nocite{cl-recommendations}
+
+\usepackage{xspace}
+\newcommand*{\XML}{XML\xspace}
+\newcommand*{\XMLfile}{\XML file}
+
 \begin{document}
   \EnableDocumentation\DisableImplementation
   \DocInput{zugferd.dtx}
@@ -206,41 +211,41 @@
 % First Invoices based on this implementation here have been created back in 2021.
 % And this is now the trial to create a more universal and public package to support the current Version of ZUGFeRD and therefore also X-Rechung and Faktur-X.
 %
-% The fundamental idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the XML file for the attachment on the fly.
+% The fundamental idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the \XMLfile for the attachment on the fly.
 % To match typical setups there is a wrapper package which usually would also hold the personal Invoicing layout configuration.
 % \end{abstract}
 %
 % \section*{Sponsors \& Supporters}
-% Most of this package has been created within my free time and for my personal use. At start it was not a paid project at all.
+% Most of this package has been created within my free time and for my personal use. At start, it was not a paid project at all.
 % Since it is addressing business users it would be great if we could keep this actively maintained.
 % If you are able to support this either financially for the maintenance effort, a custom extension, I'd love to hear from you.
 %
-% Currently this project is financially supported by:
+% Tthis project was financially supported by:
 % \begin{itemize}
-% \item Pengutronix e.K., \url{https://pengutronix}\newline
+% \item Pengutronix e.K., \url{https://pengutronix.de}\newline
 % Special thanks to them, as they also sponsored the minimal portable \TeX{} Live setup.
 % \end{itemize}
 %
 % \tableofcontents
 %
-% \section{Quickstart}
-% First of all: This package is still in development and does not provide any validation.
+% \section{Quick start}
+% This package is still in development and does not provide any validation.
 % To ensure your invoice is created correctly you should also validate the output files.
-% There are tools like the \citeauthor{mustang-project} \cite{mustang-project} providing an easy to use interface for the valudation.
+% There are tools like the \citeauthor{mustang-project} \cite{mustang-project} providing an easy-to-use interface for the validation.
 % In the appendix I will add some notes on my setup and how I use it within pipelines.
 %
 % The Bundle provides an example file called \file{DEMO-rechnung-zugferd.tex}.
 % This includes a basic setup for a valid X-Rechnung currently matching Version 3.0.1 of the standard.
 % Details on the requirements can be found in the documentation at \cite{x-rechnung}.
 %
-% \subsection{Disclaimer concerning the zugferd-invoice Package}
+% \subsection{Disclaimer concerning the \pkg{zugferd-invoice} Package}
 % The included package \pkg{zugferd-invoice} is an example project which might match your own invoicing structure.
-% It holds all the layout information which is static accross all the invoices.
+% It holds all the layout information which is static across all the invoices.
 % This package is an example implementation and should not be used in production.
 % It is published as a part of the documentation.
 %
-% The idea is to create your own version of this package to use your own layout and internally load the zugferd package that way.
-% Of course it's possible to use a copy of this package within your personal setup.
+% The idea is to create your own version of this package to use your own layout and internally load the \pkg {zugferd} package that way.
+% Of course, it's possible to use a copy of this package within your personal setup.
 % But the syntax used in the DEMO file may change, so you have to ensure yourself to be compatible with updates.
 %
 % The interfaces for \pkg{zugferd} will hopefully stay the same.
@@ -271,29 +276,29 @@
 % \begin{documentation}
 % \section{Package Options}\label{sec:package-options}
 % The package supports a few fundamental settings.
-% These have to be set when the package is loaded as they are used internally to setup the scheme or activate the xml mechanism.
+% These have to be set when the package is loaded as they are used internally to setup the scheme or activate the \XML mechanism.
 %
 %  \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic}{xrechunng}
 % \option{format} selects the scheme to be used for the zugferd invoice.
 % Currently xrechnung3.0, xrechnung2.3 and the basic scheme are supported.
 %
-% The value |xrechnung| is set as an alias to |xrechnung3.0| and will always use the latest version supported by \pkg{zugferd}.
+% The value \option{xrechnung} is set as an alias to |xrechnung3.0| and will always use the latest version supported by \pkg{zugferd}.
 %
 % \DescribeKeyOption{zugferd=\meta{boolean}}{true}*
-% This option can be used to deactivate the xml embedding.
+% This option can be used to deactivate the \XML embedding.
 % It would also disable the the \option{write-xml} option.
-% This can be used to create a package which can use the same structure to also create invoices without XML attachment.
+% This can be used to create a package which can use the same structure to also create invoices without \XML attachment.
 % It can also be used with older \LaTeX{} releases than this package requires.
 % There will be a warning, but the visible part should be okay.
 %
 % \DescribeKeyOption{write-xml=\meta{boolean}}{true}*
-% Disable the xml output.
-% This can be used if you want to create the xml attachment with different software than this package.
+% Disable the \XML output.
+% This can be used if you want to create the \XML attachment with different software than this package.
 %
 % In that case you can either rename your file to \meta{\cs[no-index]{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
 %
 % \DescribeKeyOption{xml-file=\meta{filename}}{\cs[no-index]{jobname}_zugferd.xml}*
-% Adjust the file name of the created or loaded xml file.
+% Adjust the file name of the created or loaded \XMLfile.
 %
 % The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
 % \end{documentation}
@@ -351,7 +356,7 @@
 \ProcessKeyOptions[zugferd]
 %    \end{macrocode}
 % \end{optionenv}
-% \subsection{Preparation to write the xml file}
+% \subsection{Preparation to write the \file{.xml} file}
 % \begin{variable}{\_@@_xml_writer_iow}
 %    \begin{macrocode}
 \iow_new:N \_@@_xml_writer_iow
@@ -359,7 +364,7 @@
 % \end{variable}
 % To adjust the metadata it is necessary to use the \pkg{pdfmanagement-testphase} by \citeauthor{pdfmanagement-testphase}.
 % She had prepared some experiment files for the PDF attachment in the experiments of the repository.
-% We use these to embed the XML file.
+% We use these to embed the \XML file.
 %
 % This part prepares the XMP metadata according to the required scheme.
 %    \begin{macrocode}
@@ -429,7 +434,7 @@
 }
 %    \end{macrocode}
 % \end{implementation}
-%countr \begin{documentation}
+% \begin{documentation}
 % \section{User Commands}
 % The end user is only asked to set or access the data to be used by \pkg{zugferd}.
 %
@@ -461,7 +466,7 @@
 % \begin{syntax}
 % \cs[no-index]{InsertZugferdData}\oarg{special mode option}\marg{data-selection}
 % \end{syntax}
-% ZUGFerd uses the same data as the XML inside the PDF.
+% ZUGFerd uses the same data as the \XMLfile inside the PDF.
 % To simplify the reuse of data this command is designed to simplify the access to data fields, for example:
 %
 % \begin{examplecode}
@@ -560,15 +565,15 @@
 % \section{Commands for template authors}
 %
 % \DescribeEnv{ZUGFeRD}
-% To simplify the structure of the wrapper package, \pkg{zugferd} provides an environment for the XML mechanism and does the attachment to the PDF file (of course only, if enabled, see \autoref{sec:package-options}).
+% To simplify the structure of the wrapper package, \pkg{zugferd} provides an environment for the \XML mechanism and does the attachment to the PDF file (of course only, if enabled, see \autoref{sec:package-options}).
 % This provides the public interface bundling some steps together to reduce maintenance effort for any template maintainer using this package.
 % It also avoids the use of internal commands.
 %
-% This environment opens the xml file using \cs{startWritingZUGFeRDxml} and afterwards writes the XML header including the File and Scheme information, the ExchangedDocumentContext and information of the ExchangedDocument.
+% This environment opens the \XML file using \cs{startWritingZUGFeRDxml} and afterwards writes the \XML header including the File and Scheme information, the |ExchangedDocumentContext| and information of the |ExchangedDocument|.
 % Notes will also be written within this step.
 % Afterwards the environment should include all the mechanisms to write the invoice positions as well as summation.
 %
-% At the end of the environment the footer is inserted, before the output stream is closed using \cs{stopWritingZUGFeRDxml}. Which also attaches the XML to the PDF.
+% At the end of the environment the footer is inserted, before the output stream is closed using \cs{stopWritingZUGFeRDxml}. Which also attaches the \XMLfile to the PDF.
 %
 %
 % \end{documentation}
@@ -592,12 +597,12 @@
 % \end{implementation}
 % \begin{documentation}
 % \DescribeMacro{\startWritingZUGFeRDxml}
-% \cs[no-index]{startWritingZUGFeRDxml} is opening the output stream for the XML file.
+% \cs[no-index]{startWritingZUGFeRDxml} is opening the output stream for the \XMLfile.
 % It also adjusts the indentation.
 % If \option{write-xml} is false, this option only opens a group to achieve the same structure in both modes.
 %
 % \DescribeMacro{\stopWritingZUGFeRDxml}
-% Here the output stream is closed and the xml file is attached.
+% Here the output stream is closed and the \XMLfile is attached.
 % In case \option{write-xml} is not active, the attachment will be made if that's not deactivated separately using \option{zugferd}.
 % It also ends the group started by \cs[no-index]{startWritingZUGFeRDxml}.
 % \end{documentation}
@@ -645,9 +650,9 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
-% \subsection{Interfaces to write the XML contents}
+% \subsection{Interfaces to write the \XML contents}
 % \label{sec:xml-interfaces}
-% In case you are using |write-xml=true| (which is the default) You need to ensure to call the XML writing functions in the correct order.
+% In case you are using |write-xml=true| (which is the default) You need to ensure to call the \XML writing functions in the correct order.
 % For example after setting the global invoice data, like it's done in the example file.
 % The minimal example below would create a valid XML.
 % The interface commands are described afterwards.
@@ -663,8 +668,8 @@
 % \end{examplecode}
 %
 % \DescribeMacro{\zugferd_write_Item:nnnnnn}
-% This command is the interface to write invoice items to the XML file.
-% If the XML interface is enabled this is a reference to the internal command \cs{_@@_insert_TradeLineItem:nnnnnn}.
+% This command is the interface to write invoice items to the \XMLfile.
+% If the \XML interface is enabled this is a reference to the internal command \cs{_@@_insert_TradeLineItem:nnnnnn}.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Item:nnnnn}
 %    \marg{LineID}\marg{optional: item id (\enquote{SellerAssignedID})}\marg{item name}
@@ -687,8 +692,8 @@
 %
 % \DescribeMacro{\zugferd_startInvoiceSums:}
 % \DescribeMacro{\zugferd_stopInvoiceSums:}
-% There is some global data which is placed in the XML file after the invoice items have been placed.
-% Typically in \LaTeX{} this block is started after the items have been printed and will enclose the summation block.
+% There is some global data which is placed in the \XMLfile after the invoice items have been placed.
+% Typically, in \LaTeX{} this block is started after the items have been printed and will enclose the summation block.
 %
 % The starting includes the so called \enquote{ApplicableHeaderTradeAgreement} which contains the address data of both trade parties, see \autoref{sec:TradeParties}
 % And this will also print the \enquote{SpecifiedTradeSettlementPaymentMeans}, see \autoref{sec:PaymentMeans}.
@@ -699,7 +704,7 @@
 % \cs[no-index]{zugferd_write_TaxEntry:nnnn} \marg{tax category code} \marg{tax rate in \%} \marg{basis amount the tax applies to} \marg{tax amount}
 % \end{syntax}
 % The tax amount could of course be calculated internally.
-% In the example package this is done automatically, but the interface needs to support manual input as a lot of usecases for \LaTeX{} invoicing use it only to create the output file.
+% In the example package this is done automatically, but the interface needs to support manual input as a lot of use cases for \LaTeX{} invoicing use it only to create the output file.
 %
 % \DescribeMacro{\zugferd_write_Summation:nnnnnnnn}\par
 % \noindent The total values are all collected with a single macro.
@@ -709,22 +714,22 @@
 %   \marg{TaxBasisTotalAmount}\marg{TaxTotalAmount}
 %    \marg{GrandTotalAmount}\marg{TotalPrepaidAmount}\marg{DuePayableAmount}
 % \end{syntax}
-% This commnd is also writing the payment terms to the XML file.
-% Please be aware that it's in general not possible to calculate the tax values in here, as there might be mutiple tax rates applied.
+% This commnd is also writing the payment terms to the \XMLfile.
+% Please be aware that it's in general not possible to calculate the tax values in here, as there might be multiple tax rates applied.
 % This is only taking the sums over all tax entries.
 %
 % In case you are using some specials like category \enquote{E} the exemption reason will also be written at that point.
 % For that it is referencing the current value of the setting.
 %
-% \subsection{Commands to temporary disable/re-enable the xml writing interfaces}
+% \subsection{Commands to temporary disable/re-enable the \XML writing interfaces}
 % \DescribeMacro{\zugferd_enable_XML_interfaces:}
 % \DescribeMacro{\zugferd_disable_XML_interfaces:}
 % \par\bigskip
-% As there are a lot of usecases where code is processed multiple times, it's necessary to provide an interface to temporary disable the XML writing mechanism.
-% A lot of these situations appear within table structures whereas a local adjustmet would not be helpful.
+% As there are a lot of usecases where code is processed multiple times, it's necessary to provide an interface to temporary disable the \XML writing mechanism.
+% A lot of these situations appear within table structures whereas a local adjustment would not be helpful.
 % Therefore these adjustments have to be done globally.
 %
-% The example package \pkg{zugferd-invoice} provides an example for this to ensure the xml data is not written multiple times.
+% The example package \pkg{zugferd-invoice} provides an example for this to ensure the \XML data is not written multiple times.
 % The \env{ZUGFeRD} environment has been constructed that way, that it would automatically enable the interface when it begins and also when it ends, to write the data. So you should ensure this environment is only processed once or use the lower level interfaces directly.
 % \end{documentation}
 % \begin{implementation}
@@ -775,7 +780,7 @@
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}
-% These commands are used to toggle the writing of the xml file. This corresponds to the option \option{write-xml}.
+% These commands are used to toggle the writing of the \XMLfile. This corresponds to the option \option{write-xml}.
 %    \begin{macrocode}
 \bool_if:NTF \g_@@_write_xml_bool {
 	\cs_new:Nn \_@@_write_xml:n {
@@ -832,8 +837,8 @@
 %    \end{macrocode}
 % \end{function}
 % \subsection{XML indentation}
-% The indentation of the XML does not really matter.
-% For debugging it's a lot simpler to have it included and this also helped maintaining the structure of the code during development, so I decided to keep it.
+% The indentation of the \XML does not really matter.
+% For debugging, it's a lot simpler to have it included and this also helped to maintain the structure of the code during development, so I decided to keep it.
 % The indentation is created using s bunch of auxiliary commands and variables which are defined here.
 % \begin{variable}{\g_@@_indent_int}
 %    \begin{macrocode}
@@ -860,7 +865,7 @@
 }
 %    \end{macrocode}
 % \end{implementation}
-% Setting up the catcodes to simplify the xml indentation.
+% Setting up the catcodes to simplify the \XMLindentation.
 % \iffalse
 %    \begin{macrocode}
 \cctab_new:N \g_@@_xml_cctab
@@ -872,12 +877,12 @@
 %    \end{macrocode}
 % \fi
 % \begin{documentation}
-% \subsection{Escaping macros inside XML data}
+% \subsection{Escaping macros inside \XMLdata}
 % \label{sec:disable_macros}
 % \DescribeMacro{\zugferd_disable_macros:}
-% Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the XML output.
-% The mechanism is created similar to the one by \pkg{hyperref} and we also use some definitions from there to use those as a starting point.
-% To have a detailed list of the redefinitions, please has a look at the implementation of this command.
+% Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the \XML output.
+% The mechanism is created similar to the one by \pkg{hyperref}, and we also use some definitions from there to use those as a starting point.
+% To have a detailed list of the redefinition, please have a look at the implementation of this command.
 %
 % There exists a hook to extend or overwrite these definitions |zugferd/disable-macros|.
 % You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
@@ -911,7 +916,7 @@
     \let\$\textdollar
 %    \end{macrocode}
 % This only is a part of the list.
-% There is no real use of printing the whole list, it's inside zugferd.sty anyway.
+% There is no real use of printing the whole list, it's inside \file{zugferd.sty} anyway.
 % \comment
 %    \begin{macrocode}
     \let\%\textpercent
@@ -1086,7 +1091,7 @@
 % \begin{documentation}
 % \subsubsection{Invoice number/document ID}
 % \DescribeKeyOption*{id=komavar/\meta{document ID/invoice number}}{}
-% This has to be set. Leaving it empty will lead to an invalid xml file.
+% This has to be set. Leaving it empty will lead to an invalid \XMLfile.
 %
 % The value |komavar| would reference the data provided the KOMA-Script letter variabe |invoice|. In case you don't use \pkg{scrletter} you should not use this setting.
 % More information can be found in the documentation \cite{scrletter}.
@@ -1184,10 +1189,10 @@
 % \DescribeKeyOption{subject=komavar/\meta{Tokenlist}}{}
 % \DescribeKeyOption{fromaddress=komavar/\meta{Tokenlist}}{}
 % \DescribeKeyOption{add-note=\meta{Tokenlist}}{}*
-% The ZUGFeRD example files\cite{zugferd-download} use all visible data to add them to the XML as a note.
+% The ZUGFeRD example files\cite{zugferd-download} use all visible data to add them to the \XML as a note.
 % \option{subject} and \option{fromaddress} are used to support this.
-% The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the XML using the note element.
-% So these fields can be left out but in case they are not empty, they will also be written to the XML.
+% The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the \XML using the note element.
+% So these fields can be left out but in case they are not empty, they will also be written to the \XML.
 %
 % The \value{komavar} corresponds to the mechanism provided by \pkg{scrletter}.
 % It accesses the variable expands it to be used directly.
@@ -1228,7 +1233,7 @@
 % \begin{documentation}
 % \subsection{Trade parties}
 % \label{sec:TradeParties}
-% The XML scheme knows 6 different Trade Parties:
+% The \XML scheme knows 6 different Trade Parties:
 % \begin{itemize}
 % \item Seller
 % \item Buyer
@@ -1947,7 +1952,7 @@
 % \end{implementation}
 % \begin{implementation}
 % \begin{function}{ \_@@_insert_TradeLineItem:nnnnnn,\@@_write_TradeLineItem:nnnnnn}
-% Writing an invoice item using the helper commands defined before, to the XML file.
+% Writing an invoice item using the helper commands defined before, to the \XMLfile.
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_insert_TradeLineItem:nnnnnn {
 	\_@@_write_xml:n {<ram:IncludedSupplyChainTradeLineItem>}
