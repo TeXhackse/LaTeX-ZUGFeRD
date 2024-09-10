@@ -121,49 +121,49 @@ Don't change this file in any respect.
           <ram:CountryID>AT</ram:CountryID>
         </ram:PostalTradeAddress>
       </ram:ShipToTradeParty>
-        <ram:ActualDeliverySupplyChainEvent>
-          <ram:OccurrenceDateTime>
-            <udt:DateTimeString format="102">20160520</udt:DateTimeString>
-          </ram:OccurrenceDateTime>
-        </ram:ActualDeliverySupplyChainEvent>
-      </ram:ApplicableHeaderTradeDelivery>
-      <ram:ApplicableHeaderTradeSettlement>
-        <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
-        <ram:SpecifiedTradeSettlementPaymentMeans>
-          <ram:TypeCode>1</ram:TypeCode>
-          <ram:Information>Instrument not defined</ram:Information>
-        </ram:SpecifiedTradeSettlementPaymentMeans>
-        <ram:ApplicableTradeTax>
-          <ram:CalculatedAmount>0.00</ram:CalculatedAmount>
-          <ram:TypeCode>VAT</ram:TypeCode>
-          <ram:ExemptionReason>Intra-Community Supply</ram:ExemptionReason>
-          <ram:BasisAmount>270.00</ram:BasisAmount>
-          <ram:CategoryCode>K</ram:CategoryCode>
-          <ram:RateApplicablePercent>0</ram:RateApplicablePercent>
-        </ram:ApplicableTradeTax>
-        <ram:ApplicableTradeTax>
-          <ram:CalculatedAmount>12.12</ram:CalculatedAmount>
-          <ram:TypeCode>VAT</ram:TypeCode>
-          <ram:BasisAmount>63.78</ram:BasisAmount>
-          <ram:CategoryCode>S</ram:CategoryCode>
-          <ram:RateApplicablePercent>19</ram:RateApplicablePercent>
-        </ram:ApplicableTradeTax>
-        <ram:SpecifiedTradePaymentTerms>
-          <ram:DueDateDateTime>
-            <udt:DateTimeString format="102">20240118</udt:DateTimeString>
-          </ram:DueDateDateTime>
-        </ram:SpecifiedTradePaymentTerms>
-        <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-          <ram:LineTotalAmount>333.78</ram:LineTotalAmount>
-          <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
-          <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
-          <ram:TaxBasisTotalAmount>333.78</ram:TaxBasisTotalAmount>
-          <ram:TaxTotalAmount currencyID="EUR">12.12</ram:TaxTotalAmount>
-          <ram:GrandTotalAmount>345.90</ram:GrandTotalAmount>
-          <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
-          <ram:DuePayableAmount>345.90</ram:DuePayableAmount>
-        </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-      </ram:ApplicableHeaderTradeSettlement>
-    </rsm:SupplyChainTradeTransaction>
-  </rsm:CrossIndustryInvoice>
+      <ram:ActualDeliverySupplyChainEvent>
+        <ram:OccurrenceDateTime>
+          <udt:DateTimeString format="102">20160520</udt:DateTimeString>
+        </ram:OccurrenceDateTime>
+      </ram:ActualDeliverySupplyChainEvent>
+    </ram:ApplicableHeaderTradeDelivery>
+    <ram:ApplicableHeaderTradeSettlement>
+      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+      <ram:SpecifiedTradeSettlementPaymentMeans>
+        <ram:TypeCode>1</ram:TypeCode>
+        <ram:Information>Instrument not defined</ram:Information>
+      </ram:SpecifiedTradeSettlementPaymentMeans>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>0.00</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:ExemptionReason>Intra-Community Supply</ram:ExemptionReason>
+        <ram:BasisAmount>270.00</ram:BasisAmount>
+        <ram:CategoryCode>K</ram:CategoryCode>
+        <ram:RateApplicablePercent>0</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>12.12</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:BasisAmount>63.78</ram:BasisAmount>
+        <ram:CategoryCode>S</ram:CategoryCode>
+        <ram:RateApplicablePercent>19</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:DueDateDateTime>
+          <udt:DateTimeString format="102">20240118</udt:DateTimeString>
+        </ram:DueDateDateTime>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        <ram:LineTotalAmount>333.78</ram:LineTotalAmount>
+        <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
+        <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
+        <ram:TaxBasisTotalAmount>333.78</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">12.12</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>345.90</ram:GrandTotalAmount>
+        <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
+        <ram:DuePayableAmount>345.90</ram:DuePayableAmount>
+      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+    </ram:ApplicableHeaderTradeSettlement>
+  </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>
 -------- eea_zugferd.xml (end) -----------

@@ -1491,15 +1491,13 @@
 			\_@@_write_xml:n {<ram:ShipToTradeParty>}%
 			\int_gincr:N \g_@@_indent_int%
 			\_@@_write_xml:e {%
-			\_@@_PostalTradeAddress_short:N \g_@@_shipto_AddressData_prop%
+				\_@@_PostalTradeAddress_short:N \g_@@_shipto_AddressData_prop%
 			}%
 			\int_gdecr:N \g_@@_indent_int%
 			\_@@_write_xml:n {</ram:ShipToTradeParty>}%
-			}%
 			\int_gdecr:N \g_@@_indent_int%
 		}%
 		\tl_if_blank:nF {#1} {%
-		\int_gincr:N \g_@@_indent_int%
 			\_@@_write_xml:n {%
 				\_@@_indent: <ram:ActualDeliverySupplyChainEvent>
 					\_@@_indent:n {2} <ram:OccurrenceDateTime>
