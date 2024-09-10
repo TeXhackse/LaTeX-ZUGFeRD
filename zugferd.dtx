@@ -1236,7 +1236,7 @@
 % \item SellerTaxRepresentative
 % \end{itemize}
 %
-% \noindent Currently \pkg{zugferd} supports only Buyer and Seller but can be easily extended to support the others as well.
+% \noindent Currently \pkg{zugferd} supports only Buyer, Seller and ShipTo, but can be easily extended to support the others as well.
 % The data for each party follows the same structure, except the \enquote{BuyerReference} which is described later in this section.
 %
 % Some of the data is optional for specific parties.
@@ -1255,7 +1255,7 @@
 %	seller/country = {DE},
 % }
 % \end{examplecode}
-% \noindent All this data is saved within a property list, which is internally called \cs[no-index]{g_@@_\meta{seller/buyer}_prop}.
+% \noindent All this data is saved within a property list, which is internally called \cs[no-index]{g_@@_\meta{seller/buyer/shipto}_prop}.
 % By default this property list is empty.
 % The users themselves have to ensure to add the required data.
 %
@@ -1268,6 +1268,7 @@
 %
 % \DescribeKeyOption*{\meta{party}/address=\meta{address}}{}*
 % As shown in the example \option{address} can use two lines separted by |\\|.
+% It's possble to set all fields for all trade contacts, but e.\,g. for the |shipto|-party email and vatid will not be used in the \XML.
 %
 % Alternatively it's also possible to use \option{\meta{party}/lineone} and \option{\meta{party/linetwo}} separately.
 % This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using \cs[no-index]{zugferd_disable_macros:}.
@@ -1317,10 +1318,10 @@
 % \end{itemize}
 %
 % \begin{optionenv}{\meta{party}/address}
-% \begin{variable}{\g_@@_seller_AddressData_prop,\g_@@_buyer_AddressData_prop}
+% \begin{variable}{\g_@@_seller_AddressData_prop,\g_@@_buyer_AddressData_prop,\g_@@_shipto_AddressData_prop}
 % Seller and Buyer are specified the same way.
 %    \begin{macrocode}
-\clist_map_inline:nn {seller,buyer} {
+\clist_map_inline:nn {seller,buyer,shipto} {
 	\prop_new:c {g_@@_#1_AddressData_prop}
 	\keys_define:nn {zugferd / #1} {
 		address .code:n = {
@@ -1361,6 +1362,16 @@
 % \begin{function}{\_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
 % Wrappers to map the property list items to the writing macro.
 %    \begin{macrocode}
+\cs_new:Nn \_@@_PostalTradeAddress_short:N {
+	\exp_args:Ne \tl_if_blank:nF {\prop_item:Nn #1 {name}}
+	{<ram:Name>\prop_item:Nn #1 {name}</ram:Name>\iow_newline:\_@@_xml_auto_indent:}
+	\_@@_PostalTradeAddress:eeeee
+		{\prop_item:Nn #1 {postcode}}
+		{\prop_item:Nn #1 {lineone}}
+		{\prop_item:Nn #1 {linetwo}}
+		{\prop_item:Nn #1 {city}}
+		{\prop_item:Nn #1 {country}}
+}
 \cs_new:Nn \_@@_PostalTradeAddress:N {%
 	\_@@_PostalTradeAddress:eeeeeee
 		{\prop_item:Nn #1 {postcode}}
@@ -1387,18 +1398,21 @@
 % \_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Ort Ländercode Email UID
 % \fi
 %    \begin{macrocode}
-\_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
+\_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnn {%
         <ram:PostalTradeAddress>
          \_@@_indent: <ram:PostcodeCode>#1</ram:PostcodeCode>
-         \tl_if_empty:nF {#2} {%
-           \_@@_indent: <ram:LineOne>#2</ram:LineOne>
+         \tl_if_blank:nF {#2} {%
+         \_@@_indent: <ram:LineOne>#2</ram:LineOne>
          }%
-         \tl_if_empty:nF {#3} {%
+         \tl_if_blank:nF {#3} {%
           \_@@_indent: <ram:LineTwo>#3</ram:LineTwo>
          }%
          \_@@_indent: <ram:CityName>#4</ram:CityName>
          \_@@_indent: <ram:CountryID>#5</ram:CountryID>
         </ram:PostalTradeAddress>%
+}
+\_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
+       \_@@_PostalTradeAddress:nnnnn {#1} {#2} {#3} {#4} {#5}
         \tl_if_empty:nF {#6} {%
 		<ram:URIUniversalCommunication>
 		\_@@_indent: <ram:URIID~schemeID="EM">#6</ram:URIID>
@@ -1463,29 +1477,45 @@
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:BuyerTradeParty>}%
 	\int_gdecr:N \g_@@_indent_int%
-	\_@@_write_xml:e {%
-		</ram:ApplicableHeaderTradeAgreement>
-		\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl%
-	}%
+	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}
+	\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl%
 }%
 %
 %
 % delivery date
 \_@@_define_xml_content:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
-	\tl_if_blank:nF {#1} {%
-	<ram:ApplicableHeaderTradeDelivery>
-		\_@@_indent: <ram:ActualDeliverySupplyChainEvent>
-			\_@@_indent:n {2} <ram:OccurrenceDateTime>
-				\_@@_indent:n {3}<udt:DateTimeString~format="102">#1</udt:DateTimeString>
-			\_@@_indent:n {2} </ram:OccurrenceDateTime>
-		\_@@_indent: </ram:ActualDeliverySupplyChainEvent>
-	</ram:ApplicableHeaderTradeDelivery>%
+	\bool_lazy_and:nnF {\prop_if_empty_p:N \g_@@_shipto_AddressData_prop} {\tl_if_blank_p:n {#1}} {
+		\_@@_write_xml:n {<ram:ApplicableHeaderTradeDelivery>}%
+		\prop_if_empty:NF \g_@@_shipto_AddressData_prop {%
+			\int_gincr:N \g_@@_indent_int%
+			\_@@_write_xml:n {<ram:ShipToTradeParty>}%
+			\int_gincr:N \g_@@_indent_int%
+			\_@@_write_xml:e {%
+			\_@@_PostalTradeAddress_short:N \g_@@_shipto_AddressData_prop%
+			}%
+			\int_gdecr:N \g_@@_indent_int%
+			\_@@_write_xml:n {</ram:ShipToTradeParty>}%
+			}%
+			\int_gdecr:N \g_@@_indent_int%
+		}%
+		\tl_if_blank:nF {#1} {%
+		\int_gincr:N \g_@@_indent_int%
+			\_@@_write_xml:n {%
+				\_@@_indent: <ram:ActualDeliverySupplyChainEvent>
+					\_@@_indent:n {2} <ram:OccurrenceDateTime>
+						\_@@_indent:n {3}<udt:DateTimeString~format="102">#1</udt:DateTimeString>
+					\_@@_indent:n {2} </ram:OccurrenceDateTime>
+				\_@@_indent: </ram:ActualDeliverySupplyChainEvent>%
+			}%
+		}%
+		\_@@_write_xml:n {</ram:ApplicableHeaderTradeDelivery>}%
 	}%
 }%
 %
 \cctab_end:
-\cs_generate_variant:Nn \_@@_DefinedTradeContact:nnnn {eeee}%
-\cs_generate_variant:Nn \_@@_PostalTradeAddress:nnnnnnn {eeeeeee}%
+\cs_generate_variant:Nn \_@@_DefinedTradeContact:nnnn {eeee}
+\cs_generate_variant:Nn \_@@_PostalTradeAddress:nnnnn {eeeee}%
+\cs_generate_variant:Nn \_@@_PostalTradeAddress:nnnnnnn {eeeeeee}
 \cs_generate_variant:Nn \_@@_ApplicableHeaderTradeDelivery:n {V}
 %    \end{macrocode}
 % \end{implementation}
