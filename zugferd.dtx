@@ -2042,7 +2042,7 @@
 		\tl_if_blank:nF {#1} {%
 			<ram:Description>#1</ram:Description>%
 		}%
-		\tl_if_blank:nF {#2} {
+		\tl_if_blank:nF {#2} {%
 			<ram:DueDateDateTime>
 			\_@@_indent: <udt:DateTimeString~format="102">#2</udt:DateTimeString>
 			</ram:DueDateDateTime>%
@@ -2060,7 +2060,7 @@
 		\int_gincr:N \g_@@_indent_int%
 		\_@@_write_xml:e {%
 			<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>
-			\_@@_write_inline:ne {ram:Information} {\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl}
+			\_@@_write_inline:ne {ram:Information} {\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl}%
 			\tl_if_blank:nF {#1#2} {%
 				<ram:PayeePartyCreditorFinancialAccount>
 				\_@@_write_inline_i:nn {ram:IBANID} {#2}
