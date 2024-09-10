@@ -259,7 +259,25 @@
 %    \end{macrocode}
 % Workaround to replace module name without having a visible <@@=zugferd> in the documentation
 % \fi
-% \UseName{tl_gset:cn} {g__codedoc_module_name_tl} {zugferd}
+%</package>
+% \ExplSyntaxOn
+% \tl_gset:Nn \g__codedoc_module_name_tl {zugferd}
+% \ExplSyntaxOff
+% \iffalse
+%<*!package>
+% \fi
+\ExplSyntaxOn
+\tl_gset:Nn \g__codedoc_module_name_tl {zugferd}
+\newcommand*{\accessTaxExemptionReason}[1]{
+\keys_set:nn {zugferd / tax } {category=#1}
+Exemption~reason:~\tl_if_empty:NTF \l__zugferd_tax_exemption_reason_tl {\meta{empty}} {\l__zugferd_tax_exemption_reason_tl};~
+Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta{empty}} {\l__zugferd_tax_exemption_code_tl}
+}
+\ExplSyntaxOff
+% \iffalse
+%</!package>
+%<*package>
+% \fi
 % \begin{implementation}
 % \section{Implementation}
 % \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_conformance_level_str}
@@ -301,9 +319,15 @@
 % Adjust the file name of the created or loaded \XMLfile.
 %
 % The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
+%
+% \DescribeKeyOption{auto-exemption=\meta{boolean}}{true}
+% \pkg{zugferd} tries to automatically add an exemption-reason for the most common VAT categories.
+% In case a more specific reason is required this setting can be disabled and everything should be configured manually.
+% See \autoref{sec:tax-category} for more explanation of this feature and the categories this applies to.
+%
 % \end{documentation}
 % \begin{implementation}
-% \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
+% \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file,auto-exemption}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
@@ -350,6 +374,10 @@
 	xml-file .tl_gset:N = \g_@@_xml_file_tl,
 	xml-file .initial:n = \jobname _zugferd.xml,
 	xml-file .usage:n = load,
+	auto-exemption .bool_gset:N = \g_@@_auto_exemption_bool,
+	auto-exemption .initial:n = true,
+	auto-exemption .default:n = true,
+	auto-exemption .usage:n =load,
 }
 \char_set_catcode_parameter:N \#%
 
@@ -1701,6 +1729,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Tax category and rate}
+% \label{sec:tax-category}
 % \DescribeKeyOption{tax/category=\meta{category code/alias}}{standard}*
 % The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g. at][]{spec-xrechnung}.
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
@@ -1712,12 +1741,7 @@
 % \item[standard] Standard rate and reduced rate item, |category=S|
 % \item[zero] Zero rated sale,  |category=Z|
 % \item[exempt] Exempted from VAT. This requires a reason via \option{exemption-reason},|category=E|
-% \DescribeKeyOption*{tax/exemption-reason=\meta{Text}}{}*
-% \DescribeKeyOption*{tax/exemption-reason-code=\meta{exemption reason code}}{}*
-% Add Reasons for a tax exempt, as required by |category=E|.
-% This can either be added using a text (|exemption-reason|) or a predefined code (|exemption-reason-code|).
-% The codes are listed at \cite{VAT-exemption-codes}.
-% \item[reverse-charge] Reverse Charge
+% \item[reverse-charge] Reverse Charge, |category=AE|
 % \item[intra-community\\\textnormal{or} EEA] Intra-Community Supply, |category=K|
 % \item[export] Free export item, tax not charged, |category=G|
 % \item[O] Services outside scope of tax
@@ -1725,17 +1749,64 @@
 % \item[ceuta\\\textnormal{or} melilla] Ceuta and Melilla, |category=M|
 % \end{valuelist}
 %
-% \DescribeKeyOption{tax/rate=\meta{floating point}}{19}*
-% The value given will be used for tax calculation.
-% By default it's configured to |19| to match the German standard VAT rate.
+% \end{documentation}
+% \begin{implementation}
+% \optionenv{category, exemption-reason,rate}
+%    \begin{macrocode}
+\keys_define:nn { zugferd / tax } {
+	 category .choices:nn = {Z,E,L,M} {
+		\tl_set_eq:NN \l_@@_tax_category_code_tl \l_keys_choice_tl
+	},
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption*{tax/exemption-reason=\meta{Text}}{}*
+% \DescribeKeyOption*{tax/exemption-reason-code=\meta{exemption reason code}}{}*
+% Add Reasons for a tax exempt, as required by |category=E,K,AE,G,O|.
+% This can either be added using a text (|exemption-reason|) or a predefined code (|exemption-reason-code|).
+% The codes are listed at \cite{VAT-exemption-codes}.
+%
+% In most common cases \pkg{zugferd} tries to automatically match them if the package option \option{auto-exemption} is enabled, which is the default.
+% In that case the following settings would apply:
+%
+% \begin{valuelist}
+% \item[S] \accessTaxExemptionReason{S}
+% \item[Z]  Not configured.
+% \item[E] Not configured, as there are too many options.
+% \item[AE] \accessTaxExemptionReason{AE}
+% \item[K] \accessTaxExemptionReason{K}
+% \item[G] \accessTaxExemptionReason{G}
+% \item[O] \accessTaxExemptionReason{O}
+% \end{valuelist}
 %
 % \end{documentation}
 % \begin{implementation}
-% \begin{optionenv}{category, exemption-reason,rate}
 %    \begin{macrocode}
-\keys_define:nn { zugferd / tax } {
-	 category .choices:nn = {S,Z,E,AE,K,G,O,L,M} {
-		\tl_set_eq:NN \l_@@_tax_category_code_tl \l_keys_choice_tl
+	exemption-reason .tl_set:N = \l_@@_tax_exemption_reason_tl,
+	exemption-reason  .initial:V = \c_empty_tl,
+	exemption-reason .usage:n = general,
+	exemption-reason-code .tl_set:N  = \l_@@_tax_exemption_code_tl,
+	exemption-reason-code  .initial:V = \c_empty_tl,
+	exemption-reason .usage:n = general,
+	category / S .code:n = {
+		\tl_set:Nn \l_@@_tax_category_code_tl  {S}
+		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax} {exemption-reason=,exemption-reason-code=}}
+	},
+	category / K .code:n = {
+		\tl_set:Nn \l_@@_tax_category_code_tl  {K}
+		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax} {exemption-reason= Intra-Community~Supply, exemption-reason-code={vatex-eu-ic}}}
+	},
+	category / AE .code:n = {
+		\tl_set:Nn \l_@@_tax_category_code_tl  {AE}
+		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax}{exemption-reason=Reverse~Charge,exemption-reason-code={vatex-eu-ae}}}
+	},
+	category / G .code:n = {
+		\tl_set:Nn \l_@@_tax_category_code_tl  {G}
+		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tag}{exemption-reason=Export~outside~the~EU,exemption-reason-code={vatex-eu-g}}}
+	},
+	category / O .code:n = {
+		\tl_set:Nn \l_@@_tax_category_code_tl  {O}
+		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tag}{exemption-reason=No~subject~to~VAT,exemption-reason-code={vatex-eu-o}}}
 	},
 	standard .meta:n = {category=S},
 	zero .meta:n = {category=Z},
@@ -1755,12 +1826,16 @@
 	},
 	category .initial:n =  S,
 	category .usage:n = general,
-	exemption-reason .tl_set:N = \l_@@_tax_exemption_reason_tl,
-	exemption-reason  .initial:V = \c_empty_tl,
-	exemption-reason .usage:n = general,
-	exemption-reason-code .tl_set:N  = \l_@@_tax_exemption_code_tl,
-	exemption-reason-code  .initial:V = \c_empty_tl,
-	exemption-reason .usage:n = general,
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{tax/rate=\meta{floating point}}{19}*
+% The value given will be used for tax calculation.
+% By default it's configured to |19| to match the German standard VAT rate.
+%
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
 	rate .fp_set:N =  \l_@@_tax_rate_fp,
 	rate .initial:n = 19,
 	rate .usage:n = general,
@@ -1774,7 +1849,7 @@
 	and~the~corresponding~code~list.
 }
 %    \end{macrocode}
-% \end{optionenv}
+% \endoptionenv
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_write_inline:nn {
 	\tl_if_blank:nF {#2} {
@@ -1860,7 +1935,7 @@
 	 \int_gdecr:N \g_@@_indent_int%
 	 \_@@_write_xml:n {</rsm:SupplyChainTradeTransaction>}%
 	 \int_gdecr:N \g_@@_indent_int%
-	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%
+	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%auto-exemption
  }%
 \cctab_end:
 %    \end{macrocode}
