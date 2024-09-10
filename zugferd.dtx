@@ -1802,11 +1802,11 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 	},
 	category / G .code:n = {
 		\tl_set:Nn \l_@@_tax_category_code_tl  {G}
-		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tag}{exemption-reason=Export~outside~the~EU,exemption-reason-code={vatex-eu-g}}}
+		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax}{exemption-reason=Export~outside~the~EU,exemption-reason-code={vatex-eu-g}}}
 	},
 	category / O .code:n = {
 		\tl_set:Nn \l_@@_tax_category_code_tl  {O}
-		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tag}{exemption-reason=No~subject~to~VAT,exemption-reason-code={vatex-eu-o}}}
+		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax}{exemption-reason=No~subject~to~VAT,exemption-reason-code={vatex-eu-o}}}
 	},
 	standard .meta:n = {category=S},
 	zero .meta:n = {category=Z},
