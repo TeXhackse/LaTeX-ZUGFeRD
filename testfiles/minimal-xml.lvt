@@ -44,8 +44,9 @@
 		{75.90} %DuePayableAmount = GrandTotalAmount - TotalPrepaidAmount
 	\zugferd_stopInvoiceSums:
  \end{ZUGFeRD}
-\START
-\SHOWFILE{\jobname _zugferd.xml}
-\END
-\ExplSyntaxOff
-\end{document}
+\char_set_catcode:nn {\endlinechar}{12}%
+\ExplSyntaxOff%
+\START%
+\SHOWFILE{\jobname _zugferd.xml}%
+\END%
+\end{document}%

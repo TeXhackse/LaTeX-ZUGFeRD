@@ -784,13 +784,7 @@
 %    \begin{macrocode}
 \bool_if:NTF \g_@@_write_xml_bool {
 	\cs_new:Nn \_@@_write_xml:n {
-		\tl_if_head_eq_charcode:nNTF {#1} \^^M {
-			\iow_now:Nn \_@@_xml_writer_iow {#1}
-		} {
-			\iow_now:Ne \_@@_xml_writer_iow {
-				\_@@_xml_auto_indent: \exp_not:n {#1}
-			}
-		}
+		\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: #1}
 	}
 	\cs_new_eq:NN \_@@_define_xml_writer:Nn \cs_new:Nn
 	\cs_new_eq:NN \_@@_define_xml_content:Nn \cs_new:Nn
