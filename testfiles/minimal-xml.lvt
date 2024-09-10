@@ -30,7 +30,7 @@
 \begin{document}
 \ExplSyntaxOn
  	\begin{ZUGFeRD}
-	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
+	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.89} {2} {63.78}
 	\zugferd_startInvoiceSums:
 	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
 	\zugferd_write_Summation:nnnnnnnn
@@ -44,9 +44,10 @@
 		{75.90} %DuePayableAmount = GrandTotalAmount - TotalPrepaidAmount
 	\zugferd_stopInvoiceSums:
  \end{ZUGFeRD}
-\char_set_catcode:nn {\endlinechar}{12}%
-\ExplSyntaxOff%
+\endlinechar=10
+\char_set_catcode:nn {10}{12}%
 \START%
 \SHOWFILE{\jobname _zugferd.xml}%
 \END%
+\ExplSyntaxOff%
 \end{document}%
