@@ -108,6 +108,41 @@
 		\end{tabular}
 	}
 }
+
+\newcommand*{\accessTaxExemptionReason}[1]{
+	\keys_set:nn {zugferd / tax } {category=#1}
+	Exemption~reason:~\tl_if_empty:NTF \l__zugferd_tax_exemption_reason_tl {\meta{empty}} {\l__zugferd_tax_exemption_reason_tl};~
+	Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta{empty}} {\l__zugferd_tax_exemption_code_tl}
+}
+% to support small layout adjustments for the texdoc version
+\newcommand*{\IfOnlyDocumentation}[1]{
+	\bool_if_exist:NT \g__codedoc_typeset_implementation_bool {
+		\bool_if:NF \g__codedoc_typeset_implementation_bool {#1}
+	}
+}
+%add a subtitle
+\def\@maketitle{%
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+  \let \footnote \thanks
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\large \@subtitle \par}%
+        \vskip 1em%
+    {\large
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 1em%
+    {\large \@date}%
+  \end{center}%
+  \par
+  \vskip 1.5em}
+\newcommand{\subtitle}[1]{\def\@subtitle{#1}}
+\subtitle{}
 \makeatother
 \ExplSyntaxOff
 
@@ -207,6 +242,7 @@
 % \begin{documentation}
 % \title{The \textsf{zugferd} package\thanks{This document
 %   corresponds to \textsf{zugferd}~\fileversion, dated \filedate.}}
+% \subtitle{Creating electronic and hybrid invoices using \LaTeX}
 % \author{Marei Peischl \\ \texttt{marei@peitex.de}}
 %
 % \maketitle
@@ -217,10 +253,11 @@
 % First Invoices based on this implementation here have been created back in 2021.
 % And this is now the trial to create a more universal and public package to support the current Version of ZUGFeRD and therefore also X-Rechung and Faktur-X.
 %
-% The fundamental idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the \XMLfile for the attachment on the fly.
+% \indent The fundamental idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the \XMLfile for the attachment on the fly.
 % To match typical setups there is a wrapper package which usually would also hold the personal Invoicing layout configuration.
 % \end{abstract}
 %
+% \IfOnlyDocumentation{\vfill}
 % \section*{Sponsors \& Supporters}
 % Most of this package has been created within my free time and for my personal use. At start, it was not a paid project at all.
 % Since it is addressing business users it would be great if we could keep this actively maintained.
@@ -232,7 +269,11 @@
 % Special thanks to them, as they also sponsored the minimal portable \TeX{} Live setup.
 % \end{itemize}
 %
+% \IfOnlyDocumentation{\clearpage}
+%
 % \tableofcontents
+%
+% \IfOnlyDocumentation{\clearpage}
 %
 % \section{Quick start}
 % This package is still in development and does not provide any validation.
@@ -272,14 +313,11 @@
 % \iffalse
 %<*!package>
 % \fi
+% \begin{documentation}
 \ExplSyntaxOn
 \tl_gset:Nn \g__codedoc_module_name_tl {zugferd}
-\newcommand*{\accessTaxExemptionReason}[1]{
-	\keys_set:nn {zugferd / tax } {category=#1}
-	Exemption~reason:~\tl_if_empty:NTF \l__zugferd_tax_exemption_reason_tl {\meta{empty}} {\l__zugferd_tax_exemption_reason_tl};~
-	Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta{empty}} {\l__zugferd_tax_exemption_code_tl}
-}
 \ExplSyntaxOff
+% \end{documentation}
 % \iffalse
 %</!package>
 %<*package>
@@ -1811,23 +1849,35 @@
 	exemption-reason-code  .initial:V = \c_empty_tl,
 	exemption-reason .usage:n = general,
 %    \end{macrocode}
-% \changes{0.7}{2024/00/00}{Added exemption-reason-auto key for pre-configured exemption-reasons.
+% \changes{0.7}{2024/00/00}{Added exemption-reason-auto key for pre-configured exemption-reasons.}
 %    \begin{macrocode}
 	exemption-reason-auto .choice:,
 	exemption-reason-auto / S .code:n = {
 		\keys_set:nn {zugferd/tax} {exemption-reason=,exemption-reason-code=}
 	},
 	exemption-reason-auto / K .code:n = {
-		\keys_set:nn {zugferd/tax} {exemption-reason= Intra-Community~Supply, exemption-reason-code={vatex-eu-ic}}
+		\keys_set:nn {zugferd/tax} {
+			exemption-reason= Intra-Community~Supply,
+			exemption-reason-code={vatex-eu-ic}
+		}
 	},
 	exemption-reason-auto / AE .code:n = {
-		\keys_set:nn {zugferd/tax}{exemption-reason=Reverse~Charge,exemption-reason-code={vatex-eu-ae}}
+		\keys_set:nn {zugferd/tax}{
+			exemption-reason=Reverse~Charge,
+			exemption-reason-code={vatex-eu-ae}
+		}
 	},
 	exemption-reason-auto / G .code:n = {
-		\keys_set:nn {zugferd/tax}{exemption-reason=Export~outside~the~EU,exemption-reason-code={vatex-eu-g}}
+		\keys_set:nn {zugferd/tax}{
+			exemption-reason=Export~outside~the~EU,
+			exemption-reason-code={vatex-eu-g}
+		}
 	},
 	exemption-reason-auto / O .code:n = {
-		\keys_set:nn {zugferd/tax}{exemption-reason=No~subject~to~VAT,exemption-reason-code={vatex-eu-o}}
+		\keys_set:nn {zugferd/tax}{
+			exemption-reason=No~subject~to~VAT,
+			exemption-reason-code={vatex-eu-o}
+		}
 	},
 	standard .meta:n = {category=S},
 	zero .meta:n = {category=Z},
