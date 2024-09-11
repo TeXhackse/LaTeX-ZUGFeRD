@@ -25,6 +25,7 @@ function update_tag(file, content, tagname, tagdate)
 		content = string.gsub(content,
 			"(\\usepackage{"..module.."}%[)%d%d%d%d%-%d%d%-%d%d%]",
 			"%1"..tagdate.."]")
+		content = string.gsub(content,"\\changes{v"..tagname.."}{%d%d%d%d/%d%d/%d%d", "\\changes{v"..tagname.."}{"..tagdate)
 	end
 	return content
 end

@@ -91,9 +91,7 @@
 	\endhead
 	\bottomrule[\lightrulewidth]\multicolumn{5}{@{}p{\textwidth}@{}}{\strut\hspace*{\fill}\footnotesize Fortsetzung auf der nächsten Seite}\endfoot
 	\bottomrule\endlastfoot
-%    \end{macrocode}
 % Only write xml for the first run of the tabular.
-%    \begin{macrocode}
 	\fp_compare:nNnF {\g__ptxcd_invoice_sum_fp} = {\c_zero_dim} {
 		\fp_gzero:N \g__ptxcd_invoice_sum_fp
 		\zugferd_disable_XML_interfaces:

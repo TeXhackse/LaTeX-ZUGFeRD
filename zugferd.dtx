@@ -16,14 +16,14 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2024-09-05 v0.6 ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2024-09-11 v0.8 ZUGFerd Invoice and Faktur-X]
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2024-09-05}{0.6}{ZUGFerd Invoice and Faktur-X}
+%<package>\ProvidesExplPackage{zugferd}{2024-09-11}{0.8}{ZUGFerd Invoice and Faktur-X}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
-\usepackage{zugferd}[2024-09-05]
+\usepackage{zugferd}[2024-09-11]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -228,13 +228,13 @@
 %\DisableDocumentation\EnableImplementation
 %\DocInputAgain
 \PrintChanges
-\PrintIndex
 \printbibliography
+\PrintIndex
 \end{document}
 %</driver>
 % \fi
 %
-% \changes{v1.0}{2024/01/30}{Initial public version}
+% \changes{v0.8}{2024-09-11}{First CTAN version}
 %
 % \GetFileInfo{zugferd.dtx}
 %
@@ -372,7 +372,7 @@
 % \end{documentation}
 % \begin{implementation}
 % \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file,auto-exemption}
-% \changes{0.7}{2024/00/00}{Added auto-exemption option}
+% \changes{v0.7}{2024-09-10}{Added auto-exemption option}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
@@ -724,6 +724,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsection{Interfaces to write the \XML contents}
+% \changes{v0.6}{2024-09-05}{Provide public interfaces and first version of the documentation.}
 % \label{sec:xml-interfaces}
 % In case you are using |write-xml=true| (which is the default) You need to ensure to call the \XML writing functions in the correct order.
 % For example after setting the global invoice data, like it's done in the example file.
@@ -1547,9 +1548,9 @@
 %
 % delivery date
 \_@@_define_xml_content:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
-	\bool_lazy_and:nnF {\prop_if_empty_p:N \g_@@_shipto_AddressData_prop}
-			{\tl_if_blank_p:n {#1}}
-	{
+	\bool_lazy_and:nnF {\prop_if_empty_p:N \g_@@_shipto_AddressData_prop}%
+			{\tl_if_blank_p:n {#1}}%
+	{%
 		\_@@_write_xml:n {<ram:ApplicableHeaderTradeDelivery>}%
 		\prop_if_empty:NF \g_@@_shipto_AddressData_prop {%
 			\int_gincr:N \g_@@_indent_int%
@@ -1851,7 +1852,7 @@
 	exemption-reason-code  .initial:V = \c_empty_tl,
 	exemption-reason .usage:n = general,
 %    \end{macrocode}
-% \changes{0.7}{2024/00/00}{Added exemption-reason-auto key for pre-configured exemption-reasons.}
+% \changes{v0.7}{2024-09-10}{Added exemption-reason-auto key for pre-configured exemption-reasons.}
 %    \begin{macrocode}
 	exemption-reason-auto .choice:,
 	exemption-reason-auto / S .code:n = {
@@ -2105,6 +2106,7 @@
 % This was fixed in August 2024.
 % The old macro will be kept for a bit longer but will be removed soon.
 % Please update your own implementations accordingly.
+% \changes{v0.4}{2024-08-22}{Deprecate old syntax and add public interfaces.}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {
 	\msg_warning:nnnn {zugferd} {macro-deprecated}
