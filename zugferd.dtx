@@ -328,6 +328,7 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 % \end{documentation}
 % \begin{implementation}
 % \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file,auto-exemption}
+% \changes{0.7}{2024/00/00}{Added auto-exemption option}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
@@ -1235,7 +1236,7 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 	add-note .code:n = \seq_gput_right:Nn \g_@@_notes_seq {#1},
 }
 \msg_new:nnnn {zugferd} {unknown-value} {
-	You~selected~a~currency~which~was~not~predefined.\\
+	You~selected~a~#1~which~was~not~predefined.\\
 	I~will~directly~use~your~selection~'#1=#2'.
 	Please~ensure~the~selection~is~valid!
 } {
@@ -1754,8 +1755,15 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 % \optionenv{category, exemption-reason,rate}
 %    \begin{macrocode}
 \keys_define:nn { zugferd / tax } {
-	 category .choices:nn = {Z,E,L,M} {
+	 category .choices:nn = {S,Z,E,AE,K,G,O,L,M} {
 		\tl_set_eq:NN \l_@@_tax_category_code_tl \l_keys_choice_tl
+		\bool_if:NT \g_@@_auto_exemption_bool {
+			\keys_if_choice_exist:nnnTF {zugferd/tax}  {exemption-reason-auto} {\l_keys_choice_tl} {
+				\keys_set:nn  {zugferd/tax}  {exemption-reason-auto=\l_keys_choice_tl}
+			} {
+			\msg_warning:nnn { zugferd } {no-auto-exemption} {\l_keys_choice_tl}
+			}
+		}
 	},
 %    \end{macrocode}
 % \end{implementation}
@@ -1771,13 +1779,15 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 %
 % \begin{valuelist}
 % \item[S] \accessTaxExemptionReason{S}
-% \item[Z]  Not configured.
+% \item[Z] Not configured.
 % \item[E] Not configured, as there are too many options.
 % \item[AE] \accessTaxExemptionReason{AE}
 % \item[K] \accessTaxExemptionReason{K}
 % \item[G] \accessTaxExemptionReason{G}
 % \item[O] \accessTaxExemptionReason{O}
 % \end{valuelist}
+%
+% In case there is no pre-configured selection \pkg{zugferd} will create a warning to remind the user to add a selection themselves.
 %
 % \end{documentation}
 % \begin{implementation}
@@ -1788,25 +1798,24 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 	exemption-reason-code .tl_set:N  = \l_@@_tax_exemption_code_tl,
 	exemption-reason-code  .initial:V = \c_empty_tl,
 	exemption-reason .usage:n = general,
-	category / S .code:n = {
-		\tl_set:Nn \l_@@_tax_category_code_tl  {S}
-		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax} {exemption-reason=,exemption-reason-code=}}
+%    \end{macrocode}
+% \changes{0.7}{2024/00/00}{Added exemption-reason-auto key for pre-configured exemption-reasons.
+%    \begin{macrocode}
+	exemption-reason-auto .choice:,
+	exemption-reason-auto / S .code:n = {
+		\keys_set:nn {zugferd/tax} {exemption-reason=,exemption-reason-code=}
 	},
-	category / K .code:n = {
-		\tl_set:Nn \l_@@_tax_category_code_tl  {K}
-		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax} {exemption-reason= Intra-Community~Supply, exemption-reason-code={vatex-eu-ic}}}
+	exemption-reason-auto / K .code:n = {
+		\keys_set:nn {zugferd/tax} {exemption-reason= Intra-Community~Supply, exemption-reason-code={vatex-eu-ic}}
 	},
-	category / AE .code:n = {
-		\tl_set:Nn \l_@@_tax_category_code_tl  {AE}
-		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax}{exemption-reason=Reverse~Charge,exemption-reason-code={vatex-eu-ae}}}
+	exemption-reason-auto / AE .code:n = {
+		\keys_set:nn {zugferd/tax}{exemption-reason=Reverse~Charge,exemption-reason-code={vatex-eu-ae}}
 	},
-	category / G .code:n = {
-		\tl_set:Nn \l_@@_tax_category_code_tl  {G}
-		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax}{exemption-reason=Export~outside~the~EU,exemption-reason-code={vatex-eu-g}}}
+	exemption-reason-auto / G .code:n = {
+		\keys_set:nn {zugferd/tax}{exemption-reason=Export~outside~the~EU,exemption-reason-code={vatex-eu-g}}
 	},
-	category / O .code:n = {
-		\tl_set:Nn \l_@@_tax_category_code_tl  {O}
-		\bool_if:NT \g_@@_auto_exemption_bool {\keys_set:nn {zugferd/tax}{exemption-reason=No~subject~to~VAT,exemption-reason-code={vatex-eu-o}}}
+	exemption-reason-auto / O .code:n = {
+		\keys_set:nn {zugferd/tax}{exemption-reason=No~subject~to~VAT,exemption-reason-code={vatex-eu-o}}
 	},
 	standard .meta:n = {category=S},
 	zero .meta:n = {category=Z},
@@ -1847,6 +1856,13 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 } {
 	For~more~information~see~the~zugferd~documentation\\
 	and~the~corresponding~code~list.
+}
+\msg_new:nnnn {zugferd} {no-auto-exemption} {
+	You~selected~tax/cagegory=#1~together~with~the~auto-exemption~option.\\
+	I~don't~have~any~pre-configured~exemption~setting~for~category=#1.\\
+	Please~make~sure~you~add~a~valid~setting~yourself.
+} {
+	For~more~information~see~the~zugferd~documentation.
 }
 %    \end{macrocode}
 % \endoptionenv
@@ -1935,7 +1951,7 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 	 \int_gdecr:N \g_@@_indent_int%
 	 \_@@_write_xml:n {</rsm:SupplyChainTradeTransaction>}%
 	 \int_gdecr:N \g_@@_indent_int%
-	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%auto-exemption
+	 \_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%
  }%
 \cctab_end:
 %    \end{macrocode}
@@ -2083,7 +2099,6 @@ Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
     \int_gincr:N \g_@@_indent_int%
-    %TODO check if all need to be rounded to 2 decimals
     \_@@__write_xml_number_round:nnn {2} {LineTotalAmount} {#1}
     \_@@__write_xml_number_round:nnn {2} {ChargeTotalAmount} {#2}
     \_@@__write_xml_number_round:nnn {2} {AllowanceTotalAmount} {#3}
