@@ -12,14 +12,13 @@
 % and version 1.3c or later is part of all distributions of LaTeX
 % version 2008-05-04 or later.
 %
-\ProvidesExplPackage{zugferd-invoice}{2024-09-05}{0.6}{Invoice wrapper example package for the factur-x to create ZUGFerD invoices}
-
-\PassOptionsToPackage{format=xrechnung3.0}{zugferd}
+\ProvidesExplPackage{zugferd-invoice}{2024-09-11}{0.8}{Invoice wrapper example package for the factur-x to create ZUGFerD invoices}
 
 \keys_define:nn {zugferd/invoice}{
 	default-vat .tl_set:N =  \defaultVAT,
 	default-vat .initial:n = 19,
 	format .code:n = \PassOptionsToPackage{format=#1}{zugferd},
+	format .initial:n = xrechnung3.0,
 }
 
 \ProcessKeyOptions[zugferd/invoice]
