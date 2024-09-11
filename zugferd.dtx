@@ -892,14 +892,14 @@
 \cs_generate_variant:Nn \_@@_number_format:nNn {nNe}
 %    \end{macrocode}
 % \end{function}
-% \begin{function}{\_@@__write_xml_number_round:nnnn,\_@@__write_xml_number_round:nnn}
+% \begin{function}{\_@@_write_rounded:nnnn,\_@@_write_rounded:nnn}
 %    \begin{macrocode}
-\cs_new:Nn \_@@__write_xml_number_round:nnnn {
+\cs_new:Nn \_@@_write_rounded:nnnn {
 	\_@@_number_format:nNe {#1} \l_@@_tmp_tl {#4}
 	\_@@_write_xml:e {<ram:#2#3>\l_@@_tmp_tl</ram:#2>}
 }
-\cs_new:Nn \_@@__write_xml_number_round:nnn {
-	\_@@__write_xml_number_round:nnnn {#1} {#2} {} {#3}
+\cs_new:Nn \_@@_write_rounded:nnn {
+	\_@@_write_rounded:nnnn {#1} {#2} {} {#3}
 }
 %    \end{macrocode}
 % \end{function}
@@ -1547,7 +1547,9 @@
 %
 % delivery date
 \_@@_define_xml_content:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
-	\bool_lazy_and:nnF {\prop_if_empty_p:N \g_@@_shipto_AddressData_prop} {\tl_if_blank_p:n {#1}} {
+	\bool_lazy_and:nnF {\prop_if_empty_p:N \g_@@_shipto_AddressData_prop}
+			{\tl_if_blank_p:n {#1}}
+	{
 		\_@@_write_xml:n {<ram:ApplicableHeaderTradeDelivery>}%
 		\prop_if_empty:NF \g_@@_shipto_AddressData_prop {%
 			\int_gincr:N \g_@@_indent_int%
@@ -2149,14 +2151,14 @@
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
 	\int_gincr:N \g_@@_indent_int%
-	\_@@__write_xml_number_round:nnn {2} {LineTotalAmount} {#1}
-	\_@@__write_xml_number_round:nnn {2} {ChargeTotalAmount} {#2}
-	\_@@__write_xml_number_round:nnn {2} {AllowanceTotalAmount} {#3}
-	\_@@__write_xml_number_round:nnn {2} {TaxBasisTotalAmount} {#4}
-	\_@@__write_xml_number_round:nnnn {2} {TaxTotalAmount} {~currencyID="\l_@@_currency_tl "} {#5}
-	\_@@__write_xml_number_round:nnn {2} {GrandTotalAmount} {#6}
-	\_@@__write_xml_number_round:nnn {2} {TotalPrepaidAmount} {#7}
-	\_@@__write_xml_number_round:nnn {2} {DuePayableAmount} {#8}
+	\_@@_write_rounded:nnn {2} {LineTotalAmount} {#1}
+	\_@@_write_rounded:nnn {2} {ChargeTotalAmount} {#2}
+	\_@@_write_rounded:nnn {2} {AllowanceTotalAmount} {#3}
+	\_@@_write_rounded:nnn {2} {TaxBasisTotalAmount} {#4}
+	\_@@_write_rounded:nnnn {2} {TaxTotalAmount} {~currencyID="\l_@@_currency_tl "} {#5}
+	\_@@_write_rounded:nnn {2} {GrandTotalAmount} {#6}
+	\_@@_write_rounded:nnn {2} {TotalPrepaidAmount} {#7}
+	\_@@_write_rounded:nnn {2} {DuePayableAmount} {#8}
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
 }%
@@ -2164,14 +2166,14 @@
 \_@@_define_xml_writer:Nn \_@@_ApplicableTradeTax:nnnn {%
 	\_@@_write_xml:n {<ram:ApplicableTradeTax>}
 	\int_gincr:N \g_@@_indent_int%
-	\_@@__write_xml_number_round:nnn {2} {CalculatedAmount} {#4}%BT117
+	\_@@_write_rounded:nnn {2} {CalculatedAmount} {#4}%BT117
 	\_@@_write_xml:n {<ram:TypeCode>VAT</ram:TypeCode>}%BT118
 	\tl_if_blank:VF \l_@@_tax_exemption_reason_tl {%BT-120
 		\_@@_write_xml:e {<ram:ExemptionReason>
 			\l_@@_tax_exemption_reason_tl
 			</ram:ExemptionReason>}
 	}
-	{{\_@@__write_xml_number_round:nnn {2} {BasisAmount} {#3}}}%BT-116
+	{{\_@@_write_rounded:nnn {2} {BasisAmount} {#3}}}%BT-116
 	\_@@_write_xml:e {<ram:CategoryCode>#1</ram:CategoryCode>}%BT-118
 	\tl_if_blank:VF \l_@@_tax_exemption_code_tl {%BT121
 		\_@@_write_xml:e {<ram:ExemptionReasonCode>
