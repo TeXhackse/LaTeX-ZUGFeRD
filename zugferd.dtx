@@ -225,8 +225,8 @@
 \begin{document}
 \EnableDocumentation\DisableImplementation
 \DocInput{zugferd.dtx}
-%\DisableDocumentation\EnableImplementation
-%\DocInputAgain
+\DisableDocumentation\EnableImplementation
+\DocInputAgain
 \PrintChanges
 \printbibliography
 \PrintIndex
@@ -440,6 +440,7 @@
 % We use these to embed the \XML file.
 %
 % This part prepares the XMP metadata according to the required scheme.
+% \changes{v0.8}{2024-09-16}{Use the new public interface for l3pdfmeta.}
 %    \begin{macrocode}
 \bool_if:NT \g_@@_active_bool {
 	\cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
@@ -456,35 +457,33 @@
 		urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str
 	}
 
-	\cs_generate_variant:Nn \__pdfmeta_xmp_schema_new:nnn {nne}
-
-	\__pdfmeta_xmp_schema_new:nne
+	\pdfmeta_xmp_schema_new:nnn
 		  {Factur-X~PDFA~Extension~Schema}
 		  {fx}
 		  {urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
 
-	\__pdfmeta_xmp_property_new:nnnnn
+	\pdfmeta_xmp_property_new:nnnnn
 		  {fx}
 		  {DocumentFileName}
 		  {Text}
 		  {external}
 		  {name~of~the~embedded~XML~invoice~file}
 
-	\__pdfmeta_xmp_property_new:nnnnn
+	\pdfmeta_xmp_property_new:nnnnn
 		  {fx}
 		  {DocumentType}
 		  {Text}
 		  {external}
 		  {INVOICE}
 
-	\__pdfmeta_xmp_property_new:nnnnn
+	\pdfmeta_xmp_property_new:nnnnn
 		  {fx}
 		  {Version}
 		  {Text}
 		  {external}
 		  {The~actual~version~of~the~factur-x~schema}
 
-	\__pdfmeta_xmp_property_new:nnnnn
+	\pdfmeta_xmp_property_new:nnnnn
 		  {fx}
 		  {ConformanceLevel}
 		  {Text}

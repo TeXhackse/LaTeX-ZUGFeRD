@@ -23,6 +23,9 @@ demofiles={"*.tex"}
 typesetdemofiles={"*.tex"}
 
 typesetexe="lualatex"
+typesetopts=""
+
+ctanreadme="README_CTAN.md"
 
 tagfiles = {"*.dtx","*.sty", "*.md", "*.tex"}
 function update_tag(file, content, tagname, tagdate)
