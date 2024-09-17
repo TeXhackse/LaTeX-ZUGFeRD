@@ -1,20 +1,31 @@
-# ZUGFeRD
-
-Package to create Faktur-X and ZUGFeRD invoices using LaTeX
-
-Version 0.8 (2024-09-11)
-
-––––––––––––––––––––––––––
+# ZUGFeRD - Create ZUGFeRD and other kinds of E-invoices using LaTeX
 
 Copyright (C) 2023–2024 by Marei Peischl (peiTeX) <marei@peitex.de>
+
+zugferd version 0.8 (2024-09-11)
+
+***************************************************************************
+
+ This material is subject to the LaTeX Project Public License version 1.3c
+ or later. See http://www.latex-project.org/lppl.txt for details.
+
+***************************************************************************
+
+## Abstract
+
+This package provides an interface to make your LaTeX-based invoicing compatible to e-invoicing standards, such as they exist in the EU.
+
+The package includes a demo implementation, which can be used by template developers to create their own company specific variant. The included example file shows how to use it. This package is built so it also creates the XML file which will be directly attached to the PDF.
+
+There also exist interfaces to attach an XML file generated differently. Please have a look at the documentation.
+
+This package does not provide any validation. Please be aware of you have to use valid input data for a valid ZUGFeRD output. The documentation suggests some options.
 
 ## Overview of the included files
 
 The package is created using docstrip. To install the LaTeX-Package have a look at  the [Installation Instructions](##installation).
 
 It consists of the following files:
-
-
 
 * DEMO-rechnung-zugferd.tex: Example file for an invoice. It is using the `zugferd-invoice.sty` also provided within this project.
 
@@ -24,20 +35,4 @@ It consists of the following files:
 
 ## Installation
 
-This package is not yet released to CTAN, but it provides an \pkg{l3build} installation script and demo files.
-Details on usage can be found in the [l3build documentation](http://texdoc.net/serve/l3build)/0).
-
-To get started one can run
-```
-l3build doc
-```
-
-within the repositories root directory.
-This will build the Demo project as well as the current status of the documentation within the subdirectory `build/doc`.
-
-To Install the package withi the users `$TEXMFHOME` there is also the `install` action
-
-```
-l3build install
-```
-This will install the `zugferd.sty`  as well as the `zugferd-invoice.sty` and afterwards both of them can be used without a copy inside the working directory.
+It's recommended to use a Vanilla TeX Live installation. For other options see INSTALL.md
