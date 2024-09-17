@@ -2,7 +2,7 @@
 
 Copyright (C) 2023–2024 by Marei Peischl (peiTeX) <marei@peitex.de>
 
-zugferd version 0.8 (2024-09-11)
+zugferd version 0.8a (2024-09-17)
 
 ***************************************************************************
 
@@ -23,5 +23,5 @@ This package does not provide any validation. Please be aware of you have to use
 
 # Version History
 
- * 0.8a (0000-00-00) Patch to switch to the newly public interface of l3pdfmeta
+ * 0.8a (2024-09-17) Patch to switch to the newly public interface of l3pdfmeta
  * 0.8  (2024-09-11) First version on CTAN

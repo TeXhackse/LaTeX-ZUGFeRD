@@ -16,14 +16,14 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2024-09-11 v0.8 ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2024-09-17 v0.8a ZUGFerd Invoice and Faktur-X]
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2024-09-11}{0.8}{Create ZUGFerd invoices using LaTeX}
+%<package>\ProvidesExplPackage{zugferd}{2024-09-17}{0.8a}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
-\usepackage{zugferd}[2024-09-11]
+\usepackage{zugferd}[2024-09-17]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -440,7 +440,7 @@
 % We use these to embed the \XML file.
 %
 % This part prepares the XMP metadata according to the required scheme.
-% \changes{v0.8}{2024-09-16}{Use the new public interface for l3pdfmeta.}
+% \changes{v0.8a}{2024-09-17}{Use the new public interface for l3pdfmeta.}
 %    \begin{macrocode}
 \bool_if:NT \g_@@_active_bool {
 	\cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
