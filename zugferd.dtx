@@ -1921,12 +1921,15 @@
 	rate .initial:n = 19,
 	rate .usage:n = general
 }%
+\keys_define:nn {zugferd/item} {
+	unknown .code:n = \keys_set:ne {zugferd} { \l_keys_key_str = \exp_not:V \l_keys_value_tl}
+}
 %    \end{macrocode}
 % \endoptionenv
 % \end{implementation}
 % \begin{documentation}
-% \DescribeKeyOption*{start-date=\meta{date formatted as YYYYMMDD}}{}*
-% \DescribeKeyOption*{end-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption*{item/start-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption*{item/end-date=\meta{date formatted as YYYYMMDD}}{}*
 % With version 0.00 support for |BillingSpecifiedPeriod| was added.
 % This supports setting |start-date| and |end-date| per item. 
 % As this is optional, there is no default.
@@ -1936,7 +1939,7 @@
 % \begin{implementation}
 % \optionenv{start-date,end-date}
 %    \begin{macrocode}
-\keys_define:nn { zugferd } {
+\keys_define:nn { zugferd / item } {
 	start-date .tl_gset:N = \l_@@_start_date_tl,
 	start-date .initial:n =,
 	end-date .tl_gset:N = \l_@@_end_date_tl,
