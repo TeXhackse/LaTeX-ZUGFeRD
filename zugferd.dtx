@@ -1188,6 +1188,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Dates}
+% \label{sec:dates}
 % \DescribeKeyOption{date=auto/\meta{date formatted as YYYYMMDD}}{auto}
 % \DescribeKeyOption{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}
 % \DescribeKeyOption*{due-date=\meta{date formatted as YYYYMMDD}}{}*
@@ -1914,8 +1915,29 @@
 %    \begin{macrocode}
 	rate .fp_set:N =  \l_@@_tax_rate_fp,
 	rate .initial:n = 19,
-	rate .usage:n = general,
-}
+	rate .usage:n = general
+}%
+%    \end{macrocode}
+% \endoptionenv
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption*{start-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption*{end-date=\meta{date formatted as YYYYMMDD}}{}*
+% With version 0.00 support for |BillingSpecifiedPeriod| was added.
+% This supports setting |start-date| and |end-date| per item. 
+% As this is optional, there is no default.
+% The element will be printed if both dates are set, as setting a single one will enforce the element to be invalid. 
+% This element should be set as all the other dates (see \autoref{sec:dates}).
+% \end{documentation}
+% \begin{implementation}
+% \optionenv{start-date,end-date}
+%    \begin{macrocode}
+\keys_define:nn { zugferd } {
+	start-date .tl_gset:N = \l_@@_start_date_tl,
+	start-date .initial:n =,
+	end-date .tl_gset:N = \l_@@_end_date_tl,
+	end-date .initial:n =,
+}%
 %    \end{macrocode}
 % \endoptionenv
 %    \begin{macrocode}
@@ -2069,7 +2091,7 @@
 %%%\subsubsection{SpecifiedLineTradeDelivery}%:nn <unit code > <number>
 % \begin{function}{\_@@_SpecifiedLineTradeDelivery:nn}
 %    \begin{macrocode}
-\_@@_define_xml_writer:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
+\_@@_define_xml_content:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
 	<ram:SpecifiedLineTradeDelivery>
 	% SPACE!
 	\_@@_indent: <ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
@@ -2078,27 +2100,54 @@
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_SpecifiedLineTradeSettlement:nnn,\_@@_SpecifiedLineTradeSettlement:Vnn}
+% \changes{0.0}{0000/00/00}{Split SpecifiedLineTradeSettlement to be more flexible and add support for BillingSpecifiedPeriod}
 %    \begin{macrocode}
-\_@@_define_xml_content:Nn \_@@_SpecifiedLineTradeSettlement:nnn {%
-	<ram:SpecifiedLineTradeSettlement>
-	\_@@_indent: <ram:ApplicableTradeTax>
-	%BT-151
-	\_@@_indent:n {2} <ram:TypeCode>VAT</ram:TypeCode>
-	%BT-151
-	\_@@_indent:n {2} <ram:CategoryCode>#1</ram:CategoryCode>
-	%BT-152
-	\_@@_indent:n {2} <ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
-	\_@@_indent: </ram:ApplicableTradeTax>
-	\_@@_indent: <ram:SpecifiedTradeSettlementLineMonetarySummation>
-	% BT-131
-	\_@@_indent:n {2} <ram:LineTotalAmount>#3</ram:LineTotalAmount>
-	\_@@_indent: </ram:SpecifiedTradeSettlementLineMonetarySummation>
-	</ram:SpecifiedLineTradeSettlement>%
+\_@@_define_xml_writer:Nn \_@@_write_SpecifiedLineTradeSettlement:nnn {%
+	\_@@_write_xml:n {<ram:SpecifiedLineTradeSettlement>}%
+	\int_gincr:N \g_@@_indent_int%
+	 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
+	 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
+	 \_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</ram:SpecifiedLineTradeSettlement>}%
 }%
+\cs_generate_variant:Nn \_@@_write_SpecifiedLineTradeSettlement:nnn {Vnn}%
+\_@@_define_xml_content:Nn \_@@_Line_ApplicableTradeTax:nn {%
+	<ram:ApplicableTradeTax>
+	%BT-151
+	\_@@_indent: <ram:TypeCode>VAT</ram:TypeCode>
+	%BT-151
+	\_@@_indent:  <ram:CategoryCode>#1</ram:CategoryCode>
+	%BT-152
+	\_@@_indent: <ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
+	</ram:ApplicableTradeTax>
+}%
+\_@@_define_xml_content:Nn \_@@_BillingSpecifiedPeriod:nn {%
+	\bool_lazy_or:nnF {\tl_if_blank_p:n {#1}} {\tl_if_blank_p:n {#2}} {%
+	<ram:BillingSpecifiedPeriod>
+	%<!-- BT-134 -->
+	\_@@_indent:<ram:StartDateTime>
+	\_@@_indent:n {2} <udt:DateTimeString format="102">#1</udt:DateTimeString>
+	\_@@_indent:</ram:StartDateTime>
+	%<!-- BT-135 -->
+	\_@@_indent:<ram:EndDateTime>
+	\_@@_indent:n {2} <udt:DateTimeString format="102">#2</udt:DateTimeString>
+	\_@@_indent:</ram:EndDateTime>
+     </ram:BillingSpecifiedPeriod>
+     }%
+}%
+\_@@_define_xml_content:Nn \_@@_SpecifiedTradeSettlementLineMonetarySummation:n {%
+	<ram:SpecifiedTradeSettlementLineMonetarySummation>
+	% BT-131
+	\_@@_indent: <ram:LineTotalAmount>#1</ram:LineTotalAmount>
+	 </ram:SpecifiedTradeSettlementLineMonetarySummation>
+}
+
 %    \end{macrocode}
 %    \begin{macrocode}
 \cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnn {Vnn}
+\cs_generate_variant:Nn \_@@_BillingSpecifiedPeriod:nn {VV}
 %    \end{macrocode}
 % \end{function}
 % The exemption reason was placed wrong with the pre-CTAN release.
@@ -2137,10 +2186,10 @@
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeAgreement>}
 	\_@@_write_xml:e {%
 		\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}
-		\_@@_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl %
-			{ \fp_use:N \l_@@_tax_rate_fp} {#6}
 	}%
-	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl %
+			{ \fp_use:N \l_@@_tax_rate_fp} {#6}%
+	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
 %    \end{macrocode}
