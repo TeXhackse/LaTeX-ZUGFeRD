@@ -1080,6 +1080,8 @@
 	\let\autoref\@gobble
 	\let\ignorespaces\relax
 	\let\ensuremath\@firstofone
+	\def\ {\space}% space
+	\exp_args:NV \cs_set_nopar:cpn \c_space_tl {\space}	
 	\hook_use:n {zugferd/disable-macros}
 %    \end{macrocode}
 % \endcomment
