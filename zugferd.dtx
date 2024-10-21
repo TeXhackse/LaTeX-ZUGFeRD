@@ -1221,7 +1221,7 @@
 		\tl_gset:Nn \g_@@_delivery_date_tl {#1}
 	},
 	delivery-date .initial:n = auto,
-	due-date .tl_gset:N = \_@@_due_date_tl,
+	due-date .tl_gset:N = \g_@@_due_date_tl,
 	due-date .initial:n =,
 %    \end{macrocode}
 % \end{optionenv}
@@ -1237,7 +1237,7 @@
 % \begin{implementation}
 % \begin{optionenv}{payment-terms}
 %    \begin{macrocode}
-	payment-terms .str_gset:N = \_@@_payment_terms_str,
+	payment-terms .str_gset:N = \g_@@_payment_terms_str,
 	payment-terms .initial:n =,
 %    \end{macrocode}
 % \end{optionenv}
@@ -2251,7 +2251,7 @@
 \cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nn {VV}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms: {
-	\_@@_SpecifiedTradePaymentTerms:VV \_@@_payment_terms_str \_@@_due_date_tl
+	\_@@_SpecifiedTradePaymentTerms:VV \g_@@_payment_terms_str \g_@@_due_date_tl
 }
 %    \end{macrocode}
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
