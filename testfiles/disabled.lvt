@@ -29,7 +29,7 @@
 \begin{document}
 \ExplSyntaxOn
  	\begin{ZUGFeRD}
-	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
+	\zugferd_write_Item:nnnnnn  {1} {} {Plushie ~ \TeX\ lion} {31.89} {2} {63.78}%special required for space in expl3-mode
 	\zugferd_startInvoiceSums:
 	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
 	\zugferd_write_Summation:nnnnnnnn

@@ -733,7 +733,7 @@
 %
 % \begin{examplecode}
 % \begin{ZUGFeRD}
-%	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
+%	\zugferd_write_Item:nnnnnn {1} {} {Plushie~\TeX\ lion} {31.98} {2} {63.78}
 %	\zugferd_startInvoiceSums:
 %	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
 %	\zugferd_write_Summation:nnnnnnnn {63.78} {0} {0} {63.78} {12.12} {75.90} {0} {75.90}
@@ -758,7 +758,7 @@
 % \begin{examplecode}
 % \begingroup
 %	\keys_set:nn {zugferd}{tax/rate=19, tax/category=S}
-%	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX{} lion} {31.98} {2} {63.78}
+%	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX\ lion} {31.98} {2} {63.78}
 %	% Code using the data for visible representation
 % \endgroup
 % \end{examplecode}
@@ -1080,8 +1080,9 @@
 	\let\autoref\@gobble
 	\let\ignorespaces\relax
 	\let\ensuremath\@firstofone
-	\def\ {\space}% space
-	\exp_args:NV \cs_set_nopar:cpn \c_space_tl {\space}	
+	\def\ {\space\relax}% space
+	\exp_args:NV \cs_set_nopar:cpn \c_space_tl {\space}
+	\let\nobreakspace\space
 	\hook_use:n {zugferd/disable-macros}
 %    \end{macrocode}
 % \endcomment

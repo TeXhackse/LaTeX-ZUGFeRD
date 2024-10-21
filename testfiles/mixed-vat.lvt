@@ -34,7 +34,7 @@
 		\keys_set:nn {zugferd}{tax/rate=7, tax/category=S}
 		\zugferd_write_Item:nnnnnn  {2} {7} {reduced VAT item} {90} {3} {270}
 	\endgroup
-	\zugferd_write_Item:nnnnnn  {1} {} {Plushie \TeX{} lion} {31.89} {2} {63.78}
+	\zugferd_write_Item:nnnnnn  {1} {} {Plushie ~ \TeX\ lion} {31.89} {2} {63.78}%special required for space in expl3-mode
 	\zugferd_startInvoiceSums:
 	\zugferd_write_TaxEntry:nnnn {S} {7} {270} {18.90}
 	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
