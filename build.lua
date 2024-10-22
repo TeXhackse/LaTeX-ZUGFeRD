@@ -25,6 +25,9 @@ typesetdemofiles={"*.tex"}
 typesetexe="lualatex"
 typesetopts=""
 
+supportdir="support"
+checksuppfiles={"validate_zugferd.sh","Mustang-CLI.jar"}
+
 ctanreadme="README_CTAN.md"
 
 tagfiles = {"*.dtx","*.sty", "*.md", "*.tex"}
@@ -69,3 +72,11 @@ uploadconfig = {
     topic   = "invoice",
     note_file = "ctan.note"
 }
+
+function runtest_tasks ( name , run )
+		if options["target"] == "save" then
+			return "./validate_zugferd.sh " .. name
+		else
+			return ""
+		end
+end
