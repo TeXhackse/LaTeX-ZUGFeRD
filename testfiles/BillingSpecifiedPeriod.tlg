@@ -42,10 +42,10 @@ Don't change this file in any respect.
         </ram:ApplicableTradeTax>
         <ram:BillingSpecifiedPeriod>
           <ram:StartDateTime>
-            <udt:DateTimeStringformat="102">20240101</udt:DateTimeString>
+            <udt:DateTimeString format="102">20240101</udt:DateTimeString>
           </ram:StartDateTime>
           <ram:EndDateTime>
-            <udt:DateTimeStringformat="102">20240501</udt:DateTimeString>
+            <udt:DateTimeString format="102">20240501</udt:DateTimeString>
           </ram:EndDateTime>
         </ram:BillingSpecifiedPeriod>
         <ram:SpecifiedTradeSettlementLineMonetarySummation>
