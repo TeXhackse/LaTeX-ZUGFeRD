@@ -756,13 +756,33 @@
 % This command is using the local values of tax information as well as the unit code.
 % If you want to overwrite them, adjust them locally using the corresponding options, e.g.:
 % \begin{examplecode}
-% \begingroup
-%	\keys_set:nn {zugferd}{tax/rate=19, tax/category=S}
+% \group_begin:
+%	\keys_set:nn {zugferd/item}{tax/rate=19, tax/category=S}
 %	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX\ lion} {31.98} {2} {63.78}
-%	% Code using the data for visible representation
-% \endgroup
+%	% Code using the data for visual representation
+% \group_end:
 % \end{examplecode}
 % This will set the tax rate to 19\,\% unregarding the global setting.
+%
+% This structure might look a bit overcomplicated as one might think the options could also be set as an additional argument.
+% This works as long as the Code for the visual part of the invoice is not referencing the internal data.
+% In case you don't do this it's also possible to use the following variant:
+%
+% \DescribeMacro{\zugferd_write_Item:nnnnnnn}
+% This is grouping the command and adding an argument in front to add additional options.
+% \begin{syntax}
+% \cs[no-index]{zugferd_write_Item:nnnnn}
+%    \marg{additional local options}
+%    \marg{LineID}\marg{optional: item id (\enquote{SellerAssignedID})}\marg{item name}
+%    \marg{NetPriceProductTradePrice}
+%		\marg{BilledQuantity}
+%               \marg{LineTotalAmount}
+% \end{syntax}
+% The example above could then be replaced by
+% \begin{examplecode}
+% \zugferd_write_Item:nnnnnnn {tax/rate=19,tax/category=S} {1} {Plushie-01} {Plushie \TeX\ lion} {31.98} {2} {63.78}
+%  % visual representation now may not refer to the data
+% \end{examplecode}
 %
 % \DescribeMacro{\zugferd_startInvoiceSums:}
 % \DescribeMacro{\zugferd_stopInvoiceSums:}
@@ -850,6 +870,17 @@
 	\zugferd_enable_XML_interfaces:
 }{
 	\zugferd_disable_XML_interfaces:
+}
+%    \end{macrocode}
+% \end{function}
+% \changes{0.00}{0000-00-00}{Add interface using an argument for the keyval options locally per item}
+% \begin{function}{\_@@_write_Item:nnnnnnn}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_write_Item:nnnnnnn {
+	\group_begin:
+	\keys_set:nn {zugferd/item} {#1}
+	\zugferd_write_Item:nnnnnn {#2} {#3} {#4} {#5} {#6} {#7}
+	\group_end:
 }
 %    \end{macrocode}
 % \end{function}
@@ -1929,6 +1960,8 @@
 	rate .usage:n = general
 }%
 \keys_define:nn {zugferd/item} {
+	tax .choice:,
+	tax / unknown .code:n = \keys_set:ne {zugferd/tax} { \l_keys_key_str = \exp_not:V \l_keys_value_tl},
 	unknown .code:n = \keys_set:ne {zugferd} { \l_keys_key_str = \exp_not:V \l_keys_value_tl}
 }
 %    \end{macrocode}
@@ -1938,9 +1971,9 @@
 % \DescribeKeyOption*{item/start-date=\meta{date formatted as YYYYMMDD}}{}*
 % \DescribeKeyOption*{item/end-date=\meta{date formatted as YYYYMMDD}}{}*
 % With version 0.00 support for |BillingSpecifiedPeriod| was added.
-% This supports setting |start-date| and |end-date| per item. 
+% This supports setting |start-date| and |end-date| per item.
 % As this is optional, there is no default.
-% The element will be printed if both dates are set, as setting a single one will enforce the element to be invalid. 
+% The element will be printed if both dates are set, as setting a single one will enforce the element to be invalid.
 % This element should be set as all the other dates (see \autoref{sec:dates}).
 % \end{documentation}
 % \begin{implementation}

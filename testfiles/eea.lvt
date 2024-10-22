@@ -34,10 +34,7 @@
 \begin{document}
 \ExplSyntaxOn
  	\begin{ZUGFeRD}
- 	\begingroup
-	\keys_set:nn {zugferd}{tax/rate=0, tax/category=K}
-	\zugferd_write_Item:nnnnnn  {2} {0} {reduced VAT item} {90} {3} {270}
-	\endgroup
+	\zugferd_write_Item:nnnnnnn {tax/rate=0, tax/category=K} {2} {0} {reduced VAT item} {90} {3} {270}
 	\zugferd_write_Item:nnnnnn  {1} {} {Plushie ~ \TeX\ lion} {31.89} {2} {63.78}%special required for space in expl3-mode
 	\zugferd_startInvoiceSums:
 	\begingroup
