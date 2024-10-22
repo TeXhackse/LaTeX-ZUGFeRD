@@ -10,5 +10,4 @@ fi
 for f in "$@"
 do
 	java -Xmx1G -Dfile.encoding=UTF-8 -jar "$mustang_jar" --no-notices --action validate --source "$f"
-	
 done
