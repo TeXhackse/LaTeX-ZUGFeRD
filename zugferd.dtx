@@ -240,7 +240,7 @@
 %
 % \DoNotIndex{\newcommand,\newenvironment}
 % \begin{documentation}
-% \title{The \textsf{zugferd} package\thanks{This document
+% \title{The \pkg{zugferd} package\thanks{This document
 %   corresponds to \textsf{zugferd}~\fileversion, dated \filedate.}}
 % \subtitle{Creating electronic and hybrid invoices using \LaTeX}
 % \author{Marei Peischl \\ \texttt{marei@peitex.de}}
@@ -1103,6 +1103,13 @@
 %
 % This package is using the UN/CEFACT Cross Industry Invoice Syntax for the data.
 % Currently it is not planned to implement the UBL syntax as well, but generally this would be possible.
+%
+% Please be aware that the \pkg{zugferd} package does currently not handle any replacements concerning the content.
+% Therefore it might be necessary to escape special characters, like |&| to |&amp;|.
+% This also applies to |<|, |>|, |"| and |'|.
+% It's technically possible to do this either via active characters or string replacements.
+% But since it's adjusting the content this feature would never be enabled by default.
+% The corresponding issue can be found at \url{https://github.com/TeXhackse/LaTeX-ZUGFeRD/issues/9}.
 %
 % In most cases this functionality will be used to change the tax setting or unit for a single item.
 % \autoref{sec:xml-interfaces} also provided an example for this.
