@@ -15,12 +15,24 @@
 ]]
  
 module="zugferd"
-packageversion= "0.8"
-packagedate   = "2024-09-11"
+
+-- allow to tag the build.lua file
+if options["target"] == "tag" then
+	excludefiles={"*~"}
+end
+
+packageversion = "0.9"
+packagedate      = "2024-10-23"
 
 sourcefiles={"*.dtx","*.ins", "*.sty"}
 demofiles={"*.tex"}
-typesetdemofiles={"*.tex"}
+
+-- demofiles should be typeset for testing but not for the ctan upload
+if options["target"] ~= "ctan" then
+	typesetdemofiles={"*.tex"}
+end
+
+ctanreadme="README_CTAN.md"
 
 typesetexe="lualatex"
 typesetopts=""
@@ -30,7 +42,7 @@ checksuppfiles={"validate_zugferd.sh","Mustang-CLI.jar"}
 
 ctanreadme="README_CTAN.md"
 
-tagfiles = {"*.dtx","*.sty", "*.md", "*.tex"}
+tagfiles = {"*.dtx","*.sty", "*.md", "*.tex","*.lua"}
 function update_tag(file, content, tagname, tagdate)
 	local versionpattern = "%d+.%d+%-?%w*"
 	local datepattern = "%d%d%d%d%-%d%d%-%d%d"
@@ -38,6 +50,9 @@ function update_tag(file, content, tagname, tagdate)
 		content = string.gsub(content,
 			"([Vv]ersion%s)"..versionpattern.."%s%("..datepattern.."%)",
 			"%1"..tagname.." ("..tagdate..")")
+	elseif file == "build.lua" then
+		content = string.gsub(content,"(packageversion%s*=%s*\")"..versionpattern, "%1"..tagname)
+		content = string.gsub(content,"(packagedate%s*=%s*\")"..datepattern, "%1"..tagdate)
 	else
 		content = string.gsub(content,
 			"(\\Provides%a-{[^\n]-}%[)"..datepattern.."%s-v"..versionpattern,
@@ -61,7 +76,7 @@ ctanpkg=module
 uploadconfig = {
     author = "Marei Peischl",
     uploader = "Marei Peischl",
-    description="Create ZUGFeRD, X-Rechnung or Faktur-X invoices with LaTeX",
+    description="This package provides interfaces to allow creating ZUGFeRD or Faktur-X invoices with LaTeX including the XML file. It can be used to modify personal invoicing templates to fulfil the requirements for digital invoicing without further modification of the invoicing processes.",
     pkg = ctanpkg,
     version = packageversion .. " " .. packagedate,
     license = "lppl1.3c",
