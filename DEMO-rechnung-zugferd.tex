@@ -39,8 +39,8 @@
 %	delivery-date = auto, % commented as this setting matches the initial value
 	subject=komavar,
 	fromaddress=komavar,
-%	tax/category=S,
-%	tax/rate=19,
+%	tax/category=S,  % commented as this setting matches the initial value
+%	tax/rate=19,  % commented as this setting matches the initial value
 	unit=hour,
 	seller/name = {peiTeX (Marei Peischl)},
 	seller/postcode = {20253},
@@ -59,7 +59,7 @@
 	buyer/vatid = {DE123456789},
 	buyer/email = {invoice@example.org},
 	currency=€,
-	payment-terms={Zahlbar innerhalb von 14 Tagen},% entweder das oder das Datum (Zeile drunter) ist notwendig
+	payment-terms={Zahlbar innerhalb von 14 Tagen},% either this one or the due-date below is required
 	due-date={20240118},
 	payment-means / type = 58, % SEPA Übereisung,
 	payment-means / iban = DE68430609671013251700,
