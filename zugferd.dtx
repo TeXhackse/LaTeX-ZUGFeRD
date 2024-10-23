@@ -768,7 +768,8 @@
 % This works as long as the Code for the visual part of the invoice is not referencing the internal data.
 % In case you don't do this it's also possible to use the following variant:
 %
-% \DescribeMacro{\zugferd_write_Item:nnnnnnn,\zugferd_write_Item:ennnnnn}
+% \DescribeMacro{\zugferd_write_Item:nnnnnnn}
+% \DescribeMacro{\zugferd_write_Item:ennnnnn}
 % This is grouping the command and adding an argument in front to add additional options.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Item:nnnnn}
@@ -2148,7 +2149,7 @@
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_SpecifiedLineTradeSettlement:nnn,\_@@_SpecifiedLineTradeSettlement:Vnn}
-% \changes{0.0}{0000/00/00}{Split SpecifiedLineTradeSettlement to be more flexible and add support for BillingSpecifiedPeriod}
+% \changes{0.0}{0000-00-00}{Split SpecifiedLineTradeSettlement to be more flexible and add support for BillingSpecifiedPeriod}
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_write_SpecifiedLineTradeSettlement:nnn {%
 	\_@@_write_xml:n {<ram:SpecifiedLineTradeSettlement>}%

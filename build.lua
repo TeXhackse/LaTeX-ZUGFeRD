@@ -32,21 +32,24 @@ ctanreadme="README_CTAN.md"
 
 tagfiles = {"*.dtx","*.sty", "*.md", "*.tex"}
 function update_tag(file, content, tagname, tagdate)
+	local versionpattern = "%d+.%d+%-?%w*"
+	local datepattern = "%d%d%d%d%-%d%d%-%d%d"
 	if string.match(file, "%.md$") or string.match(file, "%.tex$") then
 		content = string.gsub(content,
-			"([Vv]ersion%s)%d+%.%d+%s%(%d%d%d%d%-%d%d%-%d%d%)",
+			"([Vv]ersion%s)"..versionpattern.."%s%("..datepattern.."%)",
 			"%1"..tagname.." ("..tagdate..")")
 	else
 		content = string.gsub(content,
-			"(\\Provides%a-{[^\n]-}%[)%d%d%d%d%-%d%d%-%d%d%s-v%d-%.%d+",
+			"(\\Provides%a-{[^\n]-}%[)"..datepattern.."%s-v"..versionpattern,
 			"%1"..tagdate.." v"..tagname)
 		content = string.gsub(content,
 			"(\\ProvidesExpl%a-{[^\n]-}){[^\n]-}{[^\n]-}",
 			"%1{".. tagdate.."}{"..tagname .. "}")
 		content = string.gsub(content,
-			"(\\usepackage{"..module.."}%[)%d%d%d%d%-%d%d%-%d%d%]",
+			"(\\usepackage{"..module.."}%[)"..datepattern.."%]",
 			"%1"..tagdate.."]")
-		content = string.gsub(content,"\\changes{v"..tagname.."}{%d%d%d%d/%d%d/%d%d", "\\changes{v"..tagname.."}{"..tagdate)
+		content = string.gsub(content,"\\changes{v"..tagname.."}{"..datepattern, "\\changes{v"..tagname.."}{"..tagdate)
+		content = string.gsub(content,"\\changes{v?0*%.0*}{"..datepattern, "\\changes{v"..tagname.."}{"..tagdate)
 	end
 	return content
 end

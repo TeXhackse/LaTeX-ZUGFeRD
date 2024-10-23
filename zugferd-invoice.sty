@@ -47,10 +47,10 @@
 % InitVAT accepts 2 Arguments
 % Percentage + Tax Type Code the latter one is set to S as a default
 \NewDocumentCommand{\InitVAT}{mO{S}}{
-	\seq_gput_right:Nn \g__ptxcd_VAT_rates_seq {#2}
-	\fp_new:c {g__ptxcd_invoice_sum_vat#2_fp}
-	\fp_new:c {g__ptxcd_invoice_base_vat#2_fp}
-	\cs_new:cn {__ptxcd_invoice_type_code#2:} {#3}
+	\seq_gput_right:Nn \g__ptxcd_VAT_rates_seq {#1}
+	\fp_new:c {g__ptxcd_invoice_sum_vat#1_fp}
+	\fp_new:c {g__ptxcd_invoice_base_vat#1_fp}
+	\cs_new:cn {__ptxcd_invoice_type_code#1:} {#2}
 }
 
 %Initialize VAT rates for (5),7,(16) and 19 % VAT
@@ -68,7 +68,7 @@
 
 \seq_new:N \l__ptxcd_invoice_items_seq
 
-%\newcommand*{\AddInvoiceItem}[4][\defaultVAT]{%
+% Auxiliary macro to allow setting the Invoice items at a different position as they are printed later
 \NewDocumentCommand{\AddInvoiceItem}{D<>{}O{\defaultVAT}mmm}{
 	\seq_put_right:Nn \l__ptxcd_invoice_items_seq {
 		{#2}{#3}{#4}{#5}{#1}

@@ -21,7 +21,11 @@ There also exist interfaces to attach an XML file generated differently. Please 
 
 This package does not provide any validation. Please be aware of you have to use valid input data for a valid ZUGFeRD output. The documentation suggests some options.
 
-# Version History
+## Version History
 
+ * 0.9  (2024-10-23)
+    - Improve validation in testing of the development status.
+    - Add support for BillingSpecifiedPeriod
+    - Add additional user interfaces to simplify development for templates
  * 0.8a (2024-09-17) Patch to switch to the newly public interface of l3pdfmeta
  * 0.8  (2024-09-11) First version on CTAN
