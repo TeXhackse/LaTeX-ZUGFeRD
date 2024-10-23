@@ -768,7 +768,7 @@
 % This works as long as the Code for the visual part of the invoice is not referencing the internal data.
 % In case you don't do this it's also possible to use the following variant:
 %
-% \DescribeMacro{\zugferd_write_Item:nnnnnnn}
+% \DescribeMacro{\zugferd_write_Item:nnnnnnn,\zugferd_write_Item:ennnnnn}
 % This is grouping the command and adding an argument in front to add additional options.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Item:nnnnn}
@@ -882,6 +882,7 @@
 	\zugferd_write_Item:nnnnnn {#2} {#3} {#4} {#5} {#6} {#7}
 	\group_end:
 }
+\cs_generate_variant:Nn \zugferd_write_Item:nnnnnnn {ennnnnn}
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}

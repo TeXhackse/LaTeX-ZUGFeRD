@@ -44,18 +44,24 @@
 \newcounter{invoiceitem}
 \seq_new:N  \g__ptxcd_VAT_rates_seq 
 
-\NewDocumentCommand{\InitVAT}{omO{S}}{
+% InitVAT accepts 2 Arguments
+% Percentage + Tax Type Code the latter one is set to S as a default
+\NewDocumentCommand{\InitVAT}{mO{S}}{
 	\seq_gput_right:Nn \g__ptxcd_VAT_rates_seq {#2}
 	\fp_new:c {g__ptxcd_invoice_sum_vat#2_fp}
 	\fp_new:c {g__ptxcd_invoice_base_vat#2_fp}
 	\cs_new:cn {__ptxcd_invoice_type_code#2:} {#3}
 }
 
-%%initialisierung auf 5,7,16 oder 19 % Mwst
-\InitVAT{16}
+%Initialize VAT rates for (5),7,(16) and 19 % VAT
+%\InitVAT{16}
 \InitVAT{19}
-\InitVAT{5}
+%\InitVAT{5}
 \InitVAT{7}
+
+% Tax initialisation with a different Code than S in this example Syntax would be
+% \InitVAT{0}[AE]
+
 
 \newcommand*{\SetDefaultVAT}[1]{\def\defaultVAT{#1}}
 
@@ -143,12 +149,11 @@
 	\theinvoiceitem%Positionsnummer
 	\fp_gset:Nn \g__ptxcd_invoice_item_vat_fp  {#2 * (#1/100) * #4}
 	\fp_gset:Nn \g__ptxcd_invoice_item_fp  {#2 * #4}
-%	\fp_gadd:Nn \g__ptxcd_invoice_sum_vat_fp 
 	\fp_gadd:cn {g__ptxcd_invoice_base_vat#1_fp} {\g__ptxcd_invoice_item_fp}
 	\fp_gadd:cn {g__ptxcd_invoice_sum_vat#1_fp} {\g__ptxcd_invoice_item_vat_fp}
 	\fp_gadd:Nn \g__ptxcd_invoice_sum_fp {\g__ptxcd_invoice_item_fp}
 	
-	% position nummer name einzel-preis anzahl gesamtpreis	
+	% optionen position nummer name einzel-preis anzahl gesamtpreis	
 	\zugferd_write_Item:ennnnnn {tax/rate=#1, tax/category=\use:c {__ptxcd_invoice_type_code#1:},#5} {\theinvoiceitem} {} {#3} {#4} {#2} {\fp_use:N \g__ptxcd_invoice_item_fp}
 	
 	&#2% Anzahl
