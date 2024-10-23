@@ -13,9 +13,10 @@ build_ctan:
   before_script:
     - apt-get update && apt-get install -y zip unzip && rm -rf /var/lib/apt/lists/*
   script:
-    - l3build ctan
+    # download validate_zugferd.sh to support/ so it's not done multiple times later
     - cd support && bash validate_zugferd.sh && cd -
-    - bash validate_zugferd.sh build/doc/DEMO*.pdf
+    - l3build ctan
+    - bash support/validate_zugferd.sh build/doc/DEMO*.pdf
   artifacts:
     paths:
       - ./*.pdf

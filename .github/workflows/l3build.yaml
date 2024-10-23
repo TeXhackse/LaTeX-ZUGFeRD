@@ -19,9 +19,10 @@ jobs:
         uses: zauguin/install-texlive@v3
         with:
            package_file: .tl_packages
-      - run: l3build ctan
+      # download validate_zugferd.sh to support/ so it's not done multiple times later
       - run: cd support && bash validate_zugferd.sh && cd -
-      - run: bash validate_zugferd.sh build/doc/DEMO*.pdf
+      - run: l3build ctan
+      - run: bash support/validate_zugferd.sh build/doc/DEMO*.pdf
       - name: Upload build artifats
         uses: actions/upload-artifact@v4
         with:
