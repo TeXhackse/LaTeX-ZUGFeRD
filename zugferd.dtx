@@ -16,14 +16,14 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2024-09-17 v0.8a ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2024-10-23 v0.9 ZUGFerd Invoice and Faktur-X]
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2024-09-17}{0.8a}{Create ZUGFerd invoices using LaTeX}
+%<package>\ProvidesExplPackage{zugferd}{2024-10-23}{0.9}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
-\usepackage{zugferd}[2024-09-17]
+\usepackage{zugferd}[2024-10-23]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -874,7 +874,7 @@
 }
 %    \end{macrocode}
 % \end{function}
-% \changes{0.00}{0000-00-00}{Add interface using an argument for the keyval options locally per item}
+% \changes{v0.9}{2024-10-23}{Add interface using an argument for the keyval options locally per item}
 % \begin{function}{\_@@_write_Item:nnnnnnn}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_write_Item:nnnnnnn {
@@ -2149,7 +2149,7 @@
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_SpecifiedLineTradeSettlement:nnn,\_@@_SpecifiedLineTradeSettlement:Vnn}
-% \changes{0.0}{0000-00-00}{Split SpecifiedLineTradeSettlement to be more flexible and add support for BillingSpecifiedPeriod}
+% \changes{v0.9}{2024-10-23}{Split SpecifiedLineTradeSettlement to be more flexible and add support for BillingSpecifiedPeriod}
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_write_SpecifiedLineTradeSettlement:nnn {%
 	\_@@_write_xml:n {<ram:SpecifiedLineTradeSettlement>}%
