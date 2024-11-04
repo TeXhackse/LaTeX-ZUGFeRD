@@ -850,8 +850,12 @@
 		\cs_gset:Nn \zugferd_write_Footer: {
 			\_@@_insert_Footer:
 		}
-		\cs_gset_eq:NN \zugferd_write_Item:nnnnnn
-			\_@@_insert_TradeLineItem:nnnnnn
+		\bool_if:NTF \g_@@_minimum_bool {
+			\cs_gset_eq:NN \zugferd_write_Item:nnnnnn \use_none:nnnnnn
+		}{
+			\cs_gset_eq:NN \zugferd_write_Item:nnnnnn
+				\_@@_insert_TradeLineItem:nnnnnn
+		}
 		\cs_gset:Nn \zugferd_startInvoiceSums: {
 			\_@@_ApplicableHeaderTradeAgreement:
 			\_@@_ApplicableHeaderTradeSettlement_start:
@@ -1538,11 +1542,13 @@
 \_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
 	\_@@_PostalTradeAddress:nnnnn {#1} {#2} {#3} {#4} {#5}%
 	\bool_lazy_or:nnF {\g_@@_minimum_bool}%
-			{\tl_if_blank_p:n {#6}} {%
-		<ram:URIUniversalCommunication>
-		\_@@_indent: <ram:URIID~schemeID="EM">#6</ram:URIID>
-		</ram:URIUniversalCommunication>%
-	}%
+			{\tl_if_blank_p:n {#6}}%
+		{%
+			\_@@_xml_newline_indent:%
+			<ram:URIUniversalCommunication>
+			\_@@_indent: <ram:URIID~schemeID="EM">#6</ram:URIID>
+			</ram:URIUniversalCommunication>%
+		}%
 	% TODO add support local tax id: schemaID="FC"
 	\tl_if_empty:nF {#7} {
 		<ram:SpecifiedTaxRegistration>
@@ -1596,8 +1602,8 @@
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>%
-		\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop%
-		\bool_if:NF \g_@@_minimum_bool {%
+		\bool_if:NF \g_@@_minimum_bool {
+			\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop%
 			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop%
 		}%
 	}%
@@ -2175,11 +2181,9 @@
 \_@@_define_xml_writer:Nn \_@@_write_SpecifiedLineTradeSettlement:nnn {%
 	\_@@_write_xml:n {<ram:SpecifiedLineTradeSettlement>}%
 	\int_gincr:N \g_@@_indent_int%
-	%\bool_if:NF \g_@@_minimum_bool {%
-		 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
-		 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
-	 %}%
-	 \_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
+	 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
+	 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
+	\_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeSettlement>}%
 }%
@@ -2205,14 +2209,14 @@
 	\_@@_indent:<ram:EndDateTime>
 	\_@@_indent:n {2} <udt:DateTimeString~format="102">#2</udt:DateTimeString>
 	\_@@_indent:</ram:EndDateTime>
-     </ram:BillingSpecifiedPeriod>
+     </ram:BillingSpecifiedPeriod>%
      }%
 }%
 \_@@_define_xml_content:Nn \_@@_SpecifiedTradeSettlementLineMonetarySummation:n {%
 	<ram:SpecifiedTradeSettlementLineMonetarySummation>
 	% BT-131
 	\_@@_indent: <ram:LineTotalAmount>#1</ram:LineTotalAmount>
-	 </ram:SpecifiedTradeSettlementLineMonetarySummation>
+	 </ram:SpecifiedTradeSettlementLineMonetarySummation>%
 }
 
 %    \end{macrocode}

@@ -1,0 +1,37 @@
+\input regression-test.tex\relax
+\documentclass{article}
+
+\usepackage[zugferd=false,format=minimum]{zugferd}
+
+\SetZUGFeRDData{
+	id=1337,
+	unit=hour,
+	tax/category=S,
+	seller/name = {peiTeX (Marei Peischl)},
+	seller/country = DE,
+	seller/vatid = {DE123456789},
+	buyer/name = {Buyer Name},
+}
+
+\begin{document}
+\ExplSyntaxOn
+ 	\begin{ZUGFeRD}
+	\zugferd_startInvoiceSums:
+	\zugferd_write_Summation:nnnnnnnn
+		{}% LineTotalAmount
+		{} %ChargeTotalAmount
+		{0} %AllowanceTotalAmount
+		{63.78} %TaxBasisTotalAmount
+		{12.12} %TaxTotalAmount
+		{75.90} %GrandTotalAmount
+		{0} % TotalPrepaidAmount
+		{75.90} %DuePayableAmount = GrandTotalAmount - TotalPrepaidAmount
+	\zugferd_stopInvoiceSums:
+ \end{ZUGFeRD}
+\endlinechar=10
+\char_set_catcode:nn {10}{12}%
+\START%
+\SHOWFILE{\jobname _zugferd.xml}%
+\END%
+\ExplSyntaxOff%
+\end{document}%

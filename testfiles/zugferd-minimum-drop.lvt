@@ -1,0 +1,53 @@
+\input regression-test.tex\relax
+\documentclass{article}
+
+\usepackage[zugferd=false,format=minimum]{zugferd}
+
+\SetZUGFeRDData{
+	id=1337,
+	unit=hour,
+	tax/category=S,
+	seller/name = {peiTeX (Marei Peischl)},
+	seller/postcode = {20253},
+	seller/city ={Hamburg},
+	seller/country = DE,
+	seller/address = {Address 1},
+	seller/vatid = {DE123456789},
+	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
+	seller/email = {kontakt@peitex.de},
+	buyer/reference = {buyer-reference},
+	buyer/name = {Buyer Name},
+	buyer/postcode = {20253},
+	buyer/city ={Hamburg},
+	buyer/country = DE,
+	buyer/vatid = {DE123456789},
+	buyer/email = {invoice@example.org},
+	due-date={20240118},
+	payment-means / type = 1,
+	delivery-date=auto
+}
+
+\begin{document}
+\ExplSyntaxOn
+ 	\begin{ZUGFeRD}
+	\zugferd_write_Item:nnnnnn  {1} {} {Plushie ~ \TeX\ lion} {31.89} {2} {63.78}%special requied for space in expl3-mode
+	\zugferd_startInvoiceSums:
+	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
+	\zugferd_write_Summation:nnnnnnnn
+		{63.78}% LineTotalAmount
+		{0} %ChargeTotalAmount
+		{0} %AllowanceTotalAmount
+		{63.78} %TaxBasisTotalAmount
+		{12.12} %TaxTotalAmount
+		{75.90} %GrandTotalAmount
+		{0} % TotalPrepaidAmount
+		{75.90} %DuePayableAmount = GrandTotalAmount - TotalPrepaidAmount
+	\zugferd_stopInvoiceSums:
+ \end{ZUGFeRD}
+\endlinechar=10
+\char_set_catcode:nn {10}{12}%
+\START%
+\SHOWFILE{\jobname _zugferd.xml}%
+\END%
+\ExplSyntaxOff%
+\end{document}%
