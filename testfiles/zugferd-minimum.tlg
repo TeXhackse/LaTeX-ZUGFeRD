@@ -20,7 +20,6 @@ Don't change this file in any respect.
   </rsm:ExchangedDocument>
   <rsm:SupplyChainTradeTransaction>
     <ram:ApplicableHeaderTradeAgreement>
-      <ram:BuyerReference></ram:BuyerReference>
       <ram:SellerTradeParty>
         <ram:Name>peiTeX (Marei Peischl)</ram:Name>
         <ram:PostalTradeAddress>
