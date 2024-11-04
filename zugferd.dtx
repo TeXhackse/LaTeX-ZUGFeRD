@@ -325,13 +325,14 @@
 % \fi
 % \begin{implementation}
 % \section{Implementation}
-% \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_conformance_level_str}
+% \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_minimum_bool,\g_@@_conformance_level_str}
 %    \begin{macrocode}
 \tl_new:N \l_@@_tmp_tl
 \str_new:N \g_@@_format_str
 \str_new:N \g_@@_businessProcessId_str
 \bool_new:N \g_@@_writeTradeContact_bool
 \bool_new:N \g_@@_writePaymentMeans_bool
+\bool_new:N \g_@@_minimum_bool
 \str_new:N \g_@@_conformance_level_str
 %    \end{macrocode}
 % \end{variable}
@@ -405,6 +406,15 @@
 		\bool_gset_false:N \g_@@_writeTradeContact_bool
 		\bool_gset_false:N \g_@@_writePaymentMeans_bool
 		\str_gset:Nn \g_@@_conformance_level_str {BASIC}
+	},
+	format  / minimum .code:n = {
+		\str_gset:Nx \g_@@_format_str {
+			urn:factur-x.eu:1p0:minimum
+		}
+		\bool_gset_true:N \g_@@_minimum_bool
+		\bool_gset_false:N \g_@@_writeTradeContact_bool
+		\bool_gset_false:N \g_@@_writePaymentMeans_bool
+		\str_gset:Nn \g_@@_conformance_level_str {MINIMUM}
 	},
 	format / xrechnung .meta:n = { format = xrechnung3.0 },
 	format .initial:n = xrechnung,
@@ -850,7 +860,11 @@
 		\cs_gset:Nn \zugferd_stopInvoiceSums:  {
 			\_@@_ApplicableHeaderTradeSettlement_stop:
 		}
-		\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
+		\bool_if:NTF \g_@@_minimum_bool {
+			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn  \use_none:nnnn
+		} {
+			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
+		}
 		\cs_gset:Nn \zugferd_write_Summation:nnnnnnnn {
 			\_@@_SpecifiedTradePaymentTerms:
 			\_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn
@@ -1508,20 +1522,23 @@
 %    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnn {%
 	<ram:PostalTradeAddress>
-	\_@@_indent: <ram:PostcodeCode>#1</ram:PostcodeCode>
-	\tl_if_blank:nF {#2} {%
-		\_@@_indent: <ram:LineOne>#2</ram:LineOne>
+	\bool_if:NF \g_@@_minimum_bool {%
+		\_@@_indent: <ram:PostcodeCode>#1</ram:PostcodeCode>
+		\tl_if_blank:nF {#2} {%
+			\_@@_indent: <ram:LineOne>#2</ram:LineOne>
+		}%
+		\tl_if_blank:nF {#3} {%
+			\_@@_indent: <ram:LineTwo>#3</ram:LineTwo>
+		}%
+		\_@@_indent: <ram:CityName>#4</ram:CityName>
 	}%
-	\tl_if_blank:nF {#3} {%
-		\_@@_indent: <ram:LineTwo>#3</ram:LineTwo>
-	}%
-	\_@@_indent: <ram:CityName>#4</ram:CityName>
 	\_@@_indent: <ram:CountryID>#5</ram:CountryID>
 	</ram:PostalTradeAddress>%
 }
 \_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
-	\_@@_PostalTradeAddress:nnnnn {#1} {#2} {#3} {#4} {#5}
-	\tl_if_empty:nF {#6} {%
+	\_@@_PostalTradeAddress:nnnnn {#1} {#2} {#3} {#4} {#5}%
+	\bool_lazy_or:nnF {\g_@@_minimum_bool}%
+			{\tl_if_blank_p:n {#6}} {%
 		<ram:URIUniversalCommunication>
 		\_@@_indent: <ram:URIID~schemeID="EM">#6</ram:URIID>
 		</ram:URIUniversalCommunication>%
@@ -1578,15 +1595,19 @@
 	}%
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
-		<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>
+		<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>%
 		\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop%
-		\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop%
+		\bool_if:NF \g_@@_minimum_bool {%
+			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop%
+		}%
 	}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:BuyerTradeParty>}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}%
-	\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl%
+	\bool_if:NTF \g_@@_minimum_bool%
+		{\_@@_write_xml:n {<ram:ApplicableHeaderTradeDelivery/>}}%
+		{\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl}%
 }%
 %
 %
@@ -2154,8 +2175,10 @@
 \_@@_define_xml_writer:Nn \_@@_write_SpecifiedLineTradeSettlement:nnn {%
 	\_@@_write_xml:n {<ram:SpecifiedLineTradeSettlement>}%
 	\int_gincr:N \g_@@_indent_int%
-	 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
-	 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
+	%\bool_if:NF \g_@@_minimum_bool {%
+		 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
+		 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
+	 %}%
 	 \_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeSettlement>}%
@@ -2250,13 +2273,17 @@
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
 	\int_gincr:N \g_@@_indent_int%
-	\_@@_write_rounded:nnn {2} {LineTotalAmount} {#1}
-	\_@@_write_rounded:nnn {2} {ChargeTotalAmount} {#2}
-	\_@@_write_rounded:nnn {2} {AllowanceTotalAmount} {#3}
+	\bool_if:NF \g_@@_minimum_bool {
+		\_@@_write_rounded:nnn {2} {LineTotalAmount} {#1}
+		\_@@_write_rounded:nnn {2} {ChargeTotalAmount} {#2}
+		\_@@_write_rounded:nnn {2} {AllowanceTotalAmount} {#3}
+	}
 	\_@@_write_rounded:nnn {2} {TaxBasisTotalAmount} {#4}
 	\_@@_write_rounded:nnnn {2} {TaxTotalAmount} {~currencyID="\l_@@_currency_tl "} {#5}
 	\_@@_write_rounded:nnn {2} {GrandTotalAmount} {#6}
-	\_@@_write_rounded:nnn {2} {TotalPrepaidAmount} {#7}
+	\bool_if:NF \g_@@_minimum_bool {
+		\_@@_write_rounded:nnn {2} {TotalPrepaidAmount} {#7}
+	}
 	\_@@_write_rounded:nnn {2} {DuePayableAmount} {#8}
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
@@ -2349,7 +2376,9 @@
 \cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nn {VV}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms: {
-	\_@@_SpecifiedTradePaymentTerms:VV \g_@@_payment_terms_str \g_@@_due_date_tl
+	\bool_if:NF \g_@@_minimum_bool {
+		\_@@_SpecifiedTradePaymentTerms:VV \g_@@_payment_terms_str \g_@@_due_date_tl
+	}
 }
 %    \end{macrocode}
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
