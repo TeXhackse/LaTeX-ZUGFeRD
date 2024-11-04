@@ -1584,10 +1584,15 @@
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeAgreement: {%
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}%
 	\int_gincr:N \g_@@_indent_int%
-	\_@@_write_xml:e {%
-		<ram:BuyerReference>\g_@@_buyer_reference_tl</ram:BuyerReference>
-		<ram:SellerTradeParty>%
+	\bool_lazy_and:nnF%
+		{\tl_if_blank_p:V \g_@@_buyer_reference_tl}%
+		{\g_@@_minimum_bool}%
+	{%
+		\_@@_write_xml:e {%
+			<ram:BuyerReference>\g_@@_buyer_reference_tl</ram:BuyerReference>
+		}
 	}%
+	\_@@_write_xml:n {<ram:SellerTradeParty>}%
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		<ram:Name>\prop_item:Nn \g_@@_seller_AddressData_prop {name}</ram:Name>
@@ -2028,19 +2033,22 @@
 }
 \cctab_begin:N \g_@@_xml_cctab%
 %
-\_@@_define_xml_writer:Nn \_@@_write_note:n {%
-	\begingroup%
-		\let\\\iow_newline:%
-		\_@@_write_xml:e {%
-			<ram:IncludedNote>
-				\_@@_indent: <ram:Content>
-				#1
-				\_@@_indent: </ram:Content>
-			</ram:IncludedNote>%
-		}%
-	\endgroup%
+\bool_if:NTF \g_@@_minimum_bool {%
+	\cs_set_eq:NN \_@@_write_note:n \use_none:n%
+} {%
+	\_@@_define_xml_writer:Nn \_@@_write_note:n {%
+		\begingroup%
+			\let\\\iow_newline:%
+			\_@@_write_xml:e {%
+				<ram:IncludedNote>
+					\_@@_indent: <ram:Content>
+					#1
+					\_@@_indent: </ram:Content>
+				</ram:IncludedNote>%
+			}%
+		\endgroup%
+	}%
 }%
-%
 %
 \begingroup%
 \char_set_catcode_other:N \#%
