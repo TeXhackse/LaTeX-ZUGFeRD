@@ -954,6 +954,11 @@
 	\_@@_write_rounded:nnnn {#1} {#2} {} {#3}
 }
 %    \end{macrocode}
+% Add a public interface for the rounding to resolve \url{https://github.com/TeXhackse/LaTeX-ZUGFeRD/issues/17}
+%    \begin{macrocode}
+\cs_set:Nn  \zugferd_fp_set_rounded:Nn {\_@@_number_format:nNn  {2}   \l_@@_tmp_tl  {\fp_eval:n {#2}}\fp_set:Nn  #1 {\l_@@_tmp_tl }}
+\cs_set:Nn  \zugferd_fp_gset_rounded:Nn {\_@@_number_format:nNn  {2}   \l_@@_tmp_tl  {\fp_eval:n {#2}}\fp_gset:Nn  #1 {\l_@@_tmp_tl }}
+%    \end{macrocode}
 % \end{function}
 % \subsection{XML indentation}
 % The indentation of the \XML does not really matter.
