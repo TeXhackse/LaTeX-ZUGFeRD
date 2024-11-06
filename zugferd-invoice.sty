@@ -147,8 +147,8 @@
 \newcommand*{\PrintInvoiceItem}[5]{%
 	\stepcounter{invoiceitem}%
 	\theinvoiceitem%Positionsnummer
-	\fp_gset:Nn \g__ptxcd_invoice_item_vat_fp  {#2 * (#1/100) * #4}
-	\fp_gset:Nn \g__ptxcd_invoice_item_fp  {#2 * #4}
+	\zugferd_fp_gset_rounded:Nn \g__ptxcd_invoice_item_vat_fp  {#2 * (#1/100) * #4}
+	\zugferd_fp_gset_rounded:Nn \g__ptxcd_invoice_item_fp  {#2 * #4}
 	\fp_gadd:cn {g__ptxcd_invoice_base_vat#1_fp} {\g__ptxcd_invoice_item_fp}
 	\fp_gadd:cn {g__ptxcd_invoice_sum_vat#1_fp} {\g__ptxcd_invoice_item_vat_fp}
 	\fp_gadd:Nn \g__ptxcd_invoice_sum_fp {\g__ptxcd_invoice_item_fp}
