@@ -32,8 +32,6 @@ if options["target"] ~= "ctan" then
 	typesetdemofiles={"*.tex"}
 end
 
-ctanreadme="README_CTAN.md"
-
 typesetexe="lualatex"
 typesetopts=""
 
