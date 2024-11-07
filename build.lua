@@ -21,8 +21,8 @@ if options["target"] == "tag" then
 	excludefiles={"*~"}
 end
 
-packageversion = "0.9"
-packagedate      = "2024-10-23"
+packageversion = "0.9a"
+packagedate      = "2024-11-07"
 
 sourcefiles={"*.dtx","*.ins", "*.sty"}
 demofiles={"*.tex"}

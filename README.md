@@ -2,7 +2,7 @@
 
 Copyright (C) 2023–2024 by Marei Peischl (peiTeX) <marei@peitex.de>
 
-zugferd version 0.9 (2024-10-23)
+zugferd version 0.9a (2024-11-07)
 
 ***************************************************************************
 
@@ -21,18 +21,14 @@ There also exist interfaces to attach an XML file generated differently. Please 
 
 This package does not provide any validation. Please be aware of you have to use valid input data for a valid ZUGFeRD output. The documentation suggests some options.
 
-## Overview of the included files
+## Version History
 
-The package is created using docstrip. To install the LaTeX-Package have a look at  the [Installation Instructions](##installation).
-
-It consists of the following files:
-
-* DEMO-rechnung-zugferd.tex: Example file for an invoice. It is using the `zugferd-invoice.sty` also provided within this project.
-
-* zugferd-invoice.sty: An example package to show how one can use the zugferd fuctionality within an own wrapper. This file is meant to be some kind of template for your own setup. Feel free to share your own variants.
-
-* zugferd.ins + zugferd.dtx: docstrip bundle containing the actul source code and documentation.  It can be build and typeset using the commands shown below.
-
-## Installation
-
-It's recommended to use a Vanilla TeX Live installation. For other options see INSTALL.md
+ * 0.9a (2024-11-07)
+    - Add support for MINIMUM profile
+    - Bugfix in demo package concerning rounding of non integer units.
+ * 0.9  (2024-10-23)
+    - Improve validation in testing of the development status.
+    - Add support for BillingSpecifiedPeriod
+    - Add additional user interfaces to simplify development for templates
+ * 0.8a (2024-09-17) Patch to switch to the newly public interface of l3pdfmeta
+ * 0.8  (2024-09-11) First version on CTAN

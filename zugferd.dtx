@@ -16,14 +16,14 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2024-10-23 v0.9 ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2024-11-07 v0.9a ZUGFerd Invoice and Faktur-X]
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2024-10-23}{0.9}{Create ZUGFerd invoices using LaTeX}
+%<package>\ProvidesExplPackage{zugferd}{2024-11-07}{0.9a}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
-\usepackage{zugferd}[2024-10-23]
+\usepackage{zugferd}[2024-11-07]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -354,9 +354,9 @@
 % The package supports a few fundamental settings.
 % These have to be set when the package is loaded as they are used internally to setup the scheme or activate the \XML mechanism.
 %
-% \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic}{xrechunng}
+% \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic/minimum}{xrechunng}
 % \option{format} selects the scheme to be used for the zugferd invoice.
-% Currently xrechnung3.0, xrechnung2.3 and the basic scheme are supported.
+% Currently xrechnung3.0, xrechnung2.3, and the basic and minimum schemes are supported.
 %
 % The value \option{xrechnung} is set as an alias to |xrechnung3.0| and will always use the latest version supported by \pkg{zugferd}.
 %
@@ -386,6 +386,7 @@
 % \end{documentation}
 % \begin{implementation}
 % \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file,auto-exemption}
+% \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
 % \changes{v0.7}{2024-09-10}{Added auto-exemption option}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
@@ -475,6 +476,9 @@
 		}
 		\msg_error:nn {zugferd} {PDFmanagement-not-active}
 	}
+%    \end{macrocode}
+% \changes{v0.9a}{2024-11-07}{Add error message if pdfmanagement is outdated.}
+%    \begin{macrocode}
 	\IfPackageAtLeastF{pdfmanagement-testphase}{2024/09/13}{
 		\msg_new:nnn {zugferd} {PDFmanagement-too-old} {
 			Your~version~of~\LaTeX's~PDF~management~is~too~old.
@@ -1169,7 +1173,7 @@
 % \begin{documentation}
 % \subsection{Rounding Interface}
 % \label{sec:rounding-interface}
-% \changes{0.00}{0000-00-00}{Add public interface for the rounding mechanism.}
+% \changes{v0.9a}{2024-11-07}{Add public interface for the rounding mechanism.}
 % The demo package's implementation is also doing VAT calculations.
 % This rounding mechanism might have side effects if only the final values are rounded as reported in \issue{17} .
 % It is only an issue if fractions of units are used, but was fixed in \version{0.9a}.
