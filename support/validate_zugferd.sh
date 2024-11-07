@@ -4,7 +4,7 @@ mustang_version="2.14.2"
 mustang_jar="Mustang-CLI.jar"
 
 # add scriptdir as a variable to also check support/ for the jar as it's the case on CI pipeline runs
-scriptdir=$(realpath -s "$0")
+scriptdir=$(realpath "$0")
 scriptdir="${scriptdir%/*}"
 
 if [ ! -f "$mustang_jar" ]; then
