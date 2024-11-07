@@ -214,6 +214,12 @@
 	url={https://xeinkauf.de/faq/xrechnung#leitweg-id},
 	urldate={2024-09-04}
 }
+@online{LaTeX-ZUGFeRD-GitHub,
+	title={ZUGFeRD - Create ZUGFeRD and other kinds of E-invoices using \LaTeX},
+	subtitle={GitHub Repository},
+	author={Peischl, Marei},
+	url={https://github.com/TeXhackse/LaTeX-ZUGFeRD}
+}
 \end{filecontents}
 \addbibresource{zugferd.bib}
 \nocite{cl-recommendations}
@@ -221,6 +227,12 @@
 \usepackage{xspace}
 \newcommand*{\XML}{XML\xspace}
 \newcommand*{\XMLfile}{\XML file}
+
+\newcommand*{\issue}[1]{%
+	{\DeclareFieldFormat{citeurlpostfix}{\href{##1/issues/#1}{\##1}}\citefield{LaTeX-ZUGFeRD-GitHub}[citeurlpostfix]{url}}%
+}
+\newcommand*{\version}[1]{v#1}
+
 
 \begin{document}
 \EnableDocumentation\DisableImplementation
@@ -1158,9 +1170,9 @@
 %
 % \DescribeMacro{\zugferd_fp_set_rounded:Nn}
 % \DescribeMacro{\zugferd_fp_gset_rounded:Nn}
-% This command can be used to access the \pkg{siunitx}'s rounding mechanism within \pkg{zugferd}. 
+% This command can be used to access the \pkg{siunitx}'s rounding mechanism within \pkg{zugferd}.
 % The command is based on \cs[no-index]{fp_set:Nn} just is doing the rounding before the assignment.
-% 
+%
 % \begin{examplecode}
 %	\zugferd_fp_gset_rounded:Nn \g_tmpa_fp {|\meta{amount}* (\meta{VAT rate}/100) * \meta{unit price}}
 %	\end{examplecode}
