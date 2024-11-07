@@ -295,7 +295,7 @@
 % In the appendix I will add some notes on my setup and how I use it within pipelines.
 %
 % The Bundle provides an example file called \file{DEMO-rechnung-zugferd.tex}.
-% This includes a basic setup for a valid X-Rechnung currently matching Version 3.0.1 of the standard.
+% This includes a basic setup for a valid X-Rechnung currently matching Version 3.0.2 of the standard.
 % Details on the requirements can be found in the documentation at \cite{x-rechnung}.
 %
 % \subsection{Disclaimer concerning the \pkg{zugferd-invoice} Package}
@@ -936,7 +936,7 @@
 % \end{function}
 % \subsection{Number rounding}
 % As \pkg{siunitx} is implementing this, \pkg{zugferd} uses it instead of building our own mechanism.
-% In version \version{0.91} a public interface was added, as described in section \ref{sec:rounding-interface}.
+% In version \version{0.9a} a public interface was added, as described in section \ref{sec:rounding-interface}.
 %    \begin{macrocode}
 \RequirePackage{siunitx}
 %    \end{macrocode}
@@ -1165,7 +1165,7 @@
 % \changes{0.00}{0000-00-00}{Add public interface for the rounding mechanism.}
 % The demo package's implementation is also doing VAT calculations.
 % This rounding mechanism might have side effects if only the final values are rounded as reported in \issue{17} .
-% It is only an issue if fractions of units are used, but was fixed in \version{0.91}.
+% It is only an issue if fractions of units are used, but was fixed in \version{0.9a}.
 % To avoid this generally there now exists an interface to be used to do the rounding before the summation.
 %
 % \DescribeMacro{\zugferd_fp_set_rounded:Nn}
@@ -1174,7 +1174,7 @@
 % The command is based on \cs[no-index]{fp_set:Nn} just is doing the rounding before the assignment.
 %
 % \begin{examplecode}
-%	\zugferd_fp_gset_rounded:Nn \g_tmpa_fp {|\meta{amount}* (\meta{VAT rate}/100) * \meta{unit price}}
+%	\zugferd_fp_gset_rounded:Nn \g_tmpa_fp {|\meta{amount}|* (|\meta{VAT rate}|/100) * |\meta{unit price}|}
 %	\end{examplecode}
 % \end{documentation}
 % \begin{implementation}
@@ -1205,8 +1205,7 @@
 % Therefore it might be necessary to escape special characters, like |&| to |&amp;|.
 % This also applies to |<|, |>|, |"| and |'|.
 % It's technically possible to do this either via active characters or string replacements.
-% But since it's adjusting the content this feature would never be enabled by default.
-% The corresponding issue can be found at \url{https://github.com/TeXhackse/LaTeX-ZUGFeRD/issues/9}.
+% But since it's adjusting the content this feature would never be enabled by default (Issue \issue{9}).
 %
 % In most cases this functionality will be used to change the tax setting or unit for a single item.
 % \autoref{sec:xml-interfaces} also provided an example for this.
@@ -2050,7 +2049,7 @@
 % \begin{documentation}
 % \DescribeKeyOption*{item/start-date=\meta{date formatted as YYYYMMDD}}{}*
 % \DescribeKeyOption*{item/end-date=\meta{date formatted as YYYYMMDD}}{}*
-% With version 0.00 support for |BillingSpecifiedPeriod| was added.
+% With version \version{0.9} support for |BillingSpecifiedPeriod| was added.
 % This supports setting |start-date| and |end-date| per item.
 % As this is optional, there is no default.
 % The element will be printed if both dates are set, as setting a single one will enforce the element to be invalid.
