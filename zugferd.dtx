@@ -473,7 +473,14 @@
 		} {
 			See~ZUGFeRD~or~PDFmanagement~documentation~for~more~information.
 		}
-		\msg_error:nn{zugferd} {PDFmanagement-not-active}
+		\msg_error:nn {zugferd} {PDFmanagement-not-active}
+	}
+	\IfPackageAtLeastF{pdfmanagement-testphase}{2024/09/13}{
+		\msg_new:nnn {zugferd} {PDFmanagement-too-old} {
+			Your~version~of~\LaTeX's~PDF~management~is~too~old.
+			You~need~to~update~your~LaTeX~distribution~to~be~able~to~use~the~zugferd~package~correctly.
+		}
+		\msg_error:nn{zugferd} {PDFmanagement-too-old}
 	}
 	%% based on experiments for l3pdfmeta by Ulrike Fischer
 	\pdfmeta_xmp_xmlns_new:nn {fx}{
