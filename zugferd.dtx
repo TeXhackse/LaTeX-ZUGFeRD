@@ -766,7 +766,7 @@
 %
 % \begin{examplecode}
 % \begin{ZUGFeRD}
-%	\zugferd_write_Item:nnnnnn {1} {} {Plushie~\TeX\ lion} {31.98} {2} {63.78}
+%	\zugferd_write_Item:nnnnnn {1} {} {Plushie~\TeX\ lion} {31.89} {2} {63.78}
 %	\zugferd_startInvoiceSums:
 %	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
 %	\zugferd_write_Summation:nnnnnnnn {63.78} {0} {0} {63.78} {12.12} {75.90} {0} {75.90}
@@ -791,7 +791,7 @@
 % \begin{examplecode}
 % \group_begin:
 %	\keys_set:nn {zugferd/item}{tax/rate=19, tax/category=S}
-%	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX\ lion} {31.98} {2} {63.78}
+%	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX\ lion} {31.89} {2} {63.78}
 %	% Code using the data for visual representation
 % \group_end:
 % \end{examplecode}
@@ -814,7 +814,7 @@
 % \end{syntax}
 % The example above could then be replaced by
 % \begin{examplecode}
-% \zugferd_write_Item:nnnnnnn {tax/rate=19,tax/category=S} {1} {Plushie-01} {Plushie \TeX\ lion} {31.98} {2} {63.78}
+% \zugferd_write_Item:nnnnnnn {tax/rate=19,tax/category=S} {1} {Plushie-01} {Plushie \TeX\ lion} {31.89} {2} {63.78}
 %  % visual representation now may not refer to the data
 % \end{examplecode}
 %
