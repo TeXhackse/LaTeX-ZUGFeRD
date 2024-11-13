@@ -305,7 +305,7 @@
 % It is published as a part of the documentation.
 %
 % The idea is to create your own version of this package to use your own layout and internally load the \pkg {zugferd} package that way.
-% Of course, it is possible to use a copy of this package within your personal setup.
+% Of course, it's possible to use a copy of this package within your personal setup.
 % But the syntax used in the DEMO file may change, so you have to ensure yourself to be compatible with updates.
 %
 % The interfaces for \pkg{zugferd} will hopefully stay the same.
@@ -760,7 +760,7 @@
 % \changes{v0.6}{2024-09-05}{Provide public interfaces and first version of the documentation.}
 % \label{sec:xml-interfaces}
 % In case you are using |write-xml=true| (which is the default) You need to ensure to call the \XML writing functions in the correct order.
-% For example after setting the global invoice data, like it is done in the example file.
+% For example after setting the global invoice data, like it's done in the example file.
 % The minimal example below would create a valid XML.
 % The interface commands are described afterwards.
 %
@@ -799,7 +799,7 @@
 %
 % This structure might look a bit overcomplicated as one might think the options could also be set as an additional argument.
 % This works as long as the Code for the visual part of the invoice is not referencing the internal data.
-% In case you don't do this it is also possible to use the following variant:
+% In case you don't do this it's also possible to use the following variant:
 %
 % \DescribeMacro{\zugferd_write_Item:nnnnnnn}
 % \DescribeMacro{\zugferd_write_Item:ennnnnn}
@@ -843,7 +843,7 @@
 %    \marg{GrandTotalAmount}\marg{TotalPrepaidAmount}\marg{DuePayableAmount}
 % \end{syntax}
 % This commnd is also writing the payment terms to the \XMLfile.
-% Please be aware that it is in general not possible to calculate the tax values in here, as there might be multiple tax rates applied.
+% Please be aware that it's in general not possible to calculate the tax values in here, as there might be multiple tax rates applied.
 % This is only taking the sums over all tax entries.
 %
 % In case you are using some specials like category \enquote{E} the exemption reason will also be written at that point.
@@ -853,7 +853,7 @@
 % \DescribeMacro{\zugferd_enable_XML_interfaces:}
 % \DescribeMacro{\zugferd_disable_XML_interfaces:}
 % \par\bigskip
-% As there are a lot of usecases where code is processed multiple times, it is necessary to provide an interface to temporary disable the \XML writing mechanism.
+% As there are a lot of usecases where code is processed multiple times, it's necessary to provide an interface to temporary disable the \XML writing mechanism.
 % A lot of these situations appear within table structures whereas a local adjustment would not be helpful.
 % Therefore these adjustments have to be done globally.
 %
@@ -981,7 +981,7 @@
 % \end{function}
 % \subsection{XML indentation}
 % The indentation of the \XML does not really matter.
-% For debugging, it is a lot simpler to have it included and this also helped to maintain the structure of the code during development, so I decided to keep it.
+% For debugging, it's a lot simpler to have it included and this also helped to maintain the structure of the code during development, so I decided to keep it.
 % The indentation is created using s bunch of auxiliary commands and variables which are defined here.
 % \begin{variable}{\g_@@_indent_int}
 %    \begin{macrocode}
@@ -1038,7 +1038,7 @@
 % \begin{implementation}
 % \begin{function}{\zugferd_disable_macros:}
 % The definition was mostly taken from \pkg{hyperref} \cite{hyperref}.
-% Most likely not all of these are required, but it is probably easier to take this as a reasonable choice instead of creating an own collection.
+% Most likely not all of these are required, but it's probably easier to take this as a reasonable choice instead of creating an own collection.
 % \iffalse
 %    \begin{macrocode}
 %% modified list taken from hyperref.sty v7.01i
@@ -1059,7 +1059,7 @@
 	\let\$\textdollar
 %    \end{macrocode}
 % This only is a part of the list.
-% There is no real use of printing the whole list, it is inside \file{zugferd.sty} anyway.
+% There is no real use of printing the whole list, it's inside \file{zugferd.sty} anyway.
 % \comment
 %    \begin{macrocode}
 	\let\%\textpercent
@@ -1215,8 +1215,8 @@
 % Please be aware that the \pkg{zugferd} package does currently not handle any replacements concerning the content.
 % Therefore it might be necessary to escape special characters, like |&| to |&amp;|.
 % This also applies to |<|, |>|, |"| and |'|.
-% it is technically possible to do this either via active characters or string replacements.
-% But since it is adjusting the content this feature would never be enabled by default (Issue \issue{9}).
+% It's technically possible to do this either via active characters or string replacements.
+% But since it's adjusting the content this feature would never be enabled by default (Issue \issue{9}).
 %
 % In most cases this functionality will be used to change the tax setting or unit for a single item.
 % \autoref{sec:xml-interfaces} also provided an example for this.
@@ -1314,7 +1314,7 @@
 % The XML-Standard requires them to use the structure \meta{YYYYMMDD}.
 % For the day this document was compiled this would be: \enquote{\InsertZUGFeRDData{date}} (\today).
 %
-% Instead of providing a date value directly it is also possible to use \cs[no-index]{today}.
+% Instead of providing a date value directly it's also possible to use \cs[no-index]{today}.
 % This is done using the \value{auto} which is the default setting for \option{date} and \option{delivery-date}.
 % Please be aware, that this would change if you rebuild the document later. So you might want to use an actual value here.
 % \end{documentation}
@@ -1443,7 +1443,7 @@
 % The users themselves have to ensure to add the required data.
 %
 % The outer braces are not required, if the data does not container an equal sign or a comma.
-% In case the final data is unknown, it is recommended to use them anyway.
+% In case the final data is unknown, it's recommended to use them anyway.
 %
 % \DescribeKeyOption*{\meta{party}/name=\meta{name}}{}*
 % \DescribeKeyOption*{\meta{party}/email=\meta{email address}}{}*
@@ -1451,9 +1451,9 @@
 %
 % \DescribeKeyOption*{\meta{party}/address=\meta{address}}{}*
 % As shown in the example \option{address} can use two lines separted by |\\|.
-% it is possble to set all fields for all trade contacts, but e.\,g. for the |shipto|-party email and vatid will not be used in the \XML.
+% It's possble to set all fields for all trade contacts, but e.\,g. for the |shipto|-party email and vatid will not be used in the \XML.
 %
-% Alternatively it is also possible to use \option{\meta{party}/lineone} and \option{\meta{party/linetwo}} separately.
+% Alternatively it's also possible to use \option{\meta{party}/lineone} and \option{\meta{party/linetwo}} separately.
 % This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using \cs[no-index]{zugferd_disable_macros:}.
 %
 % \DescribeKeyOption*{\meta{party}/postcode=\meta{postal code}}{}*
@@ -1480,7 +1480,7 @@
 %	}
 % }
 % \end{examplecode}
-% \noindent As for \option{seller/address} it is also possible to set the keys directly:
+% \noindent As for \option{seller/address} it's also possible to set the keys directly:
 % \begin{examplecode}
 % \SetZUGFeRDData{
 %	seller/contact-name= {|\meta{contact-name}|},
@@ -1719,7 +1719,7 @@
 % \subsubsection{Buyer Reference}
 % \DescribeKeyOption*{buyer/reference=komavar/\meta{Reference}}{}
 % The reference field only exists for the |buyer| trade party.
-% Depending on the process it is required to use some unique identifier referring to the |buyer|.
+% Depending on the process it's required to use some unique identifier referring to the |buyer|.
 % Within Germany these numbers are called \enquote{Leitweg-ID}\cite{leitweg-id}.
 %
 % In any way the |buyer| may choose what is used here. Also may be some PO number or similar reference.
@@ -1750,11 +1750,11 @@
 % \begin{itemize}
 % \UseName{exp_args:Nnnc} \UseName{exp_args:co} {clist_map_inline:nn} {zugferd@paymentMeans@english} {\item #1}
 % \end{itemize}
-% Others may be added in the future but it is not planned to include a full list.
+% Others may be added in the future but it's not planned to include a full list.
 %
 % The codes will automatically add the corresponding string inside the \enquote{Information} field.
 % The initial version only included German strings, but currently they are also included in English.
-% it is possible to overwrite them using the same structure:
+% It's possible to overwrite them using the same structure:
 %
 % \begin{examplecode}
 % \setupZUGFeRDStrings{payment-means}{
@@ -1840,7 +1840,7 @@
 % \subsection{Variables which may be changed per invoice item}
 % Some settings may have the same value for all invoice items.
 % These are defined to take some preset but are set locally.
-% So it is possible to adjust them for a single invoice item if necessary.
+% So it's possible to adjust them for a single invoice item if necessary.
 % An example is shown in \autoref{sec:xml-interfaces}.
 % \subsubsection{Units}
 % \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{}
@@ -1906,7 +1906,7 @@
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
 % The example file includes 2 different VAT values using the same category.
 %
-% The labels have been chosen to simplify the usage. it is also possible to enter the codes directly.
+% The labels have been chosen to simplify the usage. It's also possible to enter the codes directly.
 % This option is not case sensitive.
 % \begin{valuelist}
 % \item[standard] Standard rate and reduced rate item, |category=S|
@@ -2040,7 +2040,7 @@
 % \begin{documentation}
 % \DescribeKeyOption{tax/rate=\meta{floating point}}{19}*
 % The value given will be used for tax calculation.
-% By default it is configured to |19| to match the German standard VAT rate.
+% By default it's configured to |19| to match the German standard VAT rate.
 %
 % \end{documentation}
 % \begin{implementation}

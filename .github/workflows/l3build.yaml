@@ -19,7 +19,7 @@ jobs:
         uses: zauguin/install-texlive@v3
         with:
            package_file: .tl_packages
-      # download validate_zugferd.sh to support/ so it is not done multiple times later
+      # download validate_zugferd.sh to support/ so it's not done multiple times later
       - run: cd support && bash validate_zugferd.sh && cd -
       - run: l3build ctan
       - run: bash support/validate_zugferd.sh build/doc/DEMO*.pdf
