@@ -3,7 +3,7 @@
 mustang_version="2.14.2"
 mustang_jar="Mustang-CLI.jar"
 
-# add scriptdir as a variable to also check support/ for the jar as it's the case on CI pipeline runs
+# add scriptdir as a variable to also check support/ for the jar as it is the case on CI pipeline runs
 scriptdir=$(realpath "$0")
 scriptdir="${scriptdir%/*}"
 

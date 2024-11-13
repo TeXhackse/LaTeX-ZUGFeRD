@@ -3,7 +3,7 @@ default:
   before_script:
     # install additional requirements for the validation procedure
     - apt-get update && apt-get install -y zip unzip default-jre wget && rm -rf /var/lib/apt/lists/*
-    # download validate_zugferd.sh to support/ so it's not done multiple times later
+    # download validate_zugferd.sh to support/ so it is not done multiple times later
     - cd support && bash validate_zugferd.sh && cd -
   after_script:
     # testfiles have already been validated, but DEMO did not
