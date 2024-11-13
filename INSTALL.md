@@ -6,7 +6,7 @@ As this package is now released via CTAN, it is hightly recommended to use the T
 
 ## Minimal portable TeX Live via DEPP
 
-Additionally for it is possible to use the Island of TeX's DEPP project to create a minimal portable TeX Live installation only including the dependencies for this kind of documents.
+Additionally, for it is possible to use the Island of TeX's DEPP project to create a minimal portable TeX Live installation only including the dependencies for this kind of documents.
 This repository includes a DEPENDS.txt for this purpose. 
 
 Please be aware that the soft dependencies are those required to typeset the demo file. 
