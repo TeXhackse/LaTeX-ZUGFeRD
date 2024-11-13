@@ -17,7 +17,8 @@ This package is not yet released to CTAN, but it provides an \pkg{l3build} insta
 Details on usage can be found in the [l3build documentation](http://texdoc.net/serve/l3build)/0).
 
 To get started one can run
-```
+
+```shell
 l3build doc
 ```
 
@@ -25,7 +26,8 @@ within the repositories root directory.
 This will build the Demo project as well as the current status of the documentation within the subdirectory `build/doc`.
 
 To Install the package within you `$TEXMFHOME` there is also the `install` action
-```
+
+```shell
 l3build install
 ```
 
