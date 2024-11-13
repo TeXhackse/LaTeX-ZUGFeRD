@@ -31,4 +31,4 @@ To Install the package within you `$TEXMFHOME` there is also the `install` actio
 l3build install
 ```
 
-This will install the `zugferd.sty`  as well as the `zugferd-invoice.sty` and afterwards the TeX compiler will be able to find and use them.
+This will install the `zugferd.sty` as well as the `zugferd-invoice.sty` and afterwards the TeX compiler will be able to find and use them.
