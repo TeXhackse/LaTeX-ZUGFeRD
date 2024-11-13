@@ -2,7 +2,7 @@
 
 ## Recommended setup
 
-As this package is now released via CTAN, it is hightly recommended to use the TeX Live Manager for installation.
+As this package is now released via CTAN, it is highly recommended to use the TeX Live Manager for installation.
 
 ## Minimal portable TeX Live via DEPP
 
