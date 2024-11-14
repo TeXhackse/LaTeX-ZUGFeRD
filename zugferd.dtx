@@ -338,7 +338,7 @@
 % \fi
 % \begin{implementation}
 % \section{Implementation}
-% \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_minimum_bool,\g_@@_conformance_level_str}
+% \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_minimum_bool,\g_@@_conformance_level_str,\g_@@_xml_embedded_file_tl}
 %    \begin{macrocode}
 \tl_new:N \l_@@_tmp_tl
 \str_new:N \g_@@_format_str
@@ -347,6 +347,7 @@
 \bool_new:N \g_@@_writePaymentMeans_bool
 \bool_new:N \g_@@_minimum_bool
 \str_new:N \g_@@_conformance_level_str
+\tl_new:N \g_@@_xml_embedded_file_tl
 %    \end{macrocode}
 % \end{variable}
 % \end{implementation}
@@ -396,6 +397,7 @@
 		\bool_gset_true:N \g_@@_writeTradeContact_bool
 		\bool_gset_true:N \g_@@_writePaymentMeans_bool
 		\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}
+		\tl_gset:Nn \g_@@_xml_embedded_file_tl {xrechnung.xml}
 	},
 	format .choice:,
 	format / xrechnung3.0 .code:n = {
@@ -420,6 +422,7 @@
 		\bool_gset_false:N \g_@@_writeTradeContact_bool
 		\bool_gset_false:N \g_@@_writePaymentMeans_bool
 		\str_gset:Nn \g_@@_conformance_level_str {BASIC}
+		\tl_gset:Nn \g_@@_xml_embedded_file_tl {factur-x.xml}
 	},
 	format  / minimum .code:n = {
 		\str_gset:Nx \g_@@_format_str {
@@ -429,6 +432,7 @@
 		\bool_gset_false:N \g_@@_writeTradeContact_bool
 		\bool_gset_false:N \g_@@_writePaymentMeans_bool
 		\str_gset:Nn \g_@@_conformance_level_str {MINIMUM}
+		\tl_gset:Nn \g_@@_xml_embedded_file_tl {factur-x.xml}
 	},
 	format / xrechnung .meta:n = { format = xrechnung3.0 },
 	format .initial:n = xrechnung,
@@ -529,7 +533,7 @@
 		% fix INVOICE
 		<fx:DocumentType>INVOICE</fx:DocumentType>\iow_newline:
 		% fix factur-x.xml
-		<fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>\iow_newline:
+		<fx:DocumentFileName>\g_@@_xml_embedded_file_tl</fx:DocumentFileName>\iow_newline:
 		% fix schema version
 		<fx:Version>1.0</fx:Version>\iow_newline:
 		% zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG
@@ -743,7 +747,7 @@
 			\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative}
 			%or /Source in some cases
 			\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
-			\pdffile_embed_file:nnn {\g_@@_xml_file_tl}{factur-x.xml}
+			\exp_args:NnV \pdffile_embed_file:nnn {\g_@@_xml_file_tl} \g_@@_xml_embedded_file_tl
 				{zugferd/rechnung}
 		\group_end:
 		\pdfmanagement_add:nnx
