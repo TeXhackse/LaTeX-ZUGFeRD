@@ -36,7 +36,9 @@ typesetexe="lualatex"
 typesetopts=""
 
 supportdir="support"
-checksuppfiles={"validate_zugferd.sh","Mustang-CLI.jar"}
+checksuppfiles={"validate_zugferd.sh","Mustang-CLI.jar","zugferd-test.ltx"}
+
+checkconfigs = {"build", "config-pdf"}
 
 ctanreadme="README_CTAN.md"
 
