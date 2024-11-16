@@ -362,6 +362,10 @@
 %
 % The value \option{xrechnung} is set as an alias to |xrechnung3.0| and will always use the latest version supported by \pkg{zugferd}.
 %
+% This option also adjusts the file name which is used for embedding the \XML.
+% It will be called |factur-x.xml| for all formats but the |xrechnung| ones. 
+% In that case it will be |xrechnung.xml|.
+%
 % \DescribeKeyOption{zugferd=\meta{boolean}}{true}*
 % This option can be used to deactivate the \XML embedding.
 % It would also disable the the \option{write-xml} option.
@@ -749,6 +753,14 @@
 			\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
 			\exp_args:NnV \pdffile_embed_file:nnn {\g_@@_xml_file_tl} \g_@@_xml_embedded_file_tl
 				{zugferd/rechnung}
+%    \end{macrocode}
+% Since some tools require the Catalog entry to match the file name of the embedded file this this has to be set separately (\issue{26}).
+% \changes{v0.0}{0000-00-00}{Fix file name of embedded file for the zugferd profile.}
+%    \begin{macrocode}
+			\pdfmanagement_add:nee
+				  {Catalog/Names/EmbeddedFiles}
+				  {\g_@@_xml_embedded_file_tl}
+				  {\pdf_object_ref:n{zugferd/rechnung}}
 		\group_end:
 		\pdfmanagement_add:nnx
 			{Catalog/Names}
