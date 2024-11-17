@@ -13,9 +13,11 @@ bookmark# dtx
 booktabs# DEMO dtx
 catchfile# dtx
 cm# DEMO dtx
+cm-super# testfiles-pdf
 colorprofiles# DEMO dtx
 colortbl# dtx
 csquotes# dtx
+ec# testfiles-pdf
 enumitem# dtx
 etexcmds# dtx
 etoolbox# DEMO dtx
@@ -58,6 +60,7 @@ ltxcmds# DEMO dtx
 luatex
 makeindex
 minted# dtx
+mptopdf# testfiles-pdf
 pdfescape# dtx
 pdfmanagement-testphase# DEMO dtx
 pdftexcmds# DEMO dtx
