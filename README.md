@@ -2,7 +2,7 @@
 
 Copyright (C) 2023–2024 by Marei Peischl (peiTeX) <marei@peitex.de>
 
-zugferd version 0.9a (2024-11-07)
+zugferd version 0.9b (2024-11-17)
 
 ***************************************************************************
 
@@ -23,6 +23,10 @@ This package does not provide any validation. Please be aware of you have to use
 
 ## Version History
 
+* 0.9b (2024-11-17)
+   - Rename embedded xml-file if xrechnung is used
+   - Fix bug leaving an unescaped `\n` in the output
+   - Added additional testfiles
 * 0.9a (2024-11-07)
    - Add support for MINIMUM profile
    - Bugfix in demo package concerning rounding of non integer units.

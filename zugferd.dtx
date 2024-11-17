@@ -16,14 +16,14 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2024-11-07 v0.9a ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2024-11-17 v0.9b ZUGFerd Invoice and Faktur-X]
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2024-11-07}{0.9a}{Create ZUGFerd invoices using LaTeX}
+%<package>\ProvidesExplPackage{zugferd}{2024-11-17}{0.9b}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
-\usepackage{zugferd}[2024-11-07]
+\usepackage{zugferd}[2024-11-17]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -755,7 +755,7 @@
 				{zugferd/rechnung}
 %    \end{macrocode}
 % Since some tools require the Catalog entry to match the file name of the embedded file this this has to be set separately (\issue{26}).
-% \changes{v0.0}{0000-00-00}{Fix file name of embedded file for the zugferd profile.}
+% \changes{v0.9b}{2024-11-17}{Fix file name of embedded file for the zugferd profile.}
 %    \begin{macrocode}
 			\pdfmanagement_add:nee
 				  {Catalog/Names/EmbeddedFiles}
