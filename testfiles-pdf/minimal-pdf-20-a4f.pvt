@@ -1,0 +1,10 @@
+% The standard does not support PDF 2.0 (Status 2024-11-17)
+% This test file does only exists for testing purpose
+\DocumentMetadata{
+	pdfstandard=a-4f,
+	pdfversion=2.0,
+	lang=de,
+}
+
+\errorstopmode
+\input{zugferd-test.ltx}

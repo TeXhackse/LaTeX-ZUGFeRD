@@ -146,7 +146,7 @@ endobj
 9 0 obj
 <<
 /Type /Metadata /Subtype /XML
-/Length 13811     
+/Length 13818     
 >>
 stream
 <?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
@@ -402,12 +402,12 @@ stream
     </rdf:Seq>
    </dc:date>
    <dc:format>application/pdf</dc:format>
-   <dc:source>minimal-pdf.tex</dc:source>
+   <dc:source>minimal-pdf-20-a4f.tex</dc:source>
    <xmp:CreatorTool>LaTeX</xmp:CreatorTool>
    <xmp:CreateDate>2016-05-20T09:00:00Z</xmp:CreateDate>
    <xmp:ModifyDate>2016-05-20T09:00:00Z</xmp:ModifyDate>
    <xmp:MetadataDate>2016-05-20T09:00:00Z</xmp:MetadataDate>
-   <xmpMM:DocumentID>uuid:afaffcbe-794f-47ec-8a43-98d39f75a8f3</xmpMM:DocumentID>
+   <xmpMM:DocumentID>uuid:e05bfe1e-f4c1-49da-812d-80fb1b50be22</xmpMM:DocumentID>
    <xmpMM:InstanceID>uuid:0a57c455-157a-4141-8c19-6237d832fc80</xmpMM:InstanceID>
    <prism:complianceProfile>three</prism:complianceProfile>
    <prism:pageCount>1</prism:pageCount>
@@ -462,7 +462,7 @@ endobj
 [ 6 0 R ]
 endobj
 17 0 obj
-<< /Names[(l3ef0001) 8 0 R] >>
+<< /Names[(l3ef0001) 8 0 R (xrechnung.xml) 8 0 R] >>
 endobj
 19 0 obj
 [499.9 499.9 499.9 499.9 499.9 499.9 499.9 499.9 499.9 277.7 277.7 777.6 777.6 777.6 472.1 777.6 749.8 708.2 722 763.7 680.4 652.6 784.5 749.8 361 513.8 777.6 624.8 916.4 749.8 777.6 680.4 777.6 735.9 555.4 722 749.8 749.8 1027.5 749.8 749.8 611 277.7 499.9 277.7 611 777.6 277.7 499.9 555.4 444.3 555.4 444.3 305.5 499.9 555.4 277.7 305.5 527.7 277.7 833.1 555.4 499.9 555.4 527.7 391.6 394.3 388.8]
@@ -677,7 +677,7 @@ endobj
 xref
 0 25
 0000000002 65535 f 
-0000024270 00000 n 
+0000024277 00000 n 
 0000000003 00000 f 
 0000000004 00000 f 
 0000000000 00000 f 
@@ -686,25 +686,25 @@ xref
 0000003577 00000 n 
 0000009809 00000 n 
 0000010016 00000 n 
-0000024206 00000 n 
-0000024098 00000 n 
-0000023915 00000 n 
-0000036908 00000 n 
-0000037086 00000 n 
-0000024317 00000 n 
-0000024343 00000 n 
-0000024369 00000 n 
-0000034745 00000 n 
-0000024416 00000 n 
-0000024833 00000 n 
-0000034538 00000 n 
-0000034819 00000 n 
-0000037145 00000 n 
-0000037189 00000 n 
+0000024213 00000 n 
+0000024105 00000 n 
+0000023922 00000 n 
+0000036937 00000 n 
+0000037115 00000 n 
+0000024324 00000 n 
+0000024350 00000 n 
+0000024376 00000 n 
+0000034774 00000 n 
+0000024445 00000 n 
+0000024862 00000 n 
+0000034567 00000 n 
+0000034848 00000 n 
+0000037174 00000 n 
+0000037218 00000 n 
 trailer
 << /Size 25
 /Root 24 0 R
 /ID [<9BD18DF3359C1216B83ADB4AA401CC9A> <9BD18DF3359C1216B83ADB4AA401CC9A>] >>
 startxref
-37311
+37340
 %%EOF
