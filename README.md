@@ -7,7 +7,7 @@ zugferd version 0.9a (2024-11-07)
 ***************************************************************************
 
  This material is subject to the LaTeX Project Public License version 1.3c
- or later. See http://www.latex-project.org/lppl.txt for details.
+ or later. See <http://www.latex-project.org/lppl.txt> for details.
 
 ***************************************************************************
 
@@ -23,12 +23,12 @@ This package does not provide any validation. Please be aware of you have to use
 
 ## Version History
 
- * 0.9a (2024-11-07)
-    - Add support for MINIMUM profile
-    - Bugfix in demo package concerning rounding of non integer units.
- * 0.9  (2024-10-23)
-    - Improve validation in testing of the development status.
-    - Add support for BillingSpecifiedPeriod
-    - Add additional user interfaces to simplify development for templates
- * 0.8a (2024-09-17) Patch to switch to the newly public interface of l3pdfmeta
- * 0.8  (2024-09-11) First version on CTAN
+* 0.9a (2024-11-07)
+   - Add support for MINIMUM profile
+   - Bugfix in demo package concerning rounding of non integer units.
+* 0.9  (2024-10-23)
+   - Improve validation in testing of the development status.
+   - Add support for BillingSpecifiedPeriod
+   - Add additional user interfaces to simplify development for templates
+* 0.8a (2024-09-17) Patch to switch to the newly public interface of l3pdfmeta
+* 0.8  (2024-09-11) First version on CTAN
