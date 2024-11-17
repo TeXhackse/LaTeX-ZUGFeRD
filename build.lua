@@ -92,7 +92,7 @@ uploadconfig = {
 }
 
 function runtest_tasks ( name , run )
-		if options["target"] == "save" then
+		if run == checkruns and options["target"] == "save" and name ~= "lostchars" then
 			return "./validate_zugferd.sh " .. name
 		else
 			return ""

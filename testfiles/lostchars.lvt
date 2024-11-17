@@ -1,0 +1,9 @@
+\DocumentMetadata{
+	lang=en,
+	pdfstandard=a-3b,
+	pdfversion=1.7
+}
+\PassOptionsToPackage{zugferd=false}{zugferd}
+\def\ZUGFeRDTestBeforeXML{\START}
+\def\ZUGFeRDTestAfterXML{\clearpage\END}
+\input{zugferd-test.ltx}
