@@ -487,8 +487,9 @@
 	}
 %    \end{macrocode}
 % \changes{v0.9a}{2024-11-07}{Add error message if pdfmanagement is outdated.}
+% \changes{v0.0}{0000-00-00}{Compatbility to show the error message in older formats versions.}
 %    \begin{macrocode}
-	\IfPackageAtLeastF{pdfmanagement-testphase}{2024/09/13}{
+	\IfPackageAtLeastTF{pdfmanagement-testphase}{2024/09/13}{}{
 		\msg_new:nnn {zugferd} {PDFmanagement-too-old} {
 			Your~version~of~\LaTeX's~PDF~management~is~too~old.
 			You~need~to~update~your~LaTeX~distribution~to~be~able~to~use~the~zugferd~package~correctly.
