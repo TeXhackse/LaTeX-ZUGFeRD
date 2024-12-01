@@ -1269,8 +1269,19 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeKeyOption{document-type=commercial-invoice}{commercial-invoice}
-% Select the document type. The only supported value currently is |commercial-invoice|. This will select the corresponding type code, which is 380.
+% \DescribeKeyOption{document-type=\meta{type}}{commercial-invoice}
+% Select the document type. Since \version{0.9c} \pkg{zugferd} supports the following types:
+% \changes{version}{date}{Add support for other invoice types.}
+% \begin{valuelist}
+% \item[commercial-invoice] 380
+% \item[partial-invoice] 326
+% \item[corrected-invoice] 384
+% \item[self-billed-invoice] 389
+% \item[credit-note] 381
+% \item[partial-construction-invoice] 875
+% \item[partial-final-construction-invoice] 876
+% \item[final-construction-invoice] 877
+% \end{valuelist}
 % \end{documentation}
 % \begin{implementation}
 % \begin{optionenv}{id, document-type}
@@ -1278,6 +1289,20 @@
 	document-type .choice:,
 	document-type / commercial-invoice .code:n =
 		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {380},
+	document-type / partial-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {326},
+	document-type / corrected-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {384},
+	document-type / self-billed-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {389},
+	document-type / credit-note .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {381},
+	document-type / partial-construction-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {875},
+	document-type / partial-final-construction-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {876},
+	document-type / final-construction-invoice	.code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {877},
 	document-type .initial:n = commercial-invoice,
 %    \end{macrocode}
 % \end{optionenv}
