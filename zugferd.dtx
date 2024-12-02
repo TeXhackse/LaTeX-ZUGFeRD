@@ -754,20 +754,17 @@
 			\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
 			\exp_args:NnV \pdffile_embed_file:nnn {\g_@@_xml_file_tl} \g_@@_xml_embedded_file_tl
 				{zugferd/rechnung}
+		\group_end:
 %    \end{macrocode}
 % Since some tools require the Catalog entry to match the file name of the embedded file this this has to be set separately (\issue{26}).
 % \changes{v0.9b}{2024-11-17}{Fix file name of embedded file for the zugferd profile.}
+% \changes{0.0}{0000-00–00}{Remove second catalog entry linking to xml \issue{32}}
 %    \begin{macrocode}
-			\pdfmanagement_add:nee
-				  {Catalog/Names/EmbeddedFiles}
-				  {\g_@@_xml_embedded_file_tl}
-				  {\pdf_object_ref:n{zugferd/rechnung}}
-		\group_end:
-		\pdfmanagement_add:nnx
-			{Catalog/Names}
-			{EmbeddedFiles}
+		\pdfmanagement_add:nee
+			{Catalog/Names/EmbeddedFiles}
+			{\g_@@_xml_embedded_file_tl}
 			{\pdf_object_ref:n{zugferd/rechnung}}
-			% steht in der docu ist aber pdf 2.0 ....
+			% steht in der doku ist aber pdf 2.0 ....
 		\pdfmanagement_add:nnx{Catalog}{AF}{\pdf_object_ref:n{zugferd/rechnung}}
 	}
 }
