@@ -1710,6 +1710,9 @@
 	}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:BuyerTradeParty>}%
+	\clist_map_inline:nn {SellerOrder,BuyerOrder,Contract} {%
+		\_@@_write_ReferencedDocument:n {##1}%
+	}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}%
 	\bool_if:NTF \g_@@_minimum_bool%
@@ -1781,6 +1784,34 @@
 }
 %    \end{macrocode}
 % \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Document references}
+% Additionally to the general buyer reference there may be additional data used by the buyer a reference.
+% These fields are technically optional, but the buyer may enforce them to be used.
+% These were not supported before \version{0.0}.
+% \end{documentation}
+% \begin{implementation}
+\prop_new:N \g_@@_document_references_prop
+\clist_new:N \g_@@_buyer_document_references_clist
+\keys_define:nn {zugferd} {
+	contract-reference .prop_gput:N =  \g_@@_document_references_prop,
+	purchaseorder-reference .prop_gput:N =  \g_@@_document_references_prop,
+	purchase-order-reference .meta:n = {purchaseorder-reference=#1},
+	salesorder-reference .prop_gput:N =  \g_@@_document_references_prop,
+	sales-order-reference .meta:n = {salesorder-reference=#1},
+}
+\cctab_begin:N \g_@@_xml_cctab%
+\_@@_define_xml_writer:Nn \_@@_write_ReferencedDocument:n {%
+	\prop_if_in:NeT \g_@@_document_references_prop {\str_lowercase:n {#1}-reference} {%
+		\_@@_write_xml:e {%
+		<ram:#1ReferencedDocument>
+		\_@@_indent:<ram:IssuerAssignedID>\prop_item:Ne \g_@@_document_references_prop {\str_lowercase:n {#1}-reference}</ram:IssuerAssignedID>
+		</ram:#1ReferencedDocument>%
+		}%
+	}%
+}%
+\cctab_end:
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Payment Means}
