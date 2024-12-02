@@ -2234,10 +2234,13 @@
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_SpecifiedTradeProduct:nn}
+% \changes{0.0}{0000-00-00}{Don't use SellerAssignedID if format=BASIC, smiliar to \issue{28}}
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeProduct:nn {%
 	<ram:SpecifiedTradeProduct>
-	\tl_if_empty:nF {#1} {%
+	\bool_lazy_or:nnF%
+			{\tl_if_blank_p:n {#1}}%
+			{\str_if_eq_p:Vn \g_@@_conformance_level_str {BASIC}} {%
 		\_@@_indent: <ram:SellerAssignedID>#1</ram:SellerAssignedID>
 	}%
 	\_@@_indent: <ram:Name>#2</ram:Name>
@@ -2409,11 +2412,17 @@
 	}
 	{{\_@@_write_rounded:nnn {2} {BasisAmount} {#3}}}%BT-116
 	\_@@_write_xml:e {<ram:CategoryCode>#1</ram:CategoryCode>}%BT-118
-	\tl_if_blank:VF \l_@@_tax_exemption_code_tl {%BT121
-		\_@@_write_xml:e {<ram:ExemptionReasonCode>
-			\l_@@_tax_exemption_code_tl
-			</ram:ExemptionReasonCode>}
-	}
+%    \end{macrocode}
+% \changes{0.0}{0000-00-00}{Don't use exception-reason-code if format=BASIC \issue{28}}
+%    \begin{macrocode}
+	\bool_lazy_or:nnF%	BT121
+		{\tl_if_blank_p:V \l_@@_tax_exemption_code_tl}%
+		{\str_if_eq_p:Vn \g_@@_conformance_level_str {BASIC}}%
+	{%
+		\_@@_write_xml:e {%
+			<ram:ExemptionReasonCode>\l_@@_tax_exemption_code_tl</ram:ExemptionReasonCode>%
+		}%
+	}%
 	\_@@_write_xml:n {<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>}%BT-119
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
