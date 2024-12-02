@@ -2436,6 +2436,13 @@
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_rounded:nnn {2} {CalculatedAmount} {#4}%BT117
 	\_@@_write_xml:n {<ram:TypeCode>VAT</ram:TypeCode>}%BT118
+%    \end{macrocode}
+% \changes{version}{date}{Call exemption-reason-auto also locally inside ApplicableTradeTaxEntry}
+%    \begin{macrocode}%
+	\begingroup
+	\bool_if:NT \g_@@_auto_exemption_bool {%
+		\keys_set:nn  { zugferd / tax } {exemption-reason-auto=#1}
+	}%
 	\tl_if_blank:VF \l_@@_tax_exemption_reason_tl {%BT-120
 		\_@@_write_xml:e {<ram:ExemptionReason>
 			\l_@@_tax_exemption_reason_tl
@@ -2454,6 +2461,7 @@
 			<ram:ExemptionReasonCode>\l_@@_tax_exemption_code_tl</ram:ExemptionReasonCode>%
 		}%
 	}%
+	\endgroup
 	\_@@_write_xml:n {<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>}%BT-119
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
