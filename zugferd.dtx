@@ -2149,13 +2149,13 @@
 %    \end{macrocode}
 % \endoptionenv
 %    \begin{macrocode}
-\_@@_define_xml_writer:Nn \_@@_write_inline:nn {
+\_@@_define_xml_content:Nn \_@@_write_inline:nn {
 	\tl_if_blank:nF {#2} {
 		<#1>#2</#1>
 	}
 }
 \cs_generate_variant:Nn \_@@_write_inline:nn {ne}
-\_@@_define_xml_writer:Nn  \_@@_write_inline_i:nn {
+\_@@_define_xml_content:Nn  \_@@_write_inline_i:nn {
 	\_@@_indent: \_@@_write_inline:nn {#1} {#2}
 }
 \cctab_begin:N \g_@@_xml_cctab%
