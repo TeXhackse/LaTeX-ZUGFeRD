@@ -1,14 +1,14 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
--------- eea_zugferd.xml (start) ---------
-(eea_zugferd.xml) <?xml version='1.0' encoding='UTF-8' ?>
+-------- zugferd-basic_zugferd.xml (start) ---------
+(zugferd-basic_zugferd.xml) <?xml version='1.0' encoding='UTF-8' ?>
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
   <rsm:ExchangedDocumentContext>
     <ram:BusinessProcessSpecifiedDocumentContextParameter>
       <ram:ID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</ram:ID>
     </ram:BusinessProcessSpecifiedDocumentContextParameter>
     <ram:GuidelineSpecifiedDocumentContextParameter>
-      <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</ram:ID>
+      <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic</ram:ID>
     </ram:GuidelineSpecifiedDocumentContextParameter>
   </rsm:ExchangedDocumentContext>
   <rsm:ExchangedDocument>
@@ -19,33 +19,6 @@ Don't change this file in any respect.
     </ram:IssueDateTime>
   </rsm:ExchangedDocument>
   <rsm:SupplyChainTradeTransaction>
-    <ram:IncludedSupplyChainTradeLineItem>
-      <ram:AssociatedDocumentLineDocument>
-        <ram:LineID>2</ram:LineID>
-      </ram:AssociatedDocumentLineDocument>
-      <ram:SpecifiedTradeProduct>
-        <ram:SellerAssignedID>0</ram:SellerAssignedID>
-        <ram:Name>IntracommunityItem</ram:Name>
-      </ram:SpecifiedTradeProduct>
-      <ram:SpecifiedLineTradeAgreement>
-        <ram:NetPriceProductTradePrice>
-          <ram:ChargeAmount>90</ram:ChargeAmount>
-        </ram:NetPriceProductTradePrice>
-      </ram:SpecifiedLineTradeAgreement>
-      <ram:SpecifiedLineTradeDelivery>
-        <ram:BilledQuantity unitCode="HUR">3</ram:BilledQuantity>
-      </ram:SpecifiedLineTradeDelivery>
-      <ram:SpecifiedLineTradeSettlement>
-        <ram:ApplicableTradeTax>
-          <ram:TypeCode>VAT</ram:TypeCode>
-          <ram:CategoryCode>K</ram:CategoryCode>
-          <ram:RateApplicablePercent>0</ram:RateApplicablePercent>
-        </ram:ApplicableTradeTax>
-        <ram:SpecifiedTradeSettlementLineMonetarySummation>
-          <ram:LineTotalAmount>270</ram:LineTotalAmount>
-        </ram:SpecifiedTradeSettlementLineMonetarySummation>
-      </ram:SpecifiedLineTradeSettlement>
-    </ram:IncludedSupplyChainTradeLineItem>
     <ram:IncludedSupplyChainTradeLineItem>
       <ram:AssociatedDocumentLineDocument>
         <ram:LineID>1</ram:LineID>
@@ -73,26 +46,14 @@ Don't change this file in any respect.
       </ram:SpecifiedLineTradeSettlement>
     </ram:IncludedSupplyChainTradeLineItem>
     <ram:ApplicableHeaderTradeAgreement>
-      <ram:BuyerReference>buyer-reference</ram:BuyerReference>
+      <ram:BuyerReference></ram:BuyerReference>
       <ram:SellerTradeParty>
         <ram:Name>peiTeX (Marei Peischl)</ram:Name>
-        <ram:DefinedTradeContact>
-          <ram:PersonName>Marei</ram:PersonName>
-          <ram:TelephoneUniversalCommunication>
-            <ram:CompleteNumber>+4900000000</ram:CompleteNumber>
-          </ram:TelephoneUniversalCommunication>
-          <ram:EmailURIUniversalCommunication>
-            <ram:URIID>marei@peitex.de</ram:URIID>
-          </ram:EmailURIUniversalCommunication>
-        </ram:DefinedTradeContact><ram:PostalTradeAddress>
-          <ram:PostcodeCode>20253</ram:PostcodeCode>
-          <ram:LineOne>Address 1</ram:LineOne>
-          <ram:CityName>Hamburg</ram:CityName>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode></ram:PostcodeCode>
+          <ram:CityName></ram:CityName>
           <ram:CountryID>DE</ram:CountryID>
         </ram:PostalTradeAddress>
-        <ram:URIUniversalCommunication>
-          <ram:URIID schemeID="EM">kontakt@peitex.de</ram:URIID>
-        </ram:URIUniversalCommunication>
         <ram:SpecifiedTaxRegistration>
           <ram:ID schemeID="VA">DE123456789</ram:ID>
         </ram:SpecifiedTaxRegistration>
@@ -100,27 +61,13 @@ Don't change this file in any respect.
       <ram:BuyerTradeParty>
         <ram:Name>Buyer Name</ram:Name>
         <ram:PostalTradeAddress>
-          <ram:PostcodeCode>20253</ram:PostcodeCode>
-          <ram:CityName>Hamburg</ram:CityName>
+          <ram:PostcodeCode></ram:PostcodeCode>
+          <ram:CityName></ram:CityName>
           <ram:CountryID>DE</ram:CountryID>
         </ram:PostalTradeAddress>
-        <ram:URIUniversalCommunication>
-          <ram:URIID schemeID="EM">invoice@example.org</ram:URIID>
-        </ram:URIUniversalCommunication>
-        <ram:SpecifiedTaxRegistration>
-          <ram:ID schemeID="VA">DE123456789</ram:ID>
-        </ram:SpecifiedTaxRegistration>
       </ram:BuyerTradeParty>
     </ram:ApplicableHeaderTradeAgreement>
     <ram:ApplicableHeaderTradeDelivery>
-      <ram:ShipToTradeParty>
-        <ram:Name>ShipTo Name</ram:Name>
-        <ram:PostalTradeAddress>
-          <ram:PostcodeCode>Postcode</ram:PostcodeCode>
-          <ram:CityName>City</ram:CityName>
-          <ram:CountryID>AT</ram:CountryID>
-        </ram:PostalTradeAddress>
-      </ram:ShipToTradeParty>
       <ram:ActualDeliverySupplyChainEvent>
         <ram:OccurrenceDateTime>
           <udt:DateTimeString format="102">20160520</udt:DateTimeString>
@@ -129,18 +76,6 @@ Don't change this file in any respect.
     </ram:ApplicableHeaderTradeDelivery>
     <ram:ApplicableHeaderTradeSettlement>
       <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
-      <ram:SpecifiedTradeSettlementPaymentMeans>
-        <ram:TypeCode>1</ram:TypeCode>
-        <ram:Information>Instrument not defined</ram:Information>
-      </ram:SpecifiedTradeSettlementPaymentMeans>
-      <ram:ApplicableTradeTax>
-        <ram:CalculatedAmount>0.00</ram:CalculatedAmount>
-        <ram:TypeCode>VAT</ram:TypeCode>
-        <ram:ExemptionReason>Intra-Community Supply</ram:ExemptionReason>
-        <ram:BasisAmount>270.00</ram:BasisAmount>
-        <ram:CategoryCode>K</ram:CategoryCode>
-        <ram:RateApplicablePercent>0</ram:RateApplicablePercent>
-      </ram:ApplicableTradeTax>
       <ram:ApplicableTradeTax>
         <ram:CalculatedAmount>12.12</ram:CalculatedAmount>
         <ram:TypeCode>VAT</ram:TypeCode>
@@ -154,16 +89,16 @@ Don't change this file in any respect.
         </ram:DueDateDateTime>
       </ram:SpecifiedTradePaymentTerms>
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-        <ram:LineTotalAmount>333.78</ram:LineTotalAmount>
+        <ram:LineTotalAmount>63.78</ram:LineTotalAmount>
         <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
         <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
-        <ram:TaxBasisTotalAmount>333.78</ram:TaxBasisTotalAmount>
+        <ram:TaxBasisTotalAmount>63.78</ram:TaxBasisTotalAmount>
         <ram:TaxTotalAmount currencyID="EUR">12.12</ram:TaxTotalAmount>
-        <ram:GrandTotalAmount>345.90</ram:GrandTotalAmount>
+        <ram:GrandTotalAmount>75.90</ram:GrandTotalAmount>
         <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
-        <ram:DuePayableAmount>345.90</ram:DuePayableAmount>
+        <ram:DuePayableAmount>75.90</ram:DuePayableAmount>
       </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>
--------- eea_zugferd.xml (end) -----------
+-------- zugferd-basic_zugferd.xml (end) -----------

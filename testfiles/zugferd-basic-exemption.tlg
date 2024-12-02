@@ -1,14 +1,14 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
--------- eea_zugferd.xml (start) ---------
-(eea_zugferd.xml) <?xml version='1.0' encoding='UTF-8' ?>
+-------- zugferd-basic-exemption_zugferd.xml (start) ---------
+(zugferd-basic-exemption_zugferd.xml) <?xml version='1.0' encoding='UTF-8' ?>
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
   <rsm:ExchangedDocumentContext>
     <ram:BusinessProcessSpecifiedDocumentContextParameter>
       <ram:ID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</ram:ID>
     </ram:BusinessProcessSpecifiedDocumentContextParameter>
     <ram:GuidelineSpecifiedDocumentContextParameter>
-      <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</ram:ID>
+      <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic</ram:ID>
     </ram:GuidelineSpecifiedDocumentContextParameter>
   </rsm:ExchangedDocumentContext>
   <rsm:ExchangedDocument>
@@ -24,7 +24,6 @@ Don't change this file in any respect.
         <ram:LineID>2</ram:LineID>
       </ram:AssociatedDocumentLineDocument>
       <ram:SpecifiedTradeProduct>
-        <ram:SellerAssignedID>0</ram:SellerAssignedID>
         <ram:Name>IntracommunityItem</ram:Name>
       </ram:SpecifiedTradeProduct>
       <ram:SpecifiedLineTradeAgreement>
@@ -76,15 +75,7 @@ Don't change this file in any respect.
       <ram:BuyerReference>buyer-reference</ram:BuyerReference>
       <ram:SellerTradeParty>
         <ram:Name>peiTeX (Marei Peischl)</ram:Name>
-        <ram:DefinedTradeContact>
-          <ram:PersonName>Marei</ram:PersonName>
-          <ram:TelephoneUniversalCommunication>
-            <ram:CompleteNumber>+4900000000</ram:CompleteNumber>
-          </ram:TelephoneUniversalCommunication>
-          <ram:EmailURIUniversalCommunication>
-            <ram:URIID>marei@peitex.de</ram:URIID>
-          </ram:EmailURIUniversalCommunication>
-        </ram:DefinedTradeContact><ram:PostalTradeAddress>
+        <ram:PostalTradeAddress>
           <ram:PostcodeCode>20253</ram:PostcodeCode>
           <ram:LineOne>Address 1</ram:LineOne>
           <ram:CityName>Hamburg</ram:CityName>
@@ -129,10 +120,6 @@ Don't change this file in any respect.
     </ram:ApplicableHeaderTradeDelivery>
     <ram:ApplicableHeaderTradeSettlement>
       <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
-      <ram:SpecifiedTradeSettlementPaymentMeans>
-        <ram:TypeCode>1</ram:TypeCode>
-        <ram:Information>Instrument not defined</ram:Information>
-      </ram:SpecifiedTradeSettlementPaymentMeans>
       <ram:ApplicableTradeTax>
         <ram:CalculatedAmount>0.00</ram:CalculatedAmount>
         <ram:TypeCode>VAT</ram:TypeCode>
@@ -166,4 +153,4 @@ Don't change this file in any respect.
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>
--------- eea_zugferd.xml (end) -----------
+-------- zugferd-basic-exemption_zugferd.xml (end) -----------
