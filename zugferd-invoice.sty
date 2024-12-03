@@ -124,7 +124,7 @@
 	\PrintInvoiceSum{netto}{\fp_use:N  \g__ptxcd_invoice_sum_fp}
 	\seq_map_inline:Nn \g__ptxcd_VAT_rates_seq  {
 		\fp_compare:nNnF {\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}} = {0} {
-			\zugferd_write_TaxEntry:nnnn  {\use:c {__ptxcd_invoice_type_code##1:}} {##1} {\fp_use:c {g__ptxcd_invoice_base_vat##1_fp}} {\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}}
+			\zugferd_write_TaxEntry:ennn  {\use:c {__ptxcd_invoice_type_code##1:}} {##1} {\fp_use:c {g__ptxcd_invoice_base_vat##1_fp}} {\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}}
 			\fp_gadd:Nn \g__ptxcd_tax_total_fp {\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}}
 			\PrintVatSum[{\fp_use:c {g__ptxcd_invoice_base_vat##1_fp}}]{##1 }{\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}}
 		}
