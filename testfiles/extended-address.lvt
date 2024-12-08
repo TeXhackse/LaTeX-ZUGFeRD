@@ -27,13 +27,12 @@
 	buyer/city ={Hamburg},
 	buyer/country = DE,
 	buyer/vatid = {DE123456789},
-	buyer/contact={Löwe\\+4900000000\löwe@customer.com},
+	buyer/contact={Loewe\\+4900000000\\loewe@customer.com},% avoid umlauts for testing as \SHOWFILE is annoying… 
 	buyer/email = {invoice@example.org},
 	due-date={20240118},
 	payment-means / type = 1,
 	delivery-date=auto
 }
-
 \begin{document}
 \ExplSyntaxOn
  	\begin{ZUGFeRD}
