@@ -12,7 +12,8 @@ default:
 check:
   stage: test
   script:
-    - l3build doc
+    - l3build check
+    - bash support/validate_zugferd.sh build/doc/DEMO*.pdf
 
 build_ctan:
   stage: deploy

@@ -16,14 +16,14 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2024-11-17 v0.9b ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2024-12-08 v0.9c ZUGFerd Invoice and Faktur-X]
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2024-11-17}{0.9b}{Create ZUGFerd invoices using LaTeX}
+%<package>\ProvidesExplPackage{zugferd}{2024-12-08}{0.9c}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
-\usepackage{zugferd}[2024-11-17]
+\usepackage{zugferd}[2024-12-08]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -228,7 +228,7 @@
 \newcommand*{\XML}{XML\xspace}
 \newcommand*{\XMLfile}{\XML file}
 
-\newcommand*{\issue}[1]{%
+\DeclareRobustCommand{\issue}[1]{%
 	{\DeclareFieldFormat{citeurlpostfix}{\href{##1/issues/#1}{\##1}}\citefield{LaTeX-ZUGFeRD-GitHub}[citeurlpostfix]{url}}%
 }
 \newcommand*{\version}[1]{v#1}
@@ -487,7 +487,7 @@
 	}
 %    \end{macrocode}
 % \changes{v0.9a}{2024-11-07}{Add error message if pdfmanagement is outdated.}
-% \changes{v0.0}{0000-00-00}{Compatbility to show the error message in older formats versions.}
+% \changes{v0.9c}{2024-12-08}{Compatbility to show the error message in older formats versions.}
 %    \begin{macrocode}
 	\IfPackageAtLeastTF{pdfmanagement-testphase}{2024/09/13}{}{
 		\msg_new:nnn {zugferd} {PDFmanagement-too-old} {
@@ -758,7 +758,7 @@
 %    \end{macrocode}
 % Since some tools require the Catalog entry to match the file name of the embedded file this this has to be set separately (\issue{26}).
 % \changes{v0.9b}{2024-11-17}{Fix file name of embedded file for the zugferd profile.}
-% \changes{0.0}{0000-00–00}{Remove second catalog entry linking to xml \issue{32}}
+% \changes{v0.9c}{2024-12–08}{Remove second catalog entry linking to xml \issue{32}}
 %    \begin{macrocode}
 		\pdfmanagement_add:nee
 			{Catalog/Names/EmbeddedFiles}
@@ -843,7 +843,7 @@
 %
 % \DescribeMacro{\zugferd_write_TaxEntry:nnnn}
 % \DescribeMacro{\zugferd_write_TaxEntry:ennn}
-% \changes{version}{date}{Added \cs{\zugferd_write_TaxEntry:ennn} variant}
+% \changes{v0.9c}{2024-12-08}{Added \cs{zugferd_write_TaxEntry:ennn} variant}
 % This command is writing the sum over a tax rate. This command has to be used once per rate applied to the items.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_TaxEntry:nnnn} \marg{tax category code} \marg{tax rate in \%} \marg{basis amount the tax applies to} \marg{tax amount}
@@ -945,7 +945,9 @@
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\zugferd_write_TaxEntry:ennn}
+%    \begin{macrocode}
 \cs_generate_variant:Nn \zugferd_write_TaxEntry:nnnn {ennn}
+%    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}
 % These commands are used to toggle the writing of the \XMLfile. This corresponds to the option \option{write-xml}.
@@ -1196,7 +1198,7 @@
 % \begin{documentation}
 % \DescribeMacro{\zugferd_tl_set_escaped_xml:Nn}
 % \DescribeMacro{\zugferd_tl_gset_escaped_xml:Nn}
-% \changes{version}{date}{Added mechanism to escape XML special characters.}
+% \changes{v0.9c}{2024-12-08}{Added mechanism to escape XML special characters.}
 % As described before and also in \issue{9} there are characters which are special in \XML but not within \LaTeX.
 % Additionally there also are characters which aren't special in \LaTeX{} but within \XML.
 % In version \version{0.9c} \pkg{zugferd} added some auxiliary commands to support users escaping those.
@@ -1325,7 +1327,7 @@
 % \begin{documentation}
 % \DescribeKeyOption{document-type=\meta{type}}{commercial-invoice}
 % Select the document type. Since \version{0.9c} \pkg{zugferd} supports the following types:
-% \changes{version}{date}{Add support for other invoice types.}
+% \changes{v0.9c}{2024-12-08}{Add support for other invoice types.}
 % \begin{valuelist}
 % \item[commercial-invoice] 380
 % \item[partial-invoice] 326
@@ -1523,7 +1525,7 @@
 % As this also depends on the selected scheme and version we will not list the details.
 % All fields for a trade party can be set using the \enquote{group} named by the party.
 % For example setting all the seller data is done in the following listing:
-% \changes{version}{date}{Add support for extended Addresses including additionl legal data.}
+% \changes{v0.9c}{2024-12-08}{Add support for extended Addresses including additionl legal data.}
 % \begin{examplecode}
 % \SetZUGFeRDData{
 %	seller/id = {ID – usually internal ID provided by buyer},
@@ -1551,10 +1553,10 @@
 % \DescribeKeyOption*{\meta{party}/email=\meta{email address}}{}*
 % \DescribeKeyOption*{\meta{party}/vatid=\meta{VAT ID}}{}*
 % \DescribeKeyOption*{\meta{party}/taxid=\meta{VAT ID}}{}*
-% \changes{version}{date}{Add support for taxid.}
+% \changes{v0.9c}{2024-12-08}{Add support for taxid.}
 %
 % \DescribeKeyOption*{\meta{party}/address=\meta{address}}{}*
-% \changes{version}{date}{Add support for third address line.}
+% \changes{v0.9c}{2024-12-08}{Add support for third address line.}
 % As shown in the example \option{address} can use three lines separted by |\\|.
 % It's possble to set all fields for all trade contacts, but e.\,g. for the |shipto|-party email and vatid will not be used in the \XML.
 %
@@ -1564,7 +1566,7 @@
 % \DescribeKeyOption*{\meta{party}/postcode=\meta{postal code}}{}*
 % \DescribeKeyOption*{\meta{party}/city=\meta{city}}{}*
 % \DescribeKeyOption*{\meta{party}/subdivision=\meta{subdivision}}{}*
-% \changes{version}{date}{Add support for subdivision.}
+% \changes{v0.9c}{2024-12-08}{Add support for subdivision.}
 % \DescribeKeyOption*{\meta{party}/country=\meta{country code}}{}*
 % The two letter country codes allowed here can be found in \cite{country-codes}.
 %
@@ -1651,7 +1653,7 @@
 % \end{optionenv}
 % \begin{function}{\_@@_TradePartyIdentity:N \_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
 % Wrappers to map the property list items to the writing macro.
-% \changes{version}{date}{Add TradePartyName to support additional legal information.}
+% \changes{v0.9c}{2024-12-08}{Add TradePartyName to support additional legal information.}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_TradePartyIdentity:N {
 	\_@@_TradePartyIdentity:eeeee
@@ -1907,9 +1909,10 @@
 % \subsubsection{Document references}
 % Additionally to the general buyer reference there may be additional data used by the buyer a reference.
 % These fields are technically optional, but the buyer may enforce them to be used.
-% These were not supported before \version{0.0}.
+% These were not supported before \version{0.9c}.
 % \end{documentation}
 % \begin{implementation}
+%    \begin{macrocode}
 \prop_new:N \g_@@_document_references_prop
 \clist_new:N \g_@@_buyer_document_references_clist
 \keys_define:nn {zugferd} {
@@ -1930,6 +1933,7 @@
 	}%
 }%
 \cctab_end:
+%    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Payment Means}
@@ -2389,9 +2393,9 @@
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_SpecifiedTradeProduct:nn}
-% \changes{0.0}{0000-00-00}{Don't use SellerAssignedID if format=BASIC, smiliar to \issue{28}}
+% \changes{v0.9c}{2024-12-08}{Don't use SellerAssignedID if format=basic, \issue{28}}
 %    \begin{macrocode}
-\_@@_define_xml_writer:Nn \_@@_SpecifiedTradeProduct:nn {%
+\_@@_define_xml_content:Nn \_@@_SpecifiedTradeProduct:nn {%
 	<ram:SpecifiedTradeProduct>
 	\bool_lazy_or:nnF%
 			{\tl_if_blank_p:n {#1}}%
@@ -2561,7 +2565,7 @@
 	\_@@_write_rounded:nnn {2} {CalculatedAmount} {#4}%BT117
 	\_@@_write_xml:n {<ram:TypeCode>VAT</ram:TypeCode>}%BT118
 %    \end{macrocode}
-% \changes{version}{date}{Call exemption-reason-auto also locally inside ApplicableTradeTaxEntry}
+% \changes{v0.9c}{2024-12-08}{Call exemption-reason-auto also locally inside ApplicableTradeTaxEntry}
 %    \begin{macrocode}%
 	\begingroup
 	\bool_if:NT \g_@@_auto_exemption_bool {%
@@ -2575,7 +2579,7 @@
 	{{\_@@_write_rounded:nnn {2} {BasisAmount} {#3}}}%BT-116
 	\_@@_write_xml:e {<ram:CategoryCode>#1</ram:CategoryCode>}%BT-118
 %    \end{macrocode}
-% \changes{0.0}{0000-00-00}{Don't use exception-reason-code if format=BASIC \issue{28}}
+% \changes{v0.9c}{2024-12-08}{Don't use exception-reason-code if format=BASIC \issue{28}}
 %    \begin{macrocode}
 	\bool_lazy_or:nnF%	BT121
 		{\tl_if_blank_p:V \l_@@_tax_exemption_code_tl}%
