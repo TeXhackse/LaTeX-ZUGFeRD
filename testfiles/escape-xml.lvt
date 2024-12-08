@@ -5,8 +5,9 @@
 
 \begin{document}
 \ExplSyntaxOn
+	\zugferd_tl_set_escaped_xml:Nn \l_tmpa_tl {<>"'}% moved before \START to avoid difference with luate
+
 	\START
- 	\zugferd_tl_set_escaped_xml:Nn \l_tmpa_tl {<>"'}
  	\tl_analysis_show:N \l_tmpa_tl
  	\zugferd_tl_set_escaped_xml:Nn \l_tmpa_tl {\&}
  	\tl_analysis_show:N \l_tmpa_tl
