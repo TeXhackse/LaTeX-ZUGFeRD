@@ -7,7 +7,7 @@
 	id=1337,
 	unit=hour,
 	tax/category=S,
-	seller/id = {ID – usually internal ID provided by buyer},
+	seller/id = {ID},%  usually internal ID provided by buyer
 	seller/name = {peiTeX (Marei Peischl)},
 	seller/legal-description = {Additional legal information},
 	seller/legal-id = {12345667},

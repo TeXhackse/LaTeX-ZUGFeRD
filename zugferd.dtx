@@ -1748,7 +1748,7 @@
 	</ram:PostalTradeAddress>%
 }%
 \bool_if:NTF \g_@@_minimum_bool {%
-	\cs_set_eq:Nn \_@@_UniversalCommunication:nn \use_none:nn%
+	\cs_set_eq:NN \_@@_UniversalCommunication:n \use_none:n%
 } {%
 	\_@@_define_xml_content:Nn \_@@_UniversalCommunication:n {%
 		\tl_if_blank:eF {#1} {
