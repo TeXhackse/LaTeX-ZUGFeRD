@@ -38,7 +38,8 @@ typesetopts=""
 supportdir="support"
 checksuppfiles={"validate_zugferd.sh","Mustang-CLI.jar","zugferd-test.ltx"}
 
-checkconfigs = {"build", "config-pdf"}
+checkconfigs = {"build"}
+-- checkconfigs = {"build", "config-pdf"} -- pdf config is only checked on release
 
 ctanreadme="README_CTAN.md"
 
