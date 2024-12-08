@@ -1072,22 +1072,25 @@
 % \fi
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_disable_macros: {
-	\let\{\textbraceleft
-	\let\}\textbraceright
-	\let\\\textbackslash
-	\let\#\textnumbersign
-	\let\$\textdollar
+	\let\{\c_left_brace_str
+	\let\textbraceleft\c_left_brace_str
+	\let\}\c_right_brace_str
+	\let\textbraceright\c_right_brace_str
+	\let\#\c_hash_str
 %    \end{macrocode}
 % This only is a part of the list.
 % There is no real use of printing the whole list, it's inside \file{zugferd.sty} anyway.
 % \comment
 %    \begin{macrocode}
-	\let\%\textpercent
-	\let\&\textampersand
-	\let\_\textunderscore
-	\let\P\textparagraph
-	\let\ldots\textellipsis
-	\let\dots\textellipsis
+	\let\textnumbersign\c_hash_str
+	\let\$\c_dollar_str
+	\let\textdollar\c_dollar_str
+	\let\%\c_percent_str
+	\let\&\c_ampersand_str
+	\let\_\c_underscore_str
+	\def\P{§}
+	\def\ldots{…}
+	\def\dots{…}
 	\def\\{\space}%
 	\def\newline{\space}%
 	\def\TeX{TeX}%
