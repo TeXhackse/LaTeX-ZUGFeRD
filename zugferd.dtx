@@ -1820,7 +1820,7 @@
 	}%
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
-		<ram:Name>\prop_item:Nn \g_@@_buyer_AddressData_prop {name}</ram:Name>%
+		\_@@_TradePartyIdentity:N \g_@@_buyer_AddressData_prop
 		\bool_if:NF \g_@@_minimum_bool {
 			\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop%
 			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop%
