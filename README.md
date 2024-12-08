@@ -23,6 +23,10 @@ This package does not provide any validation. Please be aware of you have to use
 
 ## Version History
 
+* 0.9c (2024-12-08)
+   - extend address interface
+   - add document reference fields
+   - fix bug adding the PDF attachment entry twice
 * 0.9b (2024-11-17)
    - Rename embedded xml-file if xrechnung is used
    - Fix bug leaving an unescaped `\n` in the output
