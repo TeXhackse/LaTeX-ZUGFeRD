@@ -1222,16 +1222,16 @@
 	\tl_set_eq:NN #1 \g_@@_tmp_tl
 }
 \cs_new:Nn \_@@_escape_xml_aux: {
-        \edef\&{\tl_to_str:n {&amp;}}
-        \edef\textgreater{\tl_to_str:n {&gt;}}
-        \edef\textless{\tl_to_str:n {&lt;}}
-        \edef\textquotedbl{\tl_to_str:n {&quot;}}
-        \edef\textquotesingle{\tl_to_str:n {&apos;}}
-		\char_set_active_eq:NN > \textgreater
-		\char_set_active_eq:NN < \textless
-		\char_set_active_eq:NN " \textquotedbl
-		\char_set_active_eq:NN ' \textquotesingle
-		\char_set_active_eq:NN & \&
+	\edef\&{\tl_to_str:n {&amp;}}
+	\edef\textgreater{\tl_to_str:n {&gt;}}
+	\edef\textless{\tl_to_str:n {&lt;}}
+	\edef\textquotedbl{\tl_to_str:n {&quot;}}
+	\edef\textquotesingle{\tl_to_str:n {&apos;}}
+	\char_set_active_eq:NN > \textgreater
+	\char_set_active_eq:NN < \textless
+	\char_set_active_eq:NN " \textquotedbl
+	\char_set_active_eq:NN ' \textquotesingle
+	\char_set_active_eq:NN & \&
 }
 \cs_new:Nn \_@@_escape_xml_activate: {
 	\char_set_catcode_active:N >
@@ -1553,7 +1553,7 @@
 % As shown in the example \option{address} can use three lines separted by |\\|.
 % It's possble to set all fields for all trade contacts, but e.\,g. for the |shipto|-party email and vatid will not be used in the \XML.
 %
-% Alternatively it's also possible to use \option{\meta{party}/lineone}, \option{\meta{party/linetwo}} and \option{\meta{party/linethree}} separately.
+% Alternatively it's also possible to use \option{\meta{party}/lineone}, \option{\meta{party}/linetwo} and \option{\meta{party}/linethree} separately.
 % This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using \cs[no-index]{zugferd_disable_macros:}.
 %
 % \DescribeKeyOption*{\meta{party}/postcode=\meta{postal code}}{}*
@@ -2232,13 +2232,19 @@
 % \endoptionenv
 %    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_write_inline:nn {
-	\tl_if_blank:nF {#2} {
-		<#1>#2</#1>
+	\_@@_write_inline:nnn {#1} {} {#2}
+}
+\_@@_define_xml_content:Nn \_@@_write_inline:nnn {
+	\tl_if_blank:nF {#3} {
+		<#1#2>#3</#1>
 	}
 }
 \cs_generate_variant:Nn \_@@_write_inline:nn {ne}
+\_@@_define_xml_content:Nn  \_@@_write_inline_i:nnn {
+	\_@@_indent: \_@@_write_inline:nnn {#1} {#2} {#3}
+}
 \_@@_define_xml_content:Nn  \_@@_write_inline_i:nn {
-	\_@@_indent: \_@@_write_inline:nn {#1} {#2}
+	\_@@_write_inline_i:nnn {#1} {} {#2}
 }
 \cctab_begin:N \g_@@_xml_cctab%
 %
