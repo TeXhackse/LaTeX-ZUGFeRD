@@ -1,0 +1,18 @@
+\input regression-test.tex\relax
+\documentclass{article}
+
+\usepackage[zugferd=false]{zugferd}
+
+\begin{document}
+\ExplSyntaxOn
+	\START
+ 	\zugferd_tl_set_escaped_xml:Nn \l_tmpa_tl {<>"'}
+ 	\tl_analysis_show:N \l_tmpa_tl
+ 	\zugferd_tl_set_escaped_xml:Nn \l_tmpa_tl {\&}
+ 	\tl_analysis_show:N \l_tmpa_tl
+ 	\zugferd_tl_set_escaped_xml:Nn \l_tmpa_tl {&}
+ 	\tl_analysis_show:N \l_tmpa_tl
+	\END
+\END%
+\ExplSyntaxOff%
+\end{document}%

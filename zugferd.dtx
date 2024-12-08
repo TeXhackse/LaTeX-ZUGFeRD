@@ -1194,6 +1194,55 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
+% \DescribeMacro{\zugferd_tl_set_escaped_xml:Nn}
+% \DescribeMacro{\zugferd_tl_gset_escaped_xml:Nn}
+% \changes{version}{date}{Added mechanism to escape XML special characters.}
+% As described before and also in \issue{9} there are characters which are special in \XML but not within \LaTeX.
+% Additionally there also are characters which aren't special in \LaTeX{} but within \XML.
+% In version \version{0.9c} \pkg{zugferd} added some auxiliary commands to support users escaping those.
+% This mechanism involves turning the category codes of characters like |"<>'&| to active and might have side effects.
+% It is an experimental feature and should be handled with care!
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\tl_new:N \g_@@_tmp_tl
+\cs_new:Nn \zugferd_tl_gset_escaped_xml:Nn {
+	\group_begin:
+		\zugferd_disable_macros:
+		\_@@_escape_xml_aux:
+		\tl_gset_rescan:Nnn #1 {
+			\cctab_select:N \c_str_cctab
+			\_@@_escape_xml_activate:
+		 } {#2}
+		\tl_gset:Ne #1 {#1}
+	\group_end:
+}
+\cs_new:Nn \zugferd_tl_set_escaped_xml:Nn {
+	\zugferd_tl_gset_escaped_xml:Nn \g_@@_tmp_tl {#2}
+	\tl_set_eq:NN #1 \g_@@_tmp_tl
+}
+\cs_new:Nn \_@@_escape_xml_aux: {
+        \edef\&{\tl_to_str:n {&amp;}}
+        \edef\textgreater{\tl_to_str:n {&gt;}}
+        \edef\textless{\tl_to_str:n {&lt;}}
+        \edef\textquotedbl{\tl_to_str:n {&quot;}}
+        \edef\textquotesingle{\tl_to_str:n {&apos;}}
+		\char_set_active_eq:NN > \textgreater
+		\char_set_active_eq:NN < \textless
+		\char_set_active_eq:NN " \textquotedbl
+		\char_set_active_eq:NN ' \textquotesingle
+		\char_set_active_eq:NN & \&
+}
+\cs_new:Nn \_@@_escape_xml_activate: {
+	\char_set_catcode_active:N >
+	\char_set_catcode_active:N <
+	\char_set_catcode_active:N "
+	\char_set_catcode_active:N '
+	\char_set_catcode_active:N &
+}
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
 % \subsection{Rounding Interface}
 % \label{sec:rounding-interface}
 % \changes{v0.9a}{2024-11-07}{Add public interface for the rounding mechanism.}

@@ -1,0 +1,42 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+The token list \l_tmpa_tl contains the tokens:
+>  & (the character &)
+>  l (the character l)
+>  t (the character t)
+>  ; (the character ;)
+>  & (the character &)
+>  g (the character g)
+>  t (the character t)
+>  ; (the character ;)
+>  & (the character &)
+>  q (the character q)
+>  u (the character u)
+>  o (the character o)
+>  t (the character t)
+>  ; (the character ;)
+>  & (the character &)
+>  a (the character a)
+>  p (the character p)
+>  o (the character o)
+>  s (the character s)
+>  ; (the character ;).
+<recently read> }
+l. ... ^^I\tl_analysis_show:N \l_tmpa_tl
+The token list \l_tmpa_tl contains the tokens:
+>  \ (the character \)
+>  & (the character &)
+>  a (the character a)
+>  m (the character m)
+>  p (the character p)
+>  ; (the character ;).
+<recently read> }
+l. ... ^^I\tl_analysis_show:N \l_tmpa_tl
+The token list \l_tmpa_tl contains the tokens:
+>  & (the character &)
+>  a (the character a)
+>  m (the character m)
+>  p (the character p)
+>  ; (the character ;).
+<recently read> }
+l. ... ^^I\tl_analysis_show:N \l_tmpa_tl
