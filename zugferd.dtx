@@ -1523,13 +1523,18 @@
 % As this also depends on the selected scheme and version we will not list the details.
 % All fields for a trade party can be set using the \enquote{group} named by the party.
 % For example setting all the seller data is done in the following listing:
+% \changes{version}{date}{Add support for extended Addresses including additionl legal data.}
 % \begin{examplecode}
 % \SetZUGFeRDData{
+%	seller/id = {ID – usually internal ID provided by buyer},
 %	seller/name = {peiTeX (Marei Peischl)},
+%	seller/legal-description = {Additional legal information},
+%	seller/legal-id = {legal registration ID},
+%	seller/trading-name = {trading name},
 %	seller/email = {invoicing@peitex.de},
 %	seller/vatid = {DE123456789},
 %	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
-%	seller/address = {Address Line 1\\Address Line 2},
+%	seller/address = {Address Line 1\\Address Line 2\\Address Line 3},
 %	seller/postcode = {20253},
 %	seller/city ={Hamburg},
 %	seller/country = {DE},
@@ -1644,9 +1649,18 @@
 %    \end{macrocode}
 % \end{variable}
 % \end{optionenv}
-% \begin{function}{\_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
+% \begin{function}{\_@@_TradePartyIdentity:N \_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
 % Wrappers to map the property list items to the writing macro.
+% \changes{version}{date}{Add TradePartyName to support additional legal information.}
 %    \begin{macrocode}
+\cs_new:Nn \_@@_TradePartyIdentity:N {
+	\_@@_TradePartyIdentity:eeeee
+			{\prop_item:Nn #1 {id}}
+			{\prop_item:Nn #1 {name}}
+			{\prop_item:Nn #1 {legal-description}}
+			{\prop_item:Nn #1 {legal-id}}
+			{\prop_item:Nn #1 {trading-name}}
+}
 \cs_new:Nn \_@@_PostalTradeAddress_short:N {
 	\exp_args:Ne \tl_if_blank:nF {\prop_item:Nn #1 {name}}
 	{<ram:Name>\prop_item:Nn #1 {name}</ram:Name>\iow_newline:\_@@_xml_auto_indent:}
@@ -1682,6 +1696,27 @@
 % \end{function}
 %    \begin{macrocode}
 \cctab_begin:N \g_@@_xml_cctab%
+%    \end{macrocode}
+% \iffalse
+% \_@@_TradePartyIdentity:eeeee ID Name description legal-id trading-name
+% \fi
+%    \begin{macrocode}
+\_@@_define_xml_content:Nn \_@@_TradePartyIdentity:nnnnn {%
+	%%<!-- BT-29 -->
+	\_@@_write_inline:nn {ram:ID} {#1}
+	%%<!-- BT-27 -->
+	\_@@_write_inline:nn {ram:Name} {#2}
+	%%<!-- BT-33 -->
+	\_@@_write_inline:nn {ram:Description} {#3}
+	\tl_if_blank:eF {#4#5} {%
+	<ram:SpecifiedLegalOrganization>
+	%%%<!-- BT-30 -->
+	\_@@_write_inline_i:nnn {ram:ID} {~schemeID="0088"} {#4}
+	%%<!-- BT-28 -->
+	\_@@_write_inline_i:nn {ram:TradingBusinessName} {#5}
+	</ram:SpecifiedLegalOrganization>
+	}%
+}%
 %    \end{macrocode}
 % \iffalse
 % \_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Zeile3 Ort Ländercode Bundesland/Bezirk
@@ -1774,7 +1809,7 @@
 	\_@@_write_xml:n {<ram:SellerTradeParty>}%
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
-		<ram:Name>\prop_item:Nn \g_@@_seller_AddressData_prop {name}</ram:Name>
+		\_@@_TradePartyIdentity:N \g_@@_seller_AddressData_prop
 		\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop%
 		\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop%
 	}%
@@ -1835,6 +1870,7 @@
 }%
 %
 \cctab_end:
+\cs_generate_variant:Nn \_@@_TradePartyIdentity:nnnnn {eeeee}
 \cs_generate_variant:Nn \_@@_DefinedTradeContact:nnnn {eeee}
 \cs_generate_variant:Nn \_@@_PostalTradeAddress:nnnnnnn {eeeeeee}
 \cs_generate_variant:Nn \_@@_ApplicableHeaderTradeDelivery:n {V}

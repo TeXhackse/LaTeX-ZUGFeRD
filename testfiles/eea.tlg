@@ -139,6 +139,7 @@ Don't change this file in any respect.
         <ram:ExemptionReason>Intra-Community Supply</ram:ExemptionReason>
         <ram:BasisAmount>270.00</ram:BasisAmount>
         <ram:CategoryCode>K</ram:CategoryCode>
+        <ram:ExemptionReasonCode>vatex-eu-ic</ram:ExemptionReasonCode>
         <ram:RateApplicablePercent>0</ram:RateApplicablePercent>
       </ram:ApplicableTradeTax>
       <ram:ApplicableTradeTax>
