@@ -1620,25 +1620,25 @@
 			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
 			%TODO error if more than 2 lines or only 1
 			\keys_set:nx {zugferd / #1} {
-				lineone=\seq_item:Nn \l_tmpa_seq {1},
-				linetwo=\seq_item:Nn \l_tmpa_seq {2},
-				linethree=\seq_item:Nn \l_tmpa_seq {3}
+				lineone={\seq_item:Nn \l_tmpa_seq {1}},
+				linetwo={\seq_item:Nn \l_tmpa_seq {2}},
+				linethree={\seq_item:Nn \l_tmpa_seq {3}}
 			}
 		},
 		contact .code:n = {
 			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
 			\int_compare:nNnTF {\seq_count:N \l_tmpa_seq} > {3} {
 				\keys_set:ne {zugferd/#1} {
-					contact-name = \seq_item:Nn \l_tmpa_seq {1},
-					contact-department = \seq_item:Nn \l_tmpa_seq {2},
-					contact-phone = \seq_item:Nn \l_tmpa_seq {3},
-					contact-email= \seq_item:Nn \l_tmpa_seq {4}
+					contact-name = {\seq_item:Nn \l_tmpa_seq {1}},
+					contact-department = {\seq_item:Nn \l_tmpa_seq {2}},
+					contact-phone = {\seq_item:Nn \l_tmpa_seq {3}},
+					contact-email= {\seq_item:Nn \l_tmpa_seq {4}},
 				}
 			}{
 				\keys_set:ne {zugferd/#1} {
-					contact-name = \seq_item:Nn \l_tmpa_seq {1},
-					contact-phone = \seq_item:Nn \l_tmpa_seq {2},
-					contact-email= \seq_item:Nn \l_tmpa_seq {3}
+					contact-name = {\seq_item:Nn \l_tmpa_seq {1}},
+					contact-phone = {\seq_item:Nn \l_tmpa_seq {2}},
+					contact-email= {\seq_item:Nn \l_tmpa_seq {3}},
 				}
 			}
 		},
