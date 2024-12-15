@@ -84,6 +84,12 @@ Don't change this file in any respect.
           <ram:ID schemeID="VA">DE123456789</ram:ID>
         </ram:SpecifiedTaxRegistration>
       </ram:BuyerTradeParty>
+      <ram:SellerOrderReferencedDocument>
+        <ram:IssuerAssignedID>1234576</ram:IssuerAssignedID>
+      </ram:SellerOrderReferencedDocument>
+      <ram:BuyerOrderReferencedDocument>
+        <ram:IssuerAssignedID>1234567</ram:IssuerAssignedID>
+      </ram:BuyerOrderReferencedDocument>
       <ram:ContractReferencedDocument>
         <ram:IssuerAssignedID>contract-ref</ram:IssuerAssignedID>
       </ram:ContractReferencedDocument>

@@ -1917,10 +1917,10 @@
 \clist_new:N \g_@@_buyer_document_references_clist
 \keys_define:nn {zugferd} {
 	contract-reference .prop_gput:N =  \g_@@_document_references_prop,
-	purchaseorder-reference .prop_gput:N =  \g_@@_document_references_prop,
-	purchase-order-reference .meta:n = {purchaseorder-reference=#1},
-	salesorder-reference .prop_gput:N =  \g_@@_document_references_prop,
-	sales-order-reference .meta:n = {salesorder-reference=#1},
+	buyerorder-reference .prop_gput:N =  \g_@@_document_references_prop,
+	purchase-order-reference .meta:n = {buyerorder-reference=#1},
+	sellerorder-reference .prop_gput:N =  \g_@@_document_references_prop,
+	sales-order-reference .meta:n = {sellerorder-reference=#1},
 }
 \cctab_begin:N \g_@@_xml_cctab%
 \_@@_define_xml_writer:Nn \_@@_write_ReferencedDocument:n {%
