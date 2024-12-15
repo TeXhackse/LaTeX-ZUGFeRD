@@ -1727,7 +1727,9 @@
 \_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
 	<ram:PostalTradeAddress>
 	\bool_if:NF \g_@@_minimum_bool {%
+		\tl_if_blank:nF {#1} {%
 		\_@@_indent: <ram:PostcodeCode>#1</ram:PostcodeCode>
+		}%
 		\tl_if_blank:nF {#2} {%
 			\_@@_indent: <ram:LineOne>#2</ram:LineOne>
 		}%
@@ -1737,7 +1739,9 @@
 		\tl_if_blank:nF {#4} {%
 			\_@@_indent: <ram:LineThree>#4</ram:LineThree>
 		}%
-		\_@@_indent: <ram:CityName>#5</ram:CityName>
+		\tl_if_blank:nF {#5} {%
+			\_@@_indent: <ram:CityName>#5</ram:CityName>
+		}%
 	}%
 	\_@@_indent: <ram:CountryID>#6</ram:CountryID>
 	\bool_if:NF \g_@@_minimum_bool {%
