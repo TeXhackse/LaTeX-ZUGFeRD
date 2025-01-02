@@ -466,13 +466,30 @@
 	auto-exemption .usage:n = load,
 %    \end{macrocode}
 % \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{unknown-value-warning=\meta{boolean}}{true}
+% There are predefined values for units, tax categories and payment-means.
+% Since there are a lot of options \pkg{zugferd} does not define all of them.
+% In case you want to use another one as the predefined options you there will a warning to make you aware of the fact, that the package does not know if that's a valid selection.
+% This is to help you avoiding typos.
+% In case you are sure about your selection and don't want to define an own value for this you can also disable the warning by setting \option{unknown-value-warning} to false.
+%
+% \end{documentation}
+% \begin{implementation}
+% \changes{0.0}{2024-09-10}{Added unknown-value-warning option}
+% \begin{optionenv}{unknown-value-warning}
+%    \begin{macrocode}
+	unknown-value-warning .bool_gset:N = \g_@@_unknown_value_warning_bool,
+	unknown-value-warning .initial:n = true,
+%    \end{macrocode}
+% \end{optionenv}
 %    \begin{macrocode}
 }
 \char_set_catcode_parameter:N \#%
 
 \ProcessKeyOptions[zugferd]
 %    \end{macrocode}
-% \end{optionenv}
 % \subsection{Preparation to write the \file{.xml} file}
 % \begin{variable}{\_@@_xml_writer_iow}
 %    \begin{macrocode}
@@ -1411,7 +1428,9 @@
 		}
 		{\keys_set:nx { zugferd } {unit= {\str_uppercase:f {#1}}}}
 		{
-			\msg_warning:nnn { zugferd } {unknown-value} {currency} {#1}
+			\bool_if:NT \g_@@_unknown_value_warning_bool {
+				\msg_warning:nnn { zugferd } {unknown-value} {currency} {#1}
+			}
 			\tl_set:Ne \l_@@_currency_tl {\str_uppercase:f {#1}}
 		}
 	},
@@ -1998,7 +2017,9 @@
 		\tl_gset_eq:NN \g_@@_payment_means_tl \l_keys_choice_tl
 	},
 	payment-means / unknown .code:n = {
-		\msg_warning:nnn { zugferd } {unknown-value} {payment-means} {#1}
+		\bool_if:NT \g_@@_unknown_value_warning_bool {
+			\msg_warning:nnn { zugferd } {unknown-value} {payment-means} {#1}
+		}
 		\tl_gset:Nn \g_@@_payment_means_tl {\int_eval:n {#1}}
 	}
 }
@@ -2072,7 +2093,9 @@
 		{
 			\keys_set:ne { zugferd } {unit= {\l_tmpa_tl}}
 		} {
-			\msg_warning:nnn { zugferd } {unknown-unit} {#1}
+			\bool_if:NT \g_@@_unknown_value_warning_bool {
+				\msg_warning:nnn { zugferd } {unknown-unit} {#1}
+			}
 			\tl_set_eq:NN \l_@@_unit_code_tl \l_tmpa_tl
 		}
 	},
@@ -2222,7 +2245,10 @@
 		{
 			\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}
 		} {
-			\msg_warning:nnn { zugferd } {unknown-tax-category} {#1}
+			\tl_set:Ne \l_@@_tax_category_code_tl {\str_uppercase:f {#1}}
+			\bool_if:NT \g_@@_unknown_value_warning_bool {
+				\msg_warning:nnn { zugferd } {unknown-tax-category} {#1}
+			}
 		}
 	},
 	category .initial:n =  S,
