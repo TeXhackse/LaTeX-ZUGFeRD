@@ -1470,6 +1470,8 @@
 % \DescribeKeyOption{add-note=\meta{Tokenlist}}{}*
 % The ZUGFeRD example files\cite{zugferd-download} use all visible data to add them to the \XML as a note.
 % \option{subject} and \option{fromaddress} are used to support this.
+% \changes{version}{date}{Add note on subject not being the same as subject-code \issue{35}.}%
+% Please be aware that \option{subject-code} is not the same as \option{subject} even if some viewers might display it like that, \issue{35}.
 % The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the \XML using the note element.
 % So these fields can be left out but in case they are not empty, they will also be written to the \XML.
 %
@@ -1730,27 +1732,15 @@
 \_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
 	<ram:PostalTradeAddress>
 	\bool_if:NF \g_@@_minimum_bool {%
-		\tl_if_blank:nF {#1} {%
-		\_@@_indent: <ram:PostcodeCode>#1</ram:PostcodeCode>
-		}%
-		\tl_if_blank:nF {#2} {%
-			\_@@_indent: <ram:LineOne>#2</ram:LineOne>
-		}%
-		\tl_if_blank:nF {#3} {%
-			\_@@_indent: <ram:LineTwo>#3</ram:LineTwo>
-		}%
-		\tl_if_blank:nF {#4} {%
-			\_@@_indent: <ram:LineThree>#4</ram:LineThree>
-		}%
-		\tl_if_blank:nF {#5} {%
-			\_@@_indent: <ram:CityName>#5</ram:CityName>
-		}%
+		\_@@_write_inline_i:nn {ram:PostcodeCode} {#1}
+		\_@@_write_inline_i:nn {ram:LineOne} {#2}
+		\_@@_write_inline_i:nn {ram:LineTwo} {#3}
+		\_@@_write_inline_i:nn {ram:LineThree} {#4}
+		\_@@_write_inline_i:nn {ram:CityName} {#5}
 	}%
 	\_@@_indent: <ram:CountryID>#6</ram:CountryID>
 	\bool_if:NF \g_@@_minimum_bool {%
-		\tl_if_blank:nF {#7} {%
-			\_@@_indent: <ram:CountrySubDivisionName>#7</ram:CountrySubDivisionName>
-		}%
+		\_@@_write_inline_i:nn {ram:CountrySubDivisionName} {#7}
 	}%
 	</ram:PostalTradeAddress>%
 }%
@@ -1787,19 +1777,9 @@
 	\bool_if:NT \g_@@_writeTradeContact_bool {%
 		<ram:DefinedTradeContact>
 		\_@@_indent: <ram:PersonName>#1</ram:PersonName>
-		\tl_if_blank:nF {#2} {%
-			\_@@_indent: <ram:DepartmentName>#2</ram:DepartmentName>
-		}%
-		\tl_if_blank:nF {#3} {%
-			\_@@_indent: <ram:TelephoneUniversalCommunication>
-			\_@@_indent:n {2} <ram:CompleteNumber>#3</ram:CompleteNumber>
-			\_@@_indent: </ram:TelephoneUniversalCommunication>
-		}%
-		\tl_if_blank:nF {#4} {%
-			\_@@_indent: <ram:EmailURIUniversalCommunication>
-			\_@@_indent:n {2} <ram:URIID>#4</ram:URIID>
-			\_@@_indent: </ram:EmailURIUniversalCommunication>
-		}%
+		\_@@_write_inline_i:nn {ram:DepartmentName} {#2}
+		\_@@_write_inline_wrapped_i:nnn {ram:TelephoneUniversalCommunication} {ram:CompleteNumber} {#3}
+		\_@@_write_inline_wrapped_i:nnn {ram:EmailURIUniversalCommunication} {ram:URIID} {#4}
 		</ram:DefinedTradeContact>%
 	}%
 }%
@@ -2286,6 +2266,15 @@
 		<#1#2>#3</#1>
 	}
 }
+\_@@_define_xml_content:Nn \_@@_write_inline_wrapped:nnnn {
+	\_@@_indent:n {#1} <#2>\_@@_xml_newline_indent:
+	\_@@_indent:n {#1+1} <#3>#4</#3>\_@@_xml_newline_indent:
+	\_@@_indent:n {#1} </#2>
+}
+\_@@_define_xml_content:Nn \_@@_write_inline_wrapped_i:nnn {
+	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
+}
+
 \cs_generate_variant:Nn \_@@_write_inline:nn {ne}
 \_@@_define_xml_content:Nn  \_@@_write_inline_i:nnn {
 	\_@@_indent: \_@@_write_inline:nnn {#1} {#2} {#3}
