@@ -613,6 +613,9 @@
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
 % Country is still missing.
 %    \begin{macrocode}
+\NewExpandableDocumentCommand{\UseZUGFeRDElement}{m}{
+	\tl_use:c {l_@@_#1_tl}
+}
 \NewDocumentCommand{\InsertZUGFeRDData}{om}{
 	\str_case:nnF {#1} {
 %    \end{macrocode}
