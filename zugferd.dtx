@@ -558,8 +558,9 @@
 % \end{syntax}
 % \DescribeMacro{\SetZUGFeRDData}
 % \DescribeMacro[noindex]{\SetZugferdData}
-% The two modes of \cs[no-index]{SetZUGFeRDData} control if the argument is expanded before the fields are set.
+% The two modes of \cs[no-index]{SetZUGFeRDData} control if the argument is expanded before the data is processed.
 % Depending on the source of the data this might be necessary.
+% In that case activate the expansion by using the star argument.
 % Fields which are involved in the calculation will be expanded anyway, but the text fields will not, to support special characters.
 %
 % \end{documentation}
