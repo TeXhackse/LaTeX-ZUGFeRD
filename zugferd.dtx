@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-% Copyright (C) 2021–2024 Marei Peischl <marei@peitex.de>
+% Copyright (C) 2021–2025 Marei Peischl <marei@peitex.de>
 % ---------------------------------------------------------
 %
 % This file may be distributed and/or modified under the
@@ -16,14 +16,14 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2024-12-08 v0.9c ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2025-01-02 v0.9d ZUGFerd Invoice and Faktur-X]
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2024-12-08}{0.9c}{Create ZUGFerd invoices using LaTeX}
+%<package>\ProvidesExplPackage{zugferd}{2025-01-02}{0.9d}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
-\usepackage{zugferd}[2024-12-08]
+\usepackage{zugferd}[2025-01-02]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -219,6 +219,15 @@
 	subtitle={GitHub Repository},
 	author={Peischl, Marei},
 	url={https://github.com/TeXhackse/LaTeX-ZUGFeRD}
+}
+@online{hyperref,
+	title = {CTAN: Package hyperref},
+	urldate = {2025-01-02},
+	language = {english},
+	author={Rahtz, Sebastian and Oberdiek, Heiko and {The \LaTeX{} Project}},
+	date={2024-11-05},
+	url = {https://ctan.org/pkg/hyperref},
+	documentation = {ctan://macros/latex/contrib/hyperref/doc/hyperref-doc.pdf}
 }
 \end{filecontents}
 \addbibresource{zugferd.bib}
@@ -477,7 +486,7 @@
 %
 % \end{documentation}
 % \begin{implementation}
-% \changes{0.0}{2024-09-10}{Added unknown-value-warning option}
+% \changes{v0.9d}{2025-01-02}{Added unknown-value-warning option}
 % \begin{optionenv}{unknown-value-warning}
 %    \begin{macrocode}
 	unknown-value-warning .bool_gset:N = \g_@@_unknown_value_warning_bool,
@@ -496,9 +505,9 @@
 \iow_new:N \_@@_xml_writer_iow
 %    \end{macrocode}
 % \end{variable}
-% To adjust the metadata it is necessary to use the \pkg{pdfmanagement-testphase} by \citeauthor{pdfmanagement-testphase}.
+% To adjust the metadata it is necessary to use the \pkg{pdfmanagement-testphase} by Ulrike Fischer from the \LaTeX{} Project Team.
 % She had prepared some experiment files for the PDF attachment in the experiments of the repository.
-% We use these to embed the \XML file.
+% We use these to embed the \XML file \issue{7}.
 %
 % This part prepares the XMP metadata according to the required scheme.
 % \changes{v0.8a}{2024-09-17}{Use the new public interface for l3pdfmeta.}
@@ -1501,7 +1510,7 @@
 % \DescribeKeyOption{add-note=\meta{Tokenlist}}{}*
 % The ZUGFeRD example files\cite{zugferd-download} use all visible data to add them to the \XML as a note.
 % \option{subject} and \option{fromaddress} are used to support this.
-% \changes{version}{date}{Add note on subject not being the same as subject-code \issue{35}.}%
+% \changes{v0.9d}{2025-01-02}{Add note on subject not being the same as subject-code \issue{35}.}%
 % Please be aware that \option{subject-code} is not the same as \option{subject} even if some viewers might display it like that, \issue{35}.
 % The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the \XML using the note element.
 % So these fields can be left out but in case they are not empty, they will also be written to the \XML.

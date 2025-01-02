@@ -21,8 +21,8 @@ if options["target"] == "tag" then
 	excludefiles={"*~"}
 end
 
-packageversion = "0.9c"
-packagedate      = "2024-12-08"
+packageversion = "0.9d"
+packagedate      = "2025-01-02"
 
 sourcefiles={"*.dtx","*.ins", "*.sty"}
 demofiles={"*.tex"}
@@ -68,6 +68,9 @@ function update_tag(file, content, tagname, tagdate)
 		content = string.gsub(content,"\\changes{v?0*%.0*}{"..datepattern, "\\changes{v"..tagname.."}{"..tagdate)
 		content = string.gsub(content,"\\changes{version}{date", "\\changes{v"..tagname.."}{"..tagdate)
 	end
+	content = string.gsub (content,
+	                  "(Copyright %(C%) 202%d%–)%d%d%d%d",
+	                  "%1"..os.date("%Y"))
 	return content
 end
 
