@@ -384,16 +384,10 @@
 %
 % The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
 %
-% \DescribeKeyOption{auto-exemption=\meta{boolean}}{true}
-% \pkg{zugferd} tries to automatically add an exemption-reason for the most common VAT categories.
-% In case a more specific reason is required this setting can be disabled and everything should be configured manually.
-% See \autoref{sec:tax-category} for more explanation of this feature and the categories this applies to.
-%
 % \end{documentation}
 % \begin{implementation}
-% \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file,auto-exemption}
+% \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
 % \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
-% \changes{v0.7}{2024-09-10}{Added auto-exemption option}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
@@ -452,10 +446,27 @@
 	xml-file .tl_gset:N = \g_@@_xml_file_tl,
 	xml-file .initial:n = \jobname _zugferd.xml,
 	xml-file .usage:n = load,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{auto-exemption=\meta{boolean}}{true}
+% \pkg{zugferd} tries to automatically add an exemption-reason for the most common VAT categories.
+% In case a more specific reason is required this setting can be disabled and everything should be configured manually.
+% See \autoref{sec:tax-category} for more explanation of this feature and the categories this applies to.
+%
+% \end{documentation}
+% \begin{implementation}
+% \changes{v0.7}{2024-09-10}{Added auto-exemption option}
+% \begin{optionenv}{auto-exemption}
+%    \begin{macrocode}
 	auto-exemption .bool_gset:N = \g_@@_auto_exemption_bool,
 	auto-exemption .initial:n = true,
 	auto-exemption .default:n = true,
-	auto-exemption .usage:n =load,
+	auto-exemption .usage:n = load,
+%    \end{macrocode}
+% \end{optionenv}
+%    \begin{macrocode}
 }
 \char_set_catcode_parameter:N \#%
 
