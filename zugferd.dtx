@@ -427,7 +427,7 @@
 			urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic
 		}
 		\bool_gset_false:N \g_@@_writeTradeContact_bool
-		\bool_gset_false:N \g_@@_writePaymentMeans_bool
+%		\bool_gset_false:N \g_@@_writePaymentMeans_bool
 		\str_gset:Nn \g_@@_conformance_level_str {BASIC}
 		\tl_gset:Nn \g_@@_xml_embedded_file_tl {factur-x.xml}
 	},
@@ -2680,18 +2680,20 @@
 		\int_gincr:N \g_@@_indent_int%
 		\_@@_write_xml:e {%
 			<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>
-			\_@@_write_inline:ne {ram:Information} {\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl}%
+			str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {\_@@_write_inline:ne {ram:Information} {\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl}}%
 			\tl_if_blank:nF {#1#2} {%
 				<ram:PayeePartyCreditorFinancialAccount>
 				\_@@_write_inline_i:nn {ram:IBANID} {#2}
-				\_@@_write_inline_i:nn {ram:AccountName} {#1}
+				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {\_@@_write_inline_i:nn {ram:AccountName} {#1}}
 				</ram:PayeePartyCreditorFinancialAccount>
 			}%
+			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {
 			\tl_if_blank:nF {#3} {%
 				<ram:PayeeSpecifiedCreditorFinancialInstitution>
 				\_@@_write_inline_i:nn {ram:BICID} {#3}
 				</ram:PayeeSpecifiedCreditorFinancialInstitution>%
 			}%
+			}
 		}%
 		\int_gdecr:N \g_@@_indent_int%
 		\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
