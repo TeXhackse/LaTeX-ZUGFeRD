@@ -1,0 +1,92 @@
+{
+  "nodes": {
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1738009863,
+        "narHash": "sha256-KxmFlQ2j9PpDhKRXWu85bv3R2wmfkUqdpJhEwz9JN/E=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f898cbfddfab52593da301a397a17d0af801bbc3",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1738086073,
+        "narHash": "sha256-LTGG89POK1F/cHBZ2FxxR9yUnDeNoCJGuNE8VjlpCkg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d9333c47dc679543d2d781b8fe3fe4cc8d8400b7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "zugferd": "zugferd"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "zugferd": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1735857060,
+        "narHash": "sha256-oi7q3t9SvBby97WfAXYZ1SKbRiWkJho9twZMKBv3KxM=",
+        "owner": "TeXhackse",
+        "repo": "LaTeX-ZUGFeRD",
+        "rev": "c6bdb5391ebdb28257274ef1c6f0ea153e0c1c05",
+        "type": "github"
+      },
+      "original": {
+        "owner": "TeXhackse",
+        "repo": "LaTeX-ZUGFeRD",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
