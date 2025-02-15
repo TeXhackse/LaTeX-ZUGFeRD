@@ -911,12 +911,12 @@
 % \DescribeMacro{\zugferd_enable_XML_interfaces:}
 % \DescribeMacro{\zugferd_disable_XML_interfaces:}
 % \par\bigskip
-% As there are a lot of usecases where code is processed multiple times, it's necessary to provide an interface to temporary disable the \XML writing mechanism.
+% As there are a lot of use cases where code is processed multiple times, it's necessary to provide an interface to temporary disable the \XML writing mechanism.
 % A lot of these situations appear within table structures whereas a local adjustment would not be helpful.
 % Therefore these adjustments have to be done globally.
 %
 % The example package \pkg{zugferd-invoice} provides an example for this to ensure the \XML data is not written multiple times.
-% The \env{ZUGFeRD} environment has been constructed that way, that it would automatically enable the interface when it begins and also when it ends, to write the data. So you should ensure this environment is only processed once or use the lower level interfaces directly.
+% The \env{ZUGFeRD} environment has been constructed in a way, so it would automatically enable the interface when it begins and also when it ends, to write the data. So you should ensure this environment is only processed once or use the lower level interfaces directly.
 % \end{documentation}
 % \begin{implementation}
 % Provide public interfaces and the ZUGFeRD environment.
@@ -1045,7 +1045,7 @@
 % \subsection{XML indentation}
 % The indentation of the \XML does not really matter.
 % For debugging, it's a lot simpler to have it included and this also helped to maintain the structure of the code during development, so I decided to keep it.
-% The indentation is created using s bunch of auxiliary commands and variables which are defined here.
+% The indentation is created using a bunch of auxiliary commands and variables which are defined here.
 % \begin{variable}{\g_@@_indent_int}
 %    \begin{macrocode}
 \int_new:N \g_@@_indent_int
@@ -1088,7 +1088,7 @@
 % \DescribeMacro{\zugferd_disable_macros:}
 % Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the \XML output.
 % The mechanism is created similar to the one by \pkg{hyperref}, and we also use some definitions from there to use those as a starting point.
-% To have a detailed list of the redefinition, please have a look at the implementation of this command.
+% To have a detailed list of the redefinitions, please have a look at the implementation of this command.
 %
 % There exists a hook to extend or overwrite these definitions |zugferd/disable-macros|.
 % You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
@@ -1241,7 +1241,7 @@
 % \DescribeMacro{\zugferd_tl_gset_escaped_xml:Nn}
 % \changes{v0.9c}{2024-12-08}{Added mechanism to escape XML special characters.}
 % As described before and also in \issue{9} there are characters which are special in \XML but not within \LaTeX.
-% Additionally there also are characters which aren't special in \LaTeX{} but within \XML.
+% Additionally there are also characters which aren't special in \LaTeX{} but within \XML.
 % In version \version{0.9c} \pkg{zugferd} added some auxiliary commands to support users escaping those.
 % This mechanism involves turning the category codes of characters like |"<>'&| to active and might have side effects.
 % It is an experimental feature and should be handled with care!
@@ -1355,7 +1355,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsection{General Invoicing Data}
-% Some of the general data currently supports only one value, which is alreay selected by default.
+% Some of the general data currently supports only one value, which is already selected by default.
 % The interface already exists and may be extended later.
 %
 % \end{documentation}
