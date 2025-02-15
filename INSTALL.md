@@ -2,11 +2,11 @@
 
 ## Recommended setup
 
-As this package is now released via CTAN, it's hightly recommended to use the TeX Live Manager (or the MikTeX console) for installation.
+As this package is now released via CTAN, it's highly recommended to use the TeX Live Manager (or the MikTeX console) for installation.
 
 ## Minimal portable TeX Live via DEPP
 
-Additionally, for it's possible to use the Island of TeX's DEPP project to create a minimal portable TeX Live installation only including the dependencies for this kind of documents.
+Additionally it's possible to use the Island of TeX's DEPP project to create a minimal portable TeX Live installation, only including the dependencies for this kind of documents.
 This repository includes a `DEPENDS.txt` for this purpose.
 
 Please be aware that the soft dependencies are those required to typeset the demo file.
@@ -15,9 +15,9 @@ In case you want to use a minimal setup for this the file `.tl_packages` contain
 ## Local user level installation using l3build
 
 Additionally to the CTAN release this package includes an `l3build` installation script inside the package repository.
-Details on usage can be found in the [l3build documentation](http://texdoc.net/serve/l3build)/0).
+Details on usage can be found in the [l3build](https://github.com/latex3/l3build) [documentation](https://ctan.math.utah.edu/ctan/tex-archive/macros/latex/contrib/l3build/l3build.pdf).
 
-To get started one can run
+To get started one can run:
 
 ```shell
 l3build doc
@@ -26,7 +26,7 @@ l3build doc
 within the repositories root directory.
 This will build the Demo project as well as the current status of the documentation within the subdirectory `build/doc`.
 
-To Install the package within you `$TEXMFHOME` there is also the `install` action
+To Install the package within your `$TEXMFHOME` there is also the `install` action:
 
 ```shell
 l3build install
