@@ -52,6 +52,7 @@
 \newcommand*{\codefamily}{\MacroFont}
 \DeclareTextFontCommand{\codefont}{\codefamily}
 \providecommand{\option}[1]{\codefont{#1}}
+\providecommand{\value}[1]{\codefont{#1}}
 
 \cs_new:Npn \__ptxctools_parse_key_option:w #1 #2 #3 #4 = #5 \q_stop {
 	\begingroup
@@ -1457,7 +1458,7 @@
 % For the day this document was compiled this would be: \enquote{\InsertZUGFeRDData{date}} (\today).
 %
 % Instead of providing a date value directly it's also possible to use \cs[no-index]{today}.
-% This is done using the \value{auto} which is the default setting for \option{date} and \option{delivery-date}.
+% This is done using the value \value{auto} which is the default setting for \option{date} and \option{delivery-date}.
 % Please be aware, that this would change if you rebuild the document later. So you might want to use an actual value here.
 % \end{documentation}
 %
@@ -1515,7 +1516,7 @@
 % The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the \XML using the note element.
 % So these fields can be left out but in case they are not empty, they will also be written to the \XML.
 %
-% The \value{komavar} corresponds to the mechanism provided by \pkg{scrletter}.
+% The value \value{komavar} corresponds to the mechanism provided by \pkg{scrletter}.
 % It accesses the variable expands it to be used directly.
 % If you don't use this package, you can ignore this setting or add content manually.
 % \end{documentation}
