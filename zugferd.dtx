@@ -235,7 +235,7 @@
 
 \usepackage{xspace}
 \newcommand*{\XML}{XML\xspace}
-\newcommand*{\XMLfile}{\XML file}
+\newcommand*{\XMLfile}{\XML file\xspace}
 
 \DeclareRobustCommand{\issue}[1]{%
 	{\DeclareFieldFormat{citeurlpostfix}{\href{##1/issues/#1}{\##1}}\citefield{LaTeX-ZUGFeRD-GitHub}[citeurlpostfix]{url}}%
@@ -507,7 +507,7 @@
 % \end{variable}
 % To adjust the metadata it is necessary to use the \pkg{pdfmanagement-testphase} by Ulrike Fischer from the \LaTeX{} Project Team.
 % She had prepared some experiment files for the PDF attachment in the experiments of the repository.
-% We use these to embed the \XML file \issue{7}.
+% We use these to embed the \XMLfile \issue{7}.
 %
 % This part prepares the XMP metadata according to the required scheme.
 % \changes{v0.8a}{2024-09-17}{Use the new public interface for l3pdfmeta.}
@@ -635,7 +635,7 @@
 % First a token list is tried, afterwards a string.
 % Global variables are prefered over local ones.
 %
-% As the variable names may container underscores and the option usually prefers dashes, dashes are converted to underscores for the detection.
+% As the variable names may contain underscores and the option usually prefers dashes, dashes are converted to underscores for the detection.
 %
 % \DescribeOption{AddressData} Allows |seller| or |buyer| for the data selection.
 % Will print the address, to be used in letters.
@@ -727,7 +727,7 @@
 % This provides the public interface bundling some steps together to reduce maintenance effort for any template maintainer using this package.
 % It also avoids the use of internal commands.
 %
-% This environment opens the \XML file using \cs{startWritingZUGFeRDxml} and afterwards writes the \XML header including the File and Scheme information, the |ExchangedDocumentContext| and information of the |ExchangedDocument|.
+% This environment opens the \XMLfile using \cs{startWritingZUGFeRDxml} and afterwards writes the \XML header including the File and Scheme information, the |ExchangedDocumentContext| and information of the |ExchangedDocument|.
 % Notes will also be written within this step.
 % Afterwards the environment should include all the mechanisms to write the invoice positions as well as summation.
 %
