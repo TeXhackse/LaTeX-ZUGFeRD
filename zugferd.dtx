@@ -653,8 +653,13 @@
 % Country is still missing.
 %    \begin{macrocode}
 \NewExpandableDocumentCommand{\UseZUGFeRDElement}{m}{
-	\tl_use:c {l_@@_#1_tl}
+	\use:c {l_@@_#1_tl}
 }
+
+\cs_new:Nn \zugferd_get_AddressData_item:nn {
+	\prop_item:cn {g_@@_#2_AddressData_prop } {#1}
+}
+
 \NewDocumentCommand{\InsertZUGFeRDData}{om}{
 	\str_case:nnF {#1} {
 %    \end{macrocode}
@@ -2423,7 +2428,7 @@
 % \item SpecifiedLineTradeSettlement
 % \end{itemize}
 % These are implemented as separate commands to be more flexible.
-% The wrapper command is called \cs[no-index]{@@_insert_TradeLineItem:nnnnnn} and is created to be used in your own invoicing package-
+% The wrapper command is called \cs[no-index]{@@_insert_TradeLineItem:nnnnnn} and is created to be used in your own invoicing package.
 %    \begin{macrocode}
 \cctab_begin:N \g_@@_xml_cctab%
 %    \end{macrocode}
