@@ -59,8 +59,16 @@
 %\InitVAT{5}
 \InitVAT{7}
 
-% Tax initialisation with a different Code than S in this example Syntax would be
-% \InitVAT{0}[AE]
+% Add additional interface for tax exemptions
+\seq_new:N  \g__ptxcd_VAT_exempt_seq
+\NewDocumentCommand{\InitVATExempt}{m}{
+	\seq_gput_right:Nn \g__ptxcd_VAT_exempt_seq {#1}
+	\fp_new:c {g__ptxcd_invoice_sum_vat#1_fp}
+	\fp_new:c {g__ptxcd_invoice_base_vat#1_fp}
+}
+
+\InitVATExempt{AE}% Reverse Charge
+\InitVATExempt{K}% Innergemeinschaftliche Lieferung
 
 
 \newcommand*{\SetDefaultVAT}[1]{\def\defaultVAT{#1}}
@@ -129,6 +137,12 @@
 			\PrintVatSum[{\fp_use:c {g__ptxcd_invoice_base_vat##1_fp}}]{##1 }{\fp_use:c {g__ptxcd_invoice_sum_vat##1_fp}}
 		}
 	}
+  % VAT exemptions won't use a separate table row inside the PDF but have to be written to XML
+	\seq_map_inline:Nn \g__ptxcd_VAT_exempt_seq {
+		\fp_compare:nNnF {\fp_use:c {g__ptxcd_invoice_base_vat##1_fp}} = {0} {
+			\zugferd_write_TaxEntry:ennn  {##1} {0} {\fp_use:c {g__ptxcd_invoice_base_vat##1_fp}} {0}
+		}
+	}
 	\PrintInvoiceSum{brutto}{\fp_eval:n {\g__ptxcd_tax_total_fp +  \g__ptxcd_invoice_total_fp }}
 	% TODO add support for allowance, chargeTotal, and prepaid
 	 \zugferd_write_Summation:nnnnnnnn
@@ -144,22 +158,34 @@
 }
 
 %Ausgabe der einzelnen Rechnungspositionen
+
 \newcommand*{\PrintInvoiceItem}[5]{%
 	\stepcounter{invoiceitem}%
 	\theinvoiceitem%Positionsnummer
-	\zugferd_fp_gset_rounded:Nn \g__ptxcd_invoice_item_vat_fp  {#2 * (#1/100) * #4}
 	\zugferd_fp_gset_rounded:Nn \g__ptxcd_invoice_item_fp  {#2 * #4}
 	\fp_gadd:cn {g__ptxcd_invoice_base_vat#1_fp} {\g__ptxcd_invoice_item_fp}
-	\fp_gadd:cn {g__ptxcd_invoice_sum_vat#1_fp} {\g__ptxcd_invoice_item_vat_fp}
 	\fp_gadd:Nn \g__ptxcd_invoice_sum_fp {\g__ptxcd_invoice_item_fp}
-	
-	% optionen position nummer name einzel-preis anzahl gesamtpreis	
-	\zugferd_write_Item:ennnnnn {tax/rate=#1, tax/category=\use:c {__ptxcd_invoice_type_code#1:},#5} {\theinvoiceitem} {} {#3} {#4} {#2} {\fp_use:N \g__ptxcd_invoice_item_fp}
-	
-	&#2% Anzahl
-	&#3\space(\printVAT{#1}~MwSt.)% Beschreibung mit Angabe der MwSt, in Klammern
-	&\num{#4}%\num[round-mode=places,output-decimal-marker={,},round-pad = false]{#4}\tl_show:n {#4}%Einzelpreis
-	&\exp_args:Nx \num{\fp_use:N \g__ptxcd_invoice_item_fp}
+  % check if specific category was used instead of a rate
+	\keys_if_choice_exist:nnnTF  {zugferd} {tax/category} {#1} {
+			% Tax Exempt item
+			\zugferd_write_Item:ennnnnn {tax/rate=0, tax/category=#1,#5} {\theinvoiceitem} {} {#3} {#4} {#2} {\fp_use:N \g__ptxcd_invoice_item_fp}
+			% content for visible PDF table
+			&#2 % amount
+			&#3 % description
+			&\num{#4} % price
+			&\exp_args:Nx \num{\fp_use:N \g__ptxcd_invoice_item_fp}
+	}{
+			% Standard Item
+			\zugferd_fp_gset_rounded:Nn \g__ptxcd_invoice_item_vat_fp  {#2 * (#1/100) * #4}
+			\fp_gadd:cn {g__ptxcd_invoice_sum_vat#1_fp} {\g__ptxcd_invoice_item_vat_fp}
+			% optionen position nummer name einzel-preis anzahl gesamtpreis
+			\zugferd_write_Item:ennnnnn {tax/rate=#1, tax/category=\use:c {__ptxcd_invoice_type_code#1:},#5} {\theinvoiceitem} {} {#3} {#4} {#2} {\fp_use:N \g__ptxcd_invoice_item_fp}
+			% content for visible PDF table
+			&#2% Anzahl
+			&#3\space(\printVAT{#1}~MwSt.)% Beschreibung mit Angabe der MwSt, in Klammern
+			&\num{#4}%\num[round-mode=places,output-decimal-marker={,},round-pad = false]{#4}\tl_show:n {#4}%Einzelpreis
+			&\exp_args:Nx \num{\fp_use:N \g__ptxcd_invoice_item_fp}
+	}
 	\tabularnewline
 }
 
