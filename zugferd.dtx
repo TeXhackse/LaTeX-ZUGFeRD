@@ -2152,7 +2152,6 @@
 %
 % \end{documentation}
 % \begin{implementation}
-% \optionenv{category, exemption-reason,rate}
 %    \begin{macrocode}
 \msg_new:nnnn {zugferd} {unknown-tax-category} {
 	You~selected~an~unknown~tax~category.\\
@@ -2169,6 +2168,31 @@
 } {
 	For~more~information~see~the~zugferd~documentation.
 }
+%    \end{macrocode}
+% \changes{version}{date}{Add interface for configuration of auto-exemption-reason}
+%    \begin{macrocode}
+\cs_new:Nn \_@@_configure_auto_exemption:nn {
+	\tl_if_in:nnTF {#2} {=} {
+		\keys_define:nn { zugferd / tax } {
+				exemption-reason-auto / #1 .code:n = {
+						\keys_set:nn {zugferd/tax}{
+							#2
+						}
+				}
+		}
+	} {
+		\keys_define:nn { zugferd / tax } {
+				exemption-reason-auto / #1 .code:n = {
+					\keys_set:nn {zugferd/tax} {
+						exemption-reason={#2}
+					}
+				}
+		}
+	}
+}
+%    \end{macrocode}
+% \optionenv{category, exemption-reason,rate}
+%    \begin{macrocode}
 \keys_define:nn { zugferd / tax } {
 	category .choices:nn = {S,Z,E,AE,K,G,O,L,M} {
 		\tl_set_eq:NN \l_@@_tax_category_code_tl \l_keys_choice_tl
@@ -2243,6 +2267,10 @@
 			exemption-reason=No~subject~to~VAT,
 			exemption-reason-code={vatex-eu-o}
 		}
+	},
+	add-exemption-reason-auto .code:n = {
+		%TODO Error if syntax doesn't match?
+		\keyval_parse:nnn {\use_none:n} {\_@@_configure_auto_exemption:nn} {#1}
 	},
 	standard .meta:n = {category=S},
 	zero .meta:n = {category=Z},

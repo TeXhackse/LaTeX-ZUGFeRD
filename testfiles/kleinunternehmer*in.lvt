@@ -30,6 +30,7 @@
 	shipto/postcode = {Postcode},
 	shipto/city ={City},
 	shipto/country = AT,
+	tax/add-exemption-reason-auto={E={Kein Ausweis von Umsatzsteuer, da Kleinunternehmer*in gemaess Paragraph 19 UStG}}% avoid umlauts for testing as \SHOWFILE is annoying…
 }
 
 \begin{document}
@@ -38,7 +39,6 @@
 	\zugferd_write_Item:nnnnnnn {tax/rate=0, tax/category=E} {loewe-1} {0} {Plushie ~ \TeX\ lion} {31.89} {2} {63.78}%special required for space in expl3-mode
 	\zugferd_startInvoiceSums:
 	\group_begin:
-	\keys_set:nn {zugferd}{tax/exemption-reason={Kein~Ausweis~von~Umsatzsteuer,~da~Kleinunternehmer*in~gemaess~Paragraph~19~UStG}}% avoid umlauts for testing as \SHOWFILE is annoying… 
 	\zugferd_write_TaxEntry:nnnn {E} {0} {63.78} {0}
 	\group_end:
 	\zugferd_write_Summation:nnnnnnnn
