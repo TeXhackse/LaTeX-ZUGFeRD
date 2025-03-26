@@ -95,8 +95,17 @@
 \newcommand*{\PrintInvoiceTabular}{
 \bool_gset_true:N \g_ptxcd_first_run_bool
 	\begin{ZUGFeRD}
+	% The following siunitx will be applied to the whole table.
+	% It might be necessary to add additional settings for other use of the values.
+	% Please be aware that I know that this setting will not match all your needs!
 	\sisetup{round-precision=2,round-mode=places,round-pad=false,table-number-alignment=right,minimum-decimal-digits=2,mode=text}
-	\begin{xltabular}{\linewidth}{@{}rS[round-precision=1,table-format=2.1]>{\RaggedRight}XPP@{}}
+	\begin{xltabular}{\linewidth}{@{}
+	r
+	S[round-mode=none]% amount
+	>{\RaggedRight}X% description
+	P% price
+	P% line total
+	@{}}
 	\toprule[\lightrulewidth]
 	\noalign{\global\let\PrintTableCurrency\relax}%
 	\small\emph{Pos.}&\small\emph{Std.}&\small\emph{Beschreibung}&\small\emph{Einzelpreis}&\small\emph{Gesamtpreis}\\\midrule[\heavyrulewidth]
