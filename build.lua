@@ -36,7 +36,7 @@ typesetexe="lualatex"
 typesetopts=""
 
 supportdir="support"
-checksuppfiles={"validate_zugferd.sh","Mustang-CLI.jar","zugferd-test.ltx"}
+checksuppfiles={"validate_zugferd.sh","Mustang-CLI*.jar","zugferd-test.ltx"}
 
 checkconfigs = {"build"}
 -- checkconfigs = {"build", "config-pdf"} -- pdf config is only checked on release
