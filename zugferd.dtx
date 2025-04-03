@@ -2268,6 +2268,15 @@
 			exemption-reason-code={vatex-eu-o}
 		}
 	},
+%    \end{macrocode}
+% \changes{version}{date}{Remove exemption reason for category Z}
+%    \begin{macrocode}
+	exemption-reason-auto / Z .code:n = {
+		\keys_set:nn {zugferd/tax}{
+			exemption-reason=,
+			exemption-reason-code=
+		}
+	},
 	add-exemption-reason-auto .code:n = {
 		%TODO Error if syntax doesn't match?
 		\keyval_parse:nnn {\use_none:n} {\_@@_configure_auto_exemption:nn} {#1}
