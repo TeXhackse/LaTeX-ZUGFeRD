@@ -1,0 +1,82 @@
+% !TeX Program=lualatex
+%
+% Demo file for the LaTeX-ZUGFeRD project
+% This file corresponds to version 0.9d (2025-01-02)
+% it is a modified Version!
+%
+% Copyright (C) 2024--2025 Marei Peischl <marei@peitex.de>
+%
+\DocumentMetadata{
+	pdfstandard=a-3b,
+	lang=de,	
+}
+\documentclass[parskip=half-,german]{scrartcl}
+
+\usepackage[
+	format=xrechnung3.0% 3.0 is the default anyway, but you can select the format to avoid automatic changes.
+	%format=basic
+]{zugferd-invoice}
+
+\setkomavar{invoice}{2024:1337}
+\setkomavar{date}{{\InsertZUGFeRDData[set-today]{date}\today}}
+\setkomavar{title}{Rechnung}
+
+\newkomafont{invoicetotal}{\bfseries}
+
+\SetZUGFeRDData{
+%	document-type =  commercial-invoice, % commented as this setting matches the initial value
+	id=komavar,
+%	date=auto, % commented as this setting matches the initial value
+%	delivery-date = auto, % commented as this setting matches the initial value
+	subject=komavar,
+	fromaddress=komavar,
+	unit=hour,
+	seller/vatid = {DE123456789},
+%	seller/id=1123,% If no VatID exists a seller/id is required. This might be an ID provided by the buyer
+	seller/name = {peiTeX (Marei Peischl)},
+	seller/postcode = {20253},
+	seller/city ={Hamburg},
+	seller/country = DE,
+	seller/address = {Address 1},
+	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
+	seller/email = {kontakt@peitex.de},
+	seller/taxid=XXXXX,
+	buyer/reference = {buyer-reference}, %oder Leitweg-ID
+	buyer/name = {Käufer Name},
+	buyer/postcode = {20253},
+	buyer/city ={Hamburg},
+	buyer/country = DE,
+	buyer/address = {Address 1\\Address 2},
+	buyer/vatid = {DE123456789},
+	buyer/email = {invoice@example.org},
+	shipto/country=NL,
+	shipto/city={Amsterdam},
+	shipto/postcode={xxx},
+	currency=€,
+	payment-terms={Zahlbar innerhalb von 14 Tagen},% either this one or the due-date below is required
+	due-date={20240118},
+	payment-means / type = 58, % SEPA Übereisung,
+	payment-means / iban = DE68430609671013251700,
+	payment-means / account-holder = Marei Peischl,
+	payment-means / bic =GENODEM1GLS,
+	tax/add-exemption-reason-auto={E={{Kein Ausweis von Umsatzsteuer, da Kleinunternehmer*in gemäß § 19 UStG}}}% avoid umlauts for testing as \SHOWFILE is annoying…
+}
+
+
+\InitVATExempt{E}% Innergemeinschaftliche Lieferung
+
+\AddInvoiceItem<unit=hour>[E]{3}{Support}{90}
+
+\begin{document}
+\begin{letter}{Firma\\Vorname Nachname\\Rechnungsadresse\\PLZ Ort}
+	
+\opening{Guten Tag,}
+
+hiermit stelle ich Ihnen meine Arbeit im Rahmen des Projektes XX in Rechnung. Die Leistung wurde im Januar 2024 erbracht. 
+
+
+
+\PrintInvoiceTabular
+
+\end{letter}
+\end{document}
