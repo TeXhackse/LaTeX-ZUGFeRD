@@ -54,6 +54,7 @@
 }
 
 %Initialize VAT rates for (5),7,(16) and 19 % VAT
+%These rates are the name to be used inside \AddInvoiceItem as defined before.
 %\InitVAT{16}
 \InitVAT{19}
 %\InitVAT{5}
@@ -67,6 +68,7 @@
 	\fp_new:c {g__ptxcd_invoice_base_vat#1_fp}
 }
 
+%These rates are the name to be used inside \AddInvoiceItem as defined before.
 \InitVATExempt{AE}% Reverse Charge
 \InitVATExempt{K}% Innergemeinschaftliche Lieferung
 
