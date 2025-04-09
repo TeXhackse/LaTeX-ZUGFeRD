@@ -272,11 +272,11 @@
 % \begin{abstract}
 % Invoicing is getting more and more automated.
 % Starting with public sector, within Germany there already is a requirement to stick to the Faktur-X Standard.
-% First Invoices based on this implementation here have been created back in 2021.
-% And this is now the trial to create a more universal and public package to support the current Version of ZUGFeRD and therefore also X-Rechung and Faktur-X.
+% First invoices based on this implementation here have been created back in 2021.
+% And this is now the trial to create a more universal and public package to support the current version of ZUGFeRD and therefore also X-Rechung and Faktur-X.
 %
 % \indent The fundamental idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the \XMLfile for the attachment on the fly.
-% To match typical setups there is a wrapper package which usually would also hold the personal Invoicing layout configuration.
+% To match typical setups there is a wrapper package which usually would also hold the personal invoicing layout configuration.
 % \end{abstract}
 %
 % \IfOnlyDocumentation{\vfill}
@@ -285,7 +285,7 @@
 % Since it is addressing business users it would be great if we could keep this actively maintained.
 % If you are able to support this either financially for the maintenance effort, a custom extension, I'd love to hear from you.
 %
-% Tthis project was financially supported by:
+% This project was financially supported by:
 % \begin{itemize}
 % \item Pengutronix e.K., \url{https://pengutronix.de}\newline
 % Special thanks to them, as they also sponsored the minimal portable \TeX{} Live setup.
@@ -373,7 +373,7 @@
 % The value \option{xrechnung} is set as an alias to |xrechnung3.0| and will always use the latest version supported by \pkg{zugferd}.
 %
 % This option also adjusts the file name which is used for embedding the \XML.
-% It will be called |factur-x.xml| for all formats but the |xrechnung| ones. 
+% It will be called |factur-x.xml| for all formats but the |xrechnung| ones.
 % In that case it will be |xrechnung.xml|.
 %
 % \DescribeKeyOption{zugferd=\meta{boolean}}{true}*
@@ -821,7 +821,7 @@
 % \subsection{Interfaces to write the \XML contents}
 % \changes{v0.6}{2024-09-05}{Provide public interfaces and first version of the documentation.}
 % \label{sec:xml-interfaces}
-% In case you are using |write-xml=true| (which is the default) You need to ensure to call the \XML writing functions in the correct order.
+% In case you are using |write-xml=true| (which is the default) you need to ensure to call the \XML writing functions in the correct order.
 % For example after setting the global invoice data, like it's done in the example file.
 % The minimal example below would create a valid XML.
 % The interface commands are described afterwards.
