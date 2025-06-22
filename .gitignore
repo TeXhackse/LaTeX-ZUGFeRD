@@ -442,3 +442,7 @@ $RECYCLE.BIN/
 zugferd.sty
 zugferd.pdf
 build/
+
+
+# ignore mustang jar files
+Mustang-CLI*.jar
