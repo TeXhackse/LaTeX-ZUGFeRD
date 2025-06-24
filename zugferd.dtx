@@ -1939,6 +1939,22 @@
 % \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
+% \subsubsection{Buyer Accounting Reference}
+% \DescribeKeyOption*{buyer/accounting-reference=\meta{Accounting reference}}{}% BT-19
+% The reference field only exists for the |buyer| trade party.
+% Buyers will explicitly ask for this field.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{buyer/accounting-reference}% BT-19
+%    \begin{macrocode}
+\prop_new:N \g_@@_extra_fields_prop
+\keys_define:nn {zugferd/buyer} {
+	accounting-reference .code:n = \prop_gput:Nnn \g_@@_extra_fields_prop {BT-19} {#1}
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
 % \subsubsection{Document references}
 % Additionally to the general buyer reference there may be additional data used by the buyer a reference.
 % These fields are technically optional, but the buyer may enforce them to be used.
@@ -2361,6 +2377,18 @@
 	\_@@_indent:n {#1+1} <#3>#4</#3>\_@@_xml_newline_indent:
 	\_@@_indent:n {#1} </#2>
 }
+\cctab_begin:N \g_@@_xml_cctab%
+\_@@_define_xml_writer:Nn \_@@_write_optional_wrapped:nnn {%
+	\prop_if_in:NeT \g_@@_extra_fields_prop {#3} {%
+		\_@@_write_xml:e {%
+		<ram:#1>
+		\_@@_indent:<ram:#2>\prop_item:Ne \g_@@_extra_fields_prop {#3}</ram:#2>
+		</ram:#1>%
+		}%
+	}%
+}%
+\cctab_end:
+
 \_@@_define_xml_content:Nn \_@@_write_inline_wrapped_i:nnn {
 	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
 }
@@ -2692,6 +2720,7 @@
 	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}%
 }%
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {%
+	\_@@_write_optional_wrapped:nnn {ReceivableSpecifiedTradeAccountingAccount} {ID} {BT-19}% BT-19
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}%
 }%
