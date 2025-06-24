@@ -29,20 +29,9 @@
 \RecordChanges
 \usepackage{biblatex}
 
-\usepackage{shellesc}
-\ifnum\ShellEscapeStatus=1\relax\else
-	\PassOptionsToPackage{draft}{minted}
-\fi
-\usepackage[highlightmode=immediate]{minted}
-\newcounter{codelist}
-\newenvironment{examplecode}{%
-	\VerbatimEnvironment%
-	\fvset{gobble=0}%
-	\begin{VerbatimOut}[tabsize=3,gobble=1]{minted.doc.out}%
-}{%
-	\end{VerbatimOut}%
-	\inputminted[autogobble, escapeinside=||]{latex}{minted.doc.out}%
-}
+\usepackage{minted}
+
+\newminted[examplecode]{latex}{gobble=2, tabsize=4}
 \usepackage{accsupp}
 \setminted{breaksymbol={\BeginAccSupp{method=escape,ActualText={}}\tiny\ensuremath{\hookrightarrow}\EndAccSupp{}},breaklines}
 
