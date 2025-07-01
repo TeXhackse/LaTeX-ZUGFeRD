@@ -2,7 +2,7 @@
 
 Copyright (C) 2023–2025 by Marei Peischl (peiTeX) <marei@peitex.de>
 
-zugferd version 0.9d (2025-01-02)
+zugferd version 0.10-dev (2025-07-01)
 
 ***************************************************************************
 

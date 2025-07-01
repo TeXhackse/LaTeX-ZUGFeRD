@@ -16,14 +16,14 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2025-01-02 v0.9d ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2025-07-01 v0.10-dev ZUGFerd Invoice and Faktur-X]
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2025-01-02}{0.9d}{Create ZUGFerd invoices using LaTeX}
+%<package>\ProvidesExplPackage{zugferd}{2025-07-01}{0.10-dev}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \DocumentMetadata{pdfstandard=a-3b,lang=en}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
-\usepackage{zugferd}[2025-01-02]
+\usepackage{zugferd}[2025-07-01]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -693,7 +693,7 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
-% \changes{version}{date}{Add expandable interfaces to access data entries.}
+% \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
 % \DescribeMacro{\UseZUGFeRDElement}
 % For all simple entries it's possible to use this expandabl interface to data items.
 % This does not apply for the AddressData.
@@ -2192,7 +2192,7 @@
 	For~more~information~see~the~zugferd~documentation.
 }
 %    \end{macrocode}
-% \changes{version}{date}{Add interface for configuration of auto-exemption-reason}
+% \changes{v0.10-dev}{2025-07-01}{Add interface for configuration of auto-exemption-reason}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_configure_auto_exemption:nn {
 	\tl_if_in:nnTF {#2} {=} {
@@ -2292,7 +2292,7 @@
 		}
 	},
 %    \end{macrocode}
-% \changes{version}{date}{Remove exemption reason for category Z}
+% \changes{v0.10-dev}{2025-07-01}{Remove exemption reason for category Z}
 %    \begin{macrocode}
 	exemption-reason-auto / Z .code:n = {
 		\keys_set:nn {zugferd/tax}{
