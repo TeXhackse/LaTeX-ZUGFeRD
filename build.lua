@@ -21,8 +21,8 @@ if options["target"] == "tag" then
 	excludefiles={"*~"}
 end
 
-packageversion = "0.9d"
-packagedate      = "2025-01-02"
+packageversion = "0.10-dev"
+packagedate      = "2025-07-01"
 
 sourcefiles={"*.dtx","*.ins", "*.sty"}
 demofiles={"*.tex"}
@@ -43,10 +43,46 @@ checkconfigs = {"build"}
 
 ctanreadme="README_CTAN.md"
 
+function get_dev_tag (oldtag)
+	if string.match(oldtag, "%-dev$") then
+		return (oldtag), true
+	end
+	newtag=string.gsub(oldtag,"v?(%d+).%d+%-?%w*%s?","%1.")..string.format("%02d",math.floor(string.gsub(oldtag,"v?%d+.(%d+)%-?%w*%s?","%1") + 1))
+	return newtag.."-dev",false
+end
+
+--[[
+  # Tagging configuration
+]]
+
 tagfiles = {"*.dtx","*.sty", "*.md", "*.tex","*.lua"}
 function update_tag(file, content, tagname, tagdate)
 	local versionpattern = "%d+.%d+%-?%w*"
 	local datepattern = "%d%d%d%d%-%d%d%-%d%d"
+	local tag_only_changes = false
+	local old_tagpattern = ""
+	local tagname = tagname or packageversion
+	if tagname == "dev" or string.match(tagname, "%-dev$") then
+		tagname, tag_only_changes = get_dev_tag(packageversion)
+	else
+    -- when a new tag is set all \changes{<old-dev-tag>} should be replaced as well
+		old_tagpattern = string.gsub(packageversion, "%.", "%%.")
+		old_tagpattern = string.gsub(old_tagpattern, "%-", "%%-")
+	end
+	-- Copyright (C) 2018–2025 by uploadconfig["author"]>
+	-- maybe change to -- instead of –
+	content = string.gsub(content, "(Copyright %(C%) 20%d%d)%-*%d%d%d%d by " ..
+							uploadconfig["author"], "%1--" .. os.date("%Y") ..
+							" by " .. uploadconfig["author"])
+	-- tagging \changes
+	if file ~= "build.lua" then
+		content = string.gsub(content, "\\changes{v?0*%.0*}{" .. datepattern,
+							"\\changes{v" .. tagname .. "}{" .. tagdate)
+		content = string.gsub(content, "\\changes{version}{date",
+							"\\changes{v" .. tagname .. "}{" .. tagdate)
+	end
+	-- don't tag fileversion to not change all dates
+	if tag_only_changes then return content end
 	if string.match(file, "%.md$") or string.match(file, "%.tex$") then
 		content = string.gsub(content,
 			"([Vv]ersion%s)"..versionpattern.."%s%("..datepattern.."%)",
@@ -64,9 +100,13 @@ function update_tag(file, content, tagname, tagdate)
 		content = string.gsub(content,
 			"(\\usepackage{"..module.."}%[)"..datepattern.."%]",
 			"%1"..tagdate.."]")
-		content = string.gsub(content,"\\changes{v"..tagname.."}{"..datepattern, "\\changes{v"..tagname.."}{"..tagdate)
-		content = string.gsub(content,"\\changes{v?0*%.0*}{"..datepattern, "\\changes{v"..tagname.."}{"..tagdate)
-		content = string.gsub(content,"\\changes{version}{date", "\\changes{v"..tagname.."}{"..tagdate)
+		content = string.gsub(content,
+							"\\changes{v" .. tagname .. "(%-dev)?}{" ..
+								datepattern,
+							"\\changes{v" .. tagname .. "}{" .. tagdate)
+		content = string.gsub(content,"(%%<%*[^\n]+\n%s+%[)"..
+								datepattern .. "%s-v" .. versionpattern,
+							"%1" .. tagdate .. " " .. tagname)
 	end
 	content = string.gsub (content,
 	                  "(Copyright %(C%) 202%d%–)%d%d%d%d",
