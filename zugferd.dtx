@@ -1947,14 +1947,19 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Buyer Accounting Reference}
+% \changes{v0.10-dev}{2025-07-01}{Add support for accounting-reference}
 % \DescribeKeyOption*{buyer/accounting-reference=\meta{Accounting reference}}{}% BT-19
 % The reference field only exists for the |buyer| trade party.
 % Buyers will explicitly ask for this field.
 % \end{documentation}
 % \begin{implementation}
-% \begin{optionenv}{buyer/accounting-reference}% BT-19
+% \begin{variable}{\g_@@_extra_fields_prop}
 %    \begin{macrocode}
 \prop_new:N \g_@@_extra_fields_prop
+%    \end{macrocode}
+% \end{variable}
+% \begin{optionenv}{buyer/accounting-reference}% BT-19
+%    \begin{macrocode}
 \keys_define:nn {zugferd/buyer} {
 	accounting-reference .code:n = \prop_gput:Nnn \g_@@_extra_fields_prop {BT-19} {#1}
 }
