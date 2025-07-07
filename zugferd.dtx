@@ -2764,7 +2764,11 @@
 		\int_gincr:N \g_@@_indent_int%
 		\_@@_write_xml:e {%
 			<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>
-			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {\_@@_write_inline:ne {ram:Information} {\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl}}%
+			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+				\_@@_write_inline:ne {ram:Information} {%
+					\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
+				}
+			}%
 			\tl_if_blank:nF {#1#2} {%
 				<ram:PayeePartyCreditorFinancialAccount>
 				\_@@_write_inline_i:nn {ram:IBANID} {#2}
