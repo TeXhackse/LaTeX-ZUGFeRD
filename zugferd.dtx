@@ -655,7 +655,15 @@
 		}
 	} {
 %    \end{macrocode}
-% Try to find the variable automatially.
+% \changes{version}{date}{Add Mechanism to provide explicit interface for data elements}
+% There are some mappings between the input and variable name.
+% We can use those to define specific data keys to access the field content.
+%    \begin{macrocode}
+		\keys_if_exist:nnTF {zugferd/data} {#2} {
+			\keys_set:nn {zugferd/data} {#2}
+		} {
+%    \end{macrocode}
+% If no specific interface is defined, we try to find the variable automatially.
 % \begin{itemize}
 %	\item replace dashes by underscores
 %	\item try if a tokenlist or a string
@@ -663,20 +671,21 @@
 %	\item take the first existing variable and break the loop
 % \end{itemize}
 %    \begin{macrocode}
-		\str_set:Ne \l_tmpa_str {#2}
-		\str_replace_all:Nnn \l_tmpa_str {-} {_}
-		\str_replace_all:Nnn \l_tmpa_str {/} {_}
-		\bool_set_true:N \g_tmpa_bool
-		\clist_map_inline:nn {tl, str} {
-			\clist_map_inline:nn {g, l} {
-				\use:c {##1 _if_exist:cT} {####1_@@_ \l_tmpa_str _##1}
-					{
-						\use:c {####1_@@_ \l_tmpa_str _##1}
-						\bool_gset_false:N \g_tmpa_bool
-					}
+			\str_set:Ne \l_tmpa_str {#2}
+			\str_replace_all:Nnn \l_tmpa_str {-} {_}
+			\str_replace_all:Nnn \l_tmpa_str {/} {_}
+			\bool_set_true:N \g_tmpa_bool
+			\clist_map_inline:nn {tl, str} {
+				\clist_map_inline:nn {g, l} {
+					\use:c {##1 _if_exist:cT} {####1_@@_ \l_tmpa_str _##1}
+						{
+							\use:c {####1_@@_ \l_tmpa_str _##1}
+							\bool_gset_false:N \g_tmpa_bool
+						}
+					\bool_if:NF \g_tmpa_bool {\clist_map_break:}
+				}
 				\bool_if:NF \g_tmpa_bool {\clist_map_break:}
 			}
-			\bool_if:NF \g_tmpa_bool {\clist_map_break:}
 		}
 	}
 }
@@ -749,7 +758,7 @@
   {\prop_item:cn { g_@@_#1_AddressData_prop } {#2}}
 }
 
-\cs_new:Nn \zugferd_printAddressDataLine:nn { 
+\cs_new:Nn \zugferd_printAddressDataLine:nn {
 		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {##1} {
 			\prop_item:cn { g_@@_#1_AddressData_prop } {##1}\\
 		}
