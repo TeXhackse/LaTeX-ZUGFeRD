@@ -646,14 +646,7 @@
 %    \end{macrocode}
 %    \begin{macrocode}
 		{AddressData} {
-			\clist_map_inline:nn {name, lineone, linetwo,linethree} {
-				\prop_if_in:cnT {g_@@_#2_AddressData_prop } {##1} {
-					\prop_item:cn {g_@@_#2_AddressData_prop } {##1}\\
-				}
-			}
-			\prop_item:cn {g_@@_#2_AddressData_prop } {postcode}
-			\space
-			\prop_item:cn {g_@@_#2_AddressData_prop } {city}
+			\zugferd_print_AddressData:n {#2}
 		}
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -715,9 +708,55 @@
 % \end{documentation}
 % \begin{implementation}
 % \begin{function}{\zugferd_get_AddressData_item:nn}
+%    \begin{macrocode}
 \cs_new:Nn \zugferd_get_AddressData_item:nn {
 	\prop_item:cn {g_@@_#2_AddressData_prop } {#1}
 }
+%    \end{macrocode}
+% \end{function}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeMacro{\zugferd_print_AddressData:n}
+% \begin{syntax}
+% \cs[no-index]{zugferd_print_AddressData:n}
+% \marg{type (one of seller/buyer/shipto)}
+% \end{syntax}
+% \end{documentation}
+% \begin{implementation}
+% \begin{function}{\zugferd_print_AddressData:n}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_print_AddressData:n {
+			\clist_map_inline:nn {name, lineone, linetwo, linethree} {
+				\zugferd_print_AddressDataLine:nn {#1} {##2}
+			}
+			\zugferd_print_AddressData:nn {postcode}
+			\zugferd_print_AddressData:nn {city}
+			\zugferd_print_AddressData:nn {country}
+}
+%    \end{macrocode}
+% \end{function}
+% \end{implementation}
+% \begin{documentation}
+% Dynamic interface to format address data fields.
+% \end{documentation}
+% \begin{implementation}
+% \begin{function}{\zugferd_print_AddressData:nn}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_print_AddressData:nn {
+	\cs_if_exist:cT {\zugferd_print_address_#2:n} {
+		\exp_args:ce {\zugferd_print_address_#2:n}
+	}
+  {\prop_item:cn { g_@@_#1_AddressData_prop } {#2}}
+}
+
+\cs_new:Nn \zugferd_printAddressDataLine:nn { 
+		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {##1} {
+			\prop_item:cn { g_@@_#1_AddressData_prop } {##1}\\
+		}
+}
+\cs_new:Nn \zugferd_print_address_postcode:n {#1\space}
+\cs_new:Nn \zugferd_print_address_city:n {\zugferd_printAddressDataLine:nn {#1} {city}
+\cs_new:Nn \zugferd_print_address_country:n {}
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_set_today:c}
