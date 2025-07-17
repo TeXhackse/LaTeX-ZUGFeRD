@@ -764,7 +764,7 @@
 		}
 }
 \cs_new:Nn \zugferd_print_address_postcode:n {#1\space}
-\cs_new:Nn \zugferd_print_address_city:n {\zugferd_printAddressDataLine:nn {#1} {city}
+\cs_new:Nn \zugferd_print_address_city:n {\zugferd_printAddressDataLine:nn {#1} {city}}
 \cs_new:Nn \zugferd_print_address_country:n {}
 %    \end{macrocode}
 % \end{function}
@@ -2430,16 +2430,23 @@
 \_@@_define_xml_content:Nn \_@@_write_inline:nn {
 	\_@@_write_inline:nnn {#1} {} {#2}
 }
+\cs_generate_variant:Nn \_@@_write_inline:nn {ne}
 \_@@_define_xml_content:Nn \_@@_write_inline:nnn {
 	\tl_if_blank:nF {#3} {
 		<#1#2>#3</#1>
 	}
 }
 \_@@_define_xml_content:Nn \_@@_write_inline_wrapped:nnnn {
+	\tl_if_blank:nF {#4} {
 	\_@@_indent:n {#1} <#2>\_@@_xml_newline_indent:
 	\_@@_indent:n {#1+1} <#3>#4</#3>\_@@_xml_newline_indent:
 	\_@@_indent:n {#1} </#2>
+	}
 }
+\cs_generate_variant:Nn \_@@_write_inline_wrapped:nnnn {nnne}
+
+
+
 \cctab_begin:N \g_@@_xml_cctab%
 \_@@_define_xml_writer:Nn \_@@_write_optional_wrapped:nnn {%
 	\prop_if_in:NeT \g_@@_extra_fields_prop {#3} {%
@@ -2455,14 +2462,19 @@
 \_@@_define_xml_content:Nn \_@@_write_inline_wrapped_i:nnn {
 	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
 }
+\cs_generate_variant:Nn \_@@_write_inline_wrapped_i:nnn {nne}
 
-\cs_generate_variant:Nn \_@@_write_inline:nn {ne}
+\_@@_define_xml_content:Nn \_@@_write_wrapped:nnn {
+	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
+}
+\cs_generate_variant:Nn \_@@_write_wrapped:nnn {nne}
 \_@@_define_xml_content:Nn  \_@@_write_inline_i:nnn {
 	\_@@_indent: \_@@_write_inline:nnn {#1} {#2} {#3}
 }
 \_@@_define_xml_content:Nn  \_@@_write_inline_i:nn {
 	\_@@_write_inline_i:nnn {#1} {} {#2}
 }
+
 \cctab_begin:N \g_@@_xml_cctab%
 %
 \bool_if:NTF \g_@@_minimum_bool {%
@@ -2826,13 +2838,13 @@
 				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {\_@@_write_inline_i:nn {ram:AccountName} {#1}}
 				</ram:PayeePartyCreditorFinancialAccount>
 			}%
-			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {
-			\tl_if_blank:nF {#3} {%
-				<ram:PayeeSpecifiedCreditorFinancialInstitution>
-				\_@@_write_inline_i:nn {ram:BICID} {#3}
-				</ram:PayeeSpecifiedCreditorFinancialInstitution>%
+			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+				\tl_if_blank:nF {#3} {%
+					<ram:PayeeSpecifiedCreditorFinancialInstitution>
+					\_@@_write_inline_i:nn {ram:BICID} {#3}
+					</ram:PayeeSpecifiedCreditorFinancialInstitution>%
+				}%
 			}%
-			}
 		}%
 		\int_gdecr:N \g_@@_indent_int%
 		\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
