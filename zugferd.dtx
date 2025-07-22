@@ -698,10 +698,10 @@
 % \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
 % \DescribeMacro{\UseZUGFeRDElement}
 % \begin{syntax}
-% \cs[no-index]{UseZUGFeRDElement}\oarg{scope l/c/g}\marg{name}
+%   \cs[no-index]{UseZUGFeRDElement}\oarg{scope l/c/g}\marg{name}
 % \end{syntax}
-% For all simple entries it's possible to use this expandabl interface to data items.
-% This does not apply for the AddressData.
+% For all simple entries it's possible to use this expandable interface to data items.
+% This does not apply for the AddressData, see \cs[no-index]{UseZUGFeRDAddressItem} for an expandable way to access these.
 % \end{documentation}
 % \begin{implementation}
 % \begin{function}{\UseZUGFeRDElement}
@@ -713,13 +713,17 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeMacro{\zugferd_get_AddressData_item:nn}
+% \DescribeMacro{\UseZUGFeRDAddressItem}
+% \begin{syntax}
+% \cs[no-index]{UseZUGFeRDAddressItem}% \marg{trade party (one of seller/buyer/shipto)}\marg{Item}
+% \end{syntax}
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\zugferd_get_AddressData_item:nn}
+% \begin{function}{\zugferd_use_AddressData_item:nn}
 %    \begin{macrocode}
-\cs_new:Nn \zugferd_get_AddressData_item:nn {
-	\prop_item:cn {g_@@_#2_AddressData_prop } {#1}
+\NewExpandableDocumentCommand{\UseZUGFeRDAddressItem}{mm}{\zugferd_use_AddressData_item:nn {#1} {#2}}
+\cs_new:Nn \zugferd_use_AddressData_item:nn {
+	\prop_item:cn {g_@@_#1_AddressData_prop } {#2}
 }
 %    \end{macrocode}
 % \end{function}
@@ -994,7 +998,7 @@
 % \begin{implementation}
 % Provide public interfaces and the ZUGFeRD environment.
 % \begin{function}{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
-%     \begin{macrocode}
+%    \begin{macrocode}
 \cs_new:Nn \zugferd_enable_XML_interfaces: {
 	\bool_if:NT \g_@@_write_xml_bool {
 		\cs_gset:Nn \zugferd_write_Header: {
