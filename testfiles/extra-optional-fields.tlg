@@ -96,8 +96,7 @@ Don't change this file in any respect.
       <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
       <ram:SpecifiedTradeSettlementPaymentMeans>
         <ram:TypeCode>1</ram:TypeCode>
-        <ram:Information>Instrument not defined
-        </ram:Information>
+        <ram:Information>Instrument not defined</ram:Information>
       </ram:SpecifiedTradeSettlementPaymentMeans>
       <ram:ApplicableTradeTax>
         <ram:CalculatedAmount>12.12</ram:CalculatedAmount>
