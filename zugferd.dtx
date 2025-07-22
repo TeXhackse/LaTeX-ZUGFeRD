@@ -735,12 +735,10 @@
 % \begin{function}{\zugferd_print_AddressData:n}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_print_AddressData:n {
-			\clist_map_inline:nn {name, lineone, linetwo, linethree} {
-				\zugferd_print_AddressDataLine:nn {#1} {##2}
-			}
-			\zugferd_print_AddressData:nn {postcode}
-			\zugferd_print_AddressData:nn {city}
-			\zugferd_print_AddressData:nn {country}
+	\zugferd_print_AddressData:nn {#1} {name}
+	\clist_map_inline:nn {lineone, linetwo, linethree, postcode, city, country} {
+		\zugferd_print_AddressDataSep:nnn {#1} {##1} {\\}
+	}
 }
 %    \end{macrocode}
 % \end{function}
@@ -752,20 +750,31 @@
 % \begin{function}{\zugferd_print_AddressData:nn}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_print_AddressData:nn {
-	\cs_if_exist:cT {\zugferd_print_address_#2:n} {
-		\exp_args:ce {\zugferd_print_address_#2:n}
-	}
-  {\prop_item:cn { g_@@_#1_AddressData_prop } {#2}}
+	\zugferd_print_AddressDataSep:nnn {#1} {#2} {}
 }
 
-\cs_new:Nn \zugferd_printAddressDataLine:nn {
-		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {##1} {
-			\prop_item:cn { g_@@_#1_AddressData_prop } {##1}\\
+\cs_new:Nn \zugferd_print_AddressDataSep:nnn {
+	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
+		\exp_args:Nne \use:c {zugferd_print_address_#2:n}
+			{\prop_item:cn { g_@@_#1_AddressData_prop } {#2}}
+	} {
+%    \end{macrocode}
+% Add line break before item to avoid issues using the newline at the end of a paragraph.
+%    \begin{macrocode}
+		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {#2} {
+			#3
+			\prop_item:cn { g_@@_#1_AddressData_prop } {#2}
 		}
+	}
 }
-\cs_new:Nn \zugferd_print_address_postcode:n {#1\space}
-\cs_new:Nn \zugferd_print_address_city:n {\zugferd_printAddressDataLine:nn {#1} {city}}
-\cs_new:Nn \zugferd_print_address_country:n {}
+%    \end{macrocode}
+% No new line before city.
+%    \begin{macrocode}
+\cs_new_nopar:Nn \zugferd_print_address_city:n {\space#1}
+%    \end{macrocode}
+%   Default is empty, for compatbility reasons.
+%    \begin{macrocode}
+\cs_new_nopar:Nn \zugferd_print_address_country:n {}
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_set_today:c}
