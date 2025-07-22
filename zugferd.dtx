@@ -774,11 +774,15 @@
 %    \end{macrocode}
 % No new line before city.
 %    \begin{macrocode}
-\cs_new_nopar:Nn \zugferd_print_address_city:n {\space#1}
+\cs_if_exist:NF \zugferd_print_address_city:n {
+	\cs_new_nopar:Nn \zugferd_print_address_city:n {\space#1}
+}
 %    \end{macrocode}
 %   Default is empty, for compatbility reasons.
 %    \begin{macrocode}
-\cs_new_nopar:Nn \zugferd_print_address_country:n {}
+\cs_if_exist:NF \zugferd_print_address_country:n {
+	\cs_new_nopar:Nn \zugferd_print_address_country:n {}
+}
 %    \end{macrocode}
 % \end{function}
 % \begin{function}{\_@@_set_today:c}
