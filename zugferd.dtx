@@ -705,12 +705,7 @@
 % \DescribeOption{AddressData}
 % Allows |seller|, |buyer| or |shipto| for the data selection.
 % Will print the address, to be used in letters.
-% \end{documentation}
-% \begin{implementation}
-%    \begin{macrocode}
-%    \end{macrocode}
-% \end{implementaion}
-% \begin{documentation}
+%
 % \DescribeOption{set-today}
 % For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
 % Using this the date format can be controlled easier using the language setting of the document.
@@ -2222,6 +2217,13 @@
 	\keys_define:nn {zugferd/payment-means} {
 		#1 .tl_gset:c = {g_@@_payment_#1_tl}
 	}
+%    \end{macrocode}
+% \changes{version}{date}{Add data access-keys for payment-means}
+%    \begin{macrocode}
+  \keys_define:nn {zugferd/data} {
+    payment-means / #1 .code:n = \tl_use:c {g_@@_payment_#1_tl},
+    payment-means / #1 .value_forbidden:n = true,
+  }
 }
 
 \prop_new:c {g_@@_payment-means_names_prop}
