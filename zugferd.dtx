@@ -619,13 +619,24 @@
 % {\InsertZUGFeRDData[set-today]{date}\today}
 % \InsertZUGFeRDData[AddressData]{seller}
 % \end{examplecode}
-% As special modes the command currently supports the following:
+% As special modes the command currently supports the options \option{AddressData\}, \option{set-today} and \option{iso-date}.
+%
+% It is extendable, as the command is searching for a macro named \cs[no-index]{zugferd_print_\meta{special-access-mode}:n}. Please be aware that there might be added additional ones to the \pkg{zugferd} package in the future.
 %
 % By default \pkg{zugferd} tries to find the variable holding the data itself.
-% First a token list is tried, afterwards a string.
+% First it looks for a token list, afterwards a string.
 % Global variables are prefered over local ones.
 %
 % As the variable names may contain underscores and the option usually prefers dashes, dashes are converted to underscores for the detection.
+%
+% Some Variables have a more complex structure either with setting or saving them.
+% To simplicy access \version{0.10-dev} also added a \pkg{l3keys} interface.
+% The first variables using this by default are the |payment-means|.
+% It's possible to use the same structure to access as to set the variable.
+% Other variabels will follow.
+% \begin{examplecode}
+% \InsertZUGFeRDData{payment-means/iban}
+% \end{examplecode}
 %
 % \DescribeOption{AddressData} Allows |seller| or |buyer| for the data selection.
 % Will print the address, to be used in letters.
@@ -639,23 +650,12 @@
 % \begin{implementation}
 % \begin{function}{\InsertZUGFeRDData,\InsertZugferdData}
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
-% Country is still missing.
+% \version{0.11} added more fleixble interfaces.
+% \changes{v0.10-dev}{2025-07-22}{Add Mechanism to provide explicit interface for data elements}
 %    \begin{macrocode}
 \NewDocumentCommand{\InsertZUGFeRDData}{om}{
-	\str_case:nnF {#1} {
+	\IfNoValueTF{#1} {
 %    \end{macrocode}
-%    \begin{macrocode}
-		{AddressData} {
-			\zugferd_print_AddressData:n {#2}
-		}
-%    \end{macrocode}
-%    \begin{macrocode}
-		{set-today} {
-			\_@@_set_today:v {g_@@_#2_tl}
-		}
-	} {
-%    \end{macrocode}
-% \changes{v0.10-dev}{2025-07-22}{Add Mechanism to provide explicit interface for data elements}
 % There are some mappings between the input and variable name.
 % We can use those to define specific data keys to access the field content.
 %    \begin{macrocode}
@@ -687,12 +687,63 @@
 				\bool_if:NF \g_tmpa_bool {\clist_map_break:}
 			}
 		}
+%    \end{macrocode}
+% Optional Argument was used.
+%    \begin{macrocode}
+	} {
+			\cs_if_exist_use:cTF {zugferd_print_#1:n} {
+				#2
+			} {
+				%TODO
+			}
 	}
 }
 \providecommand{\InsertZugferdData}{\InsertZUGFeRDData}
 \providecommand{\insertZugferdData}{\InsertZUGFeRDData}
 %    \end{macrocode}
 % \end{function}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeOption{AddressData}
+% Allows |seller|, |buyer| or |shipto| for the data selection.
+% Will print the address, to be used in letters.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+%    \end{macrocode}
+% \end{implementaion}
+% \begin{documentation}
+% \DescribeOption{set-today}
+% For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
+% Using this the date format can be controlled easier using the language setting of the document.
+% Here you should take care to use it within a group to restore the real value of \cs[no-index]{today} afterwards.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\cs_new:cn {zugferd_print_set-today:n} {
+			\_@@_set_today:v {g_@@_#1_tl}
+}
+%    \end{macrocode}
+% \end{implementaion}
+% \begin{documentation}
+% \DescribeOption{iso-date}
+% \changes{version}{date}{add iso-date Option for \InsertZUGFeRDData}
+% This option enhaances the \option{set-today} variant and will group the setting and convert the date to ISO format (YYYY-MM-DD).
+% In contrast to set-today this is creating the date as output and keeps the change local
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\cs_new:cn {zugferd_print_iso-date:n} {
+	{
+		\_@@_set_today:v {g_@@_#1_tl}
+		\the\year
+		-
+		\int_compare:nNnT {\month} < {10} {0} \the\month
+		-
+		\int_compare:nNnT {\day} < {10} {0}\the\day
+	}
+}
+%    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
 % \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
@@ -748,6 +799,7 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
+% \DescribeFunction{\zugferd_print_AddressData:nn}
 % Dynamic interface to format address data fields.
 % \end{documentation}
 % \begin{implementation}
@@ -785,6 +837,39 @@
 }
 %    \end{macrocode}
 % \end{function}
+% \end{implementaion}
+% \begin{documentation}
+% \DescribeOption{set-today}
+% For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
+% Using this, the date format can be controlled easier using the language setting of the document.
+% Here you should take care to use it within a group to restore the real value of \cs[no-index]{today} afterwards.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\cs_new:cn {zugferd_print_set-today:n} {
+			\_@@_set_today:v {g_@@_#1_tl}
+}
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeOption{iso-date}
+% \changes{version}{date}{add iso-date Option for \InsertZUGFeRDData}
+% This option enhaances the \option{set-today} variant and will group the setting and convert the date to ISO format (YYYY-MM-DD).
+% In contrast to set-today this is creating the date as output and keeps the change local
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\cs_new:cn {zugferd_print_iso-date:n} {
+	{
+		\_@@_set_today:v {g_@@_#1_tl}
+		\the\year
+		-
+		\int_compare:nNnT {\month} < {10} {0} \the\month
+		-
+		\int_compare:nNnT {\day} < {10} {0}\the\day
+	}
+}
+%    \end{macrocode}
 % \begin{function}{\_@@_set_today:c}
 % Auxiliary function to use a date variable within the current group to be used as \cs[no-index]{today}.
 %    \begin{macrocode}
