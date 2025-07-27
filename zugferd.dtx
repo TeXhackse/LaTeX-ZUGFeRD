@@ -580,6 +580,7 @@
 % \section{User Commands}
 % The end user is only asked to set or access the data to be used by \pkg{zugferd}.
 %
+% \subsection{Set Data}
 % \begin{syntax}
 % \cs[no-index]{SetZUGFeRDData}*\marg{key value list}
 % \end{syntax}
@@ -605,7 +606,7 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
-%
+% \subsection{Access Data for PDF output}
 % \DescribeMacro{\InsertZUGFeRDData}
 % \DescribeMacro[noindex]{\InsertZugferdData}
 % \begin{syntax}
@@ -616,12 +617,7 @@
 %
 % \begin{examplecode}
 % \InsertZUGFeRDData{id}
-% {\InsertZUGFeRDData[set-today]{date}\today}
-% \InsertZUGFeRDData[AddressData]{seller}
 % \end{examplecode}
-% As special modes the command currently supports the options \option{AddressData\}, \option{set-today} and \option{iso-date}.
-%
-% It is extendable, as the command is searching for a macro named \cs[no-index]{zugferd_print_\meta{special-access-mode}:n}. Please be aware that there might be added additional ones to the \pkg{zugferd} package in the future.
 %
 % By default \pkg{zugferd} tries to find the variable holding the data itself.
 % First it looks for a token list, afterwards a string.
@@ -638,15 +634,17 @@
 % \InsertZUGFeRDData{payment-means/iban}
 % \end{examplecode}
 %
-% \DescribeOption{AddressData} Allows |seller| or |buyer| for the data selection.
-% Will print the address, to be used in letters.
-%
-% \DescribeOption{set-today}
-% For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
-% Using this the date format can be controlled easier using the language setting of the document.
-% Here you should take care to use it within a group to restore the real value of \cs[no-index]{today} afterwards.
+% \subsubsection{Special modes to access data or control the output}
+% For some data elements there already have been interfaces implemented to simplify the output.
+% \begin{examplecode}
+% {\InsertZUGFeRDData[set-today]{date}\today}
+% \InsertZUGFeRDData[AddressData]{seller}
+% \InsertZUGFeRDData[iso-date]{date}
+% \end{examplecode}
+% As special modes the command currently supports the options \option{AddressData}, \option{set-today} and \option{iso-date}.
 %
 % \end{documentation}
+%
 % \begin{implementation}
 % \begin{function}{\InsertZUGFeRDData,\InsertZugferdData}
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
@@ -692,7 +690,7 @@
 %    \begin{macrocode}
 	} {
 			\cs_if_exist_use:cTF {zugferd_print_#1:n} {
-				#2
+				{#2}
 			} {
 				%TODO
 			}
@@ -716,7 +714,7 @@
 % \DescribeOption{set-today}
 % For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
 % Using this the date format can be controlled easier using the language setting of the document.
-% Here you should take care to use it within a group to restore the real value of \cs[no-index]{today} afterwards.
+% Here you should take care to use it within a group to restore the real value of \cs[no-index]{today} afterwards as shown in the example above.
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
@@ -728,8 +726,8 @@
 % \begin{documentation}
 % \DescribeOption{iso-date}
 % \changes{version}{date}{add iso-date Option for \InsertZUGFeRDData}
-% This option enhaances the \option{set-today} variant and will group the setting and convert the date to ISO format (YYYY-MM-DD).
-% In contrast to set-today this is creating the date as output and keeps the change local
+% This option enhances the \option{set-today} variant and will group the setting and convert the date to ISO format (YYYY-MM-DD).
+% In contrast to set-today this is creating the date as output and keeps the change local.
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
@@ -744,8 +742,115 @@
 	}
 }
 %    \end{macrocode}
+% \begin{function}{\_@@_set_today:c}
+% Auxiliary function to use a date variable within the current group to be used as \cs[no-index]{today}.
+%    \begin{macrocode}
+\cs_new:Nn \_@@_set_today:n {
+	\_@@_set_today_aux:w #1 \q_stop
+}
+\cs_generate_variant:Nn \_@@_set_today:n {v}
+\cs_new:Npn \_@@_set_today_aux:w #1 #2 #3 #4 #5 #6 #7 #8 \q_stop{
+	\int_set:Nn \year {#1#2#3#4}
+	\int_set:Nn \month {#5#6}
+	\int_set:Nn \day {#7#8}
+}
+%    \end{macrocode}
+% \end{function}
 % \end{implementation}
 % \begin{documentation}
+% \section{Commands for template authors}
+
+% \begin{implementation}
+
+% \end{implementation}
+% \begin{documentation}
+% \DescribeFunction{\zugferd_print_AddressDataSep:nnn}
+% \begin{syntax}
+% \cs[no-index]{zugferd_print_AddressDataSep:nnn}
+% \marg{trade party (one of seller/buyer/shipto)}
+% \marg{element}
+% \marg{separator}
+% \end{syntax}
+% Dynamic interface to format address data fields.
+% It would check if a specific command has been defined otherwhise the address item would be used after adding the separator.
+% The separator would not be added if a specific formatting macro was found, so be aware to add it to the definition if necesarry.
+% Same applies to checks for empty items.
+%
+% The commands which can be (re-)defined to adjust the output are called: \cs[no-index]{zugferd_print_address_\meta{field}:n}.
+% The argument will receive the value of the element.
+% So e.g. to enable to output the country code one can use:
+% \begin{examplecode}
+%	\cs_set_nopar:Nn \zugferd_print_address_country:n {#1}
+% \end{examplecode}
+% \end{documentation}
+% \begin{function}{\zugferd_print_AddressDataSep:nnn }
+% \begin{implementation}
+\cs_new:Nn \zugferd_print_AddressDataSep:nnn {
+	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
+		\exp_args:Nne \use:c {zugferd_print_address_#2:n}
+			{\prop_item:cn { g_@@_#1_AddressData_prop } {#2}}
+	} {
+%    \end{macrocode}
+% Add line break before item to avoid issues using the newline at the end of a paragraph.
+%    \begin{macrocode}
+		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {#2} {
+			#3
+			\prop_item:cn { g_@@_#1_AddressData_prop } {#2}
+		}
+	}
+}
+%    \end{macrocode}
+% \end{function}
+% \begin{function}{\zugferd_print_AddressData:nn}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_print_AddressData:nn {
+	\zugferd_print_AddressDataSep:nnn {#1} {#2} {}
+}
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeFunction{\zugferd_print_AddressData:n}
+% \begin{syntax}
+% \cs[no-index]{zugferd_print_AddressData:n}
+% \marg{type (one of seller/buyer/shipto)}
+% \end{syntax}
+% Used by the \option{AddressData} option of \cs[no-index]{InsertZUGFeRDData}.
+% It uses  \cs[no-index]{\zugferd_print_AddressData:n} to print the name and would be followed by the
+% entries |lineone|, |linetwo|, |linethree|, |postcode|, |city| and |country|.
+% These entries would use  \cs[no-index]{\zugferd_print_AddressDataSep:nnn} using |\\| as a separator in case the following entry has been set.
+% |\\| is used instead of a more specific command to allow template developers to redefine it locally.
+%
+% This command also could be redefined to support different order of the entries.
+% \end{documentation}
+% \begin{implementation}
+% \begin{function}{\zugferd_print_AddressData:n}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_print_AddressData:n {
+	\zugferd_print_AddressData:nn {#1} {name}
+	\clist_map_inline:nn {lineone, linetwo, linethree, postcode, city, country} {
+		\zugferd_print_AddressDataSep:nnn {#1} {##1} {\\}
+	}
+}
+%    \end{macrocode}
+% \subsubsection{Pre-defined exceptions for AdressData}
+% For compatibility reasons by default |city| and |country| will be treated differently.
+% The default setting matches how national addresses are printed within Germany.
+% There is no new line added before the city which is printed after the postcode and the country will not be printed.
+%    \begin{macrocode}
+\cs_if_exist:NF \zugferd_print_address_city:n {
+	\cs_new_nopar:Nn \zugferd_print_address_city:n {\space#1}
+}
+%    \end{macrocode}
+%   Default is empty, for compatbility reasons.
+%    \begin{macrocode}
+\cs_if_exist:NF \zugferd_print_address_country:n {
+	\cs_new_nopar:Nn \zugferd_print_address_country:n {}
+}
+%    \end{macrocode}
+% \end{function}
+% \end{implementation}
+% \begin{documentation}
+%
 % \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
 % \DescribeMacro{\UseZUGFeRDElement}
 % \begin{syntax}
@@ -780,113 +885,6 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeMacro{\zugferd_print_AddressData:n}
-% \begin{syntax}
-% \cs[no-index]{zugferd_print_AddressData:n}
-% \marg{type (one of seller/buyer/shipto)}
-% \end{syntax}
-% \end{documentation}
-% \begin{implementation}
-% \begin{function}{\zugferd_print_AddressData:n}
-%    \begin{macrocode}
-\cs_new:Nn \zugferd_print_AddressData:n {
-	\zugferd_print_AddressData:nn {#1} {name}
-	\clist_map_inline:nn {lineone, linetwo, linethree, postcode, city, country} {
-		\zugferd_print_AddressDataSep:nnn {#1} {##1} {\\}
-	}
-}
-%    \end{macrocode}
-% \end{function}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeFunction{\zugferd_print_AddressData:nn}
-% Dynamic interface to format address data fields.
-% \end{documentation}
-% \begin{implementation}
-% \begin{function}{\zugferd_print_AddressData:nn}
-%    \begin{macrocode}
-\cs_new:Nn \zugferd_print_AddressData:nn {
-	\zugferd_print_AddressDataSep:nnn {#1} {#2} {}
-}
-
-\cs_new:Nn \zugferd_print_AddressDataSep:nnn {
-	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
-		\exp_args:Nne \use:c {zugferd_print_address_#2:n}
-			{\prop_item:cn { g_@@_#1_AddressData_prop } {#2}}
-	} {
-%    \end{macrocode}
-% Add line break before item to avoid issues using the newline at the end of a paragraph.
-%    \begin{macrocode}
-		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {#2} {
-			#3
-			\prop_item:cn { g_@@_#1_AddressData_prop } {#2}
-		}
-	}
-}
-%    \end{macrocode}
-% No new line before city.
-%    \begin{macrocode}
-\cs_if_exist:NF \zugferd_print_address_city:n {
-	\cs_new_nopar:Nn \zugferd_print_address_city:n {\space#1}
-}
-%    \end{macrocode}
-%   Default is empty, for compatbility reasons.
-%    \begin{macrocode}
-\cs_if_exist:NF \zugferd_print_address_country:n {
-	\cs_new_nopar:Nn \zugferd_print_address_country:n {}
-}
-%    \end{macrocode}
-% \end{function}
-% \end{implementaion}
-% \begin{documentation}
-% \DescribeOption{set-today}
-% For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
-% Using this, the date format can be controlled easier using the language setting of the document.
-% Here you should take care to use it within a group to restore the real value of \cs[no-index]{today} afterwards.
-% \end{documentation}
-% \begin{implementation}
-%    \begin{macrocode}
-\cs_new:cn {zugferd_print_set-today:n} {
-			\_@@_set_today:v {g_@@_#1_tl}
-}
-%    \end{macrocode}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeOption{iso-date}
-% \changes{version}{date}{add iso-date Option for \InsertZUGFeRDData}
-% This option enhaances the \option{set-today} variant and will group the setting and convert the date to ISO format (YYYY-MM-DD).
-% In contrast to set-today this is creating the date as output and keeps the change local
-% \end{documentation}
-% \begin{implementation}
-%    \begin{macrocode}
-\cs_new:cn {zugferd_print_iso-date:n} {
-	{
-		\_@@_set_today:v {g_@@_#1_tl}
-		\the\year
-		-
-		\int_compare:nNnT {\month} < {10} {0} \the\month
-		-
-		\int_compare:nNnT {\day} < {10} {0}\the\day
-	}
-}
-%    \end{macrocode}
-% \begin{function}{\_@@_set_today:c}
-% Auxiliary function to use a date variable within the current group to be used as \cs[no-index]{today}.
-%    \begin{macrocode}
-\cs_new:Nn \_@@_set_today:n {
-	\_@@_set_today_aux:w #1 \q_stop
-}
-\cs_generate_variant:Nn \_@@_set_today:n {v}
-\cs_new:Npn \_@@_set_today_aux:w #1 #2 #3 #4 #5 #6 #7 #8 \q_stop{
-	\int_set:Nn \year {#1#2#3#4}
-	\int_set:Nn \month {#5#6}
-	\int_set:Nn \day {#7#8}
-}
-%    \end{macrocode}
-% \end{function}
-% \end{implementation}
-% \begin{documentation}
-% \section{Commands for template authors}
 %
 % \DescribeEnv{ZUGFeRD}
 % To simplify the structure of the wrapper package, \pkg{zugferd} provides an environment for the \XML mechanism and does the attachment to the PDF file (of course only, if enabled, see \autoref{sec:package-options}).
