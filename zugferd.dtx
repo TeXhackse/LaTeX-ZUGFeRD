@@ -446,6 +446,12 @@
 	xml-file .initial:n = \jobname _zugferd.xml,
 	xml-file .usage:n = load,
 %    \end{macrocode}
+% Option to log variables for interface tests.
+%    \begin{macrocode}
+	testing .bool_gset:N = \g_@@_testing_bool,
+	testing .initial:n = false,
+	testing .usage:n = load,
+%    \end{macrocode}
 % \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
@@ -646,6 +652,18 @@
 % \end{documentation}
 %
 % \begin{implementation}
+% Auxiliary command to support unit testing on the output interfaces.
+% \begin{function}{\_@@_access_data:c}
+\bool_if:NTF \g_@@_testing_bool {
+	\cs_new:Nn \_@@_access_data:n {\tl_show:n {#1} #1}
+	\cs_new:Nn \_@@_access_data:N {\tl_show:N #1#1}
+	\cs_generate_variant:Nn \_@@_access_data:N {c}
+} {
+	\cs_set_eq:NN \_@@_access_data:c \use:c
+	\cs_set_eq:NN \_@@_access_data:n \use:n
+}
+\cs_generate_variant:Nn {\_@@_access_data:n} {e}
+%\end{function}
 % \begin{function}{\InsertZUGFeRDData,\InsertZugferdData}
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
 % \version{0.11} added more fleixble interfaces.
@@ -677,7 +695,7 @@
 				\clist_map_inline:nn {g, l} {
 					\use:c {##1 _if_exist:cT} {####1_@@_ \l_tmpa_str _##1}
 						{
-							\use:c {####1_@@_ \l_tmpa_str _##1}
+							\_@@_access_data:c  {####1_@@_ \l_tmpa_str _##1}
 							\bool_gset_false:N \g_tmpa_bool
 						}
 					\bool_if:NF \g_tmpa_bool {\clist_map_break:}
@@ -783,14 +801,14 @@
 \cs_new:Nn \zugferd_print_AddressDataSep:nnn {
 	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
 		\exp_args:Nne \use:c {zugferd_print_address_#2:n}
-			{\prop_item:cn { g_@@_#1_AddressData_prop } {#2}}
+			{\UseZUGFeRDAddressItem{#1}{#2}}
 	} {
 %    \end{macrocode}
 % Add line break before item to avoid issues using the newline at the end of a paragraph.
 %    \begin{macrocode}
 		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {#2} {
 			#3
-			\prop_item:cn { g_@@_#1_AddressData_prop } {#2}
+			\UseZUGFeRDAddressItem{#1}{#2}
 		}
 	}
 }
@@ -874,7 +892,7 @@
 %    \begin{macrocode}
 \NewExpandableDocumentCommand{\UseZUGFeRDAddressItem}{mm}{\zugferd_use_AddressData_item:nn {#1} {#2}}
 \cs_new:Nn \zugferd_use_AddressData_item:nn {
-	\prop_item:cn {g_@@_#1_AddressData_prop } {#2}
+	\_@@_access_data:e {\prop_item:cn {g_@@_#1_AddressData_prop } {#2}}
 }
 %    \end{macrocode}
 % \end{function}
@@ -2221,7 +2239,7 @@
 % \changes{version}{date}{Add data access-keys for payment-means}
 %    \begin{macrocode}
   \keys_define:nn {zugferd/data} {
-    payment-means / #1 .code:n = \tl_use:c {g_@@_payment_#1_tl},
+    payment-means / #1 .code:n = \_@@_access_data:c {g_@@_payment_#1_tl},
     payment-means / #1 .value_forbidden:n = true,
   }
 }
