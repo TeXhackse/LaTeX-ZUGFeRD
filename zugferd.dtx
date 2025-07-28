@@ -86,7 +86,6 @@
 		\dim_compare:nNnF {\parskip} > {\c_zero_dim} {\medskip}
 	}
 	\__ptxctools_parse_key_option:w #1 {#4} #5 #3 \q_stop
-
 	\bool_set_true:N \l_ptxtools_last_was_describe_bool
 	\AddToHookNext{para/begin}{
 		\bool_set_false:N \l_ptxtools_last_was_describe_bool
@@ -251,8 +250,11 @@
 \begin{document}
 \EnableDocumentation\DisableImplementation
 \DocInput{zugferd.dtx}
+
 \DisableDocumentation\EnableImplementation
+
 \DocInputAgain
+
 \PrintChanges
 \printbibliography
 \PrintIndex
@@ -799,13 +801,13 @@
 % \end{function}
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\UseZUGFeRDElement}
+% \begin{macro}{\UseZUGFeRDElement}
 %    \begin{macrocode}
 \NewExpandableDocumentCommand{\UseZUGFeRDElement}{O{l}m}{
 	\use:c {#1_@@_#2_tl}
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 % \begin{documentation}
 % \begin{function}{\UseZUGFeRDAddressItem}
@@ -949,7 +951,7 @@
 % \end{function}
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\zugferd_print_AddressDataSep:nnn}
+% \begin{macro}{\zugferd_print_AddressDataSep:nnn}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_print_AddressDataSep:nnn {
 	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
@@ -966,7 +968,7 @@
 	}
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \begin{function}{\zugferd_print_AddressData:nn}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_print_AddressData:nn {
@@ -991,7 +993,7 @@
 % \end{function}
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\zugferd_print_AddressData:n}
+% \begin{macro}{\zugferd_print_AddressData:n}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_print_AddressData:n {
 	\zugferd_print_AddressData:nn {#1} {name}
@@ -1000,22 +1002,26 @@
 	}
 }
 %    \end{macrocode}
+% \end{macro}
 % \subsubsection{Pre-defined exceptions for AdressData}
 % For compatibility reasons by default |city| and |country| will be treated differently.
 % The default setting matches how national addresses are printed within Germany.
 % There is no new line added before the city which is printed after the postcode and the country will not be printed.
+% \begin{macro}{\zugferd_print_address_city:n}
 %    \begin{macrocode}
 \cs_if_exist:NF \zugferd_print_address_city:n {
 	\cs_new_nopar:Nn \zugferd_print_address_city:n {\space#1}
 }
 %    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\zugferd_print_address_country:n}
 %   Default is empty, for compatbility reasons.
 %    \begin{macrocode}
 \cs_if_exist:NF \zugferd_print_address_country:n {
 	\cs_new_nopar:Nn \zugferd_print_address_country:n {}
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 %
 % \begin{documentation}
