@@ -786,8 +786,148 @@
 %    \end{macrocode}
 % \end{function}
 % \end{implementation}
+%
+% \begin{documentation}
+%
+% \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
+% \begin{function}{\UseZUGFeRDElement}
+% \begin{syntax}
+%   \cs[no-index]{UseZUGFeRDElement}\oarg{scope l/c/g}\marg{name}
+% \end{syntax}
+% For all simple entries it's possible to use this expandable interface to data items.
+% This does not apply for the AddressData, see \cs[no-index]{UseZUGFeRDAddressItem} for an expandable way to access these.
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% \begin{function}{\UseZUGFeRDElement}
+%    \begin{macrocode}
+\NewExpandableDocumentCommand{\UseZUGFeRDElement}{O{l}m}{
+	\use:c {#1_@@_#2_tl}
+}
+%    \end{macrocode}
+% \end{function}
+% \end{implementation}
+% \begin{documentation}
+% \begin{function}{\UseZUGFeRDAddressItem}
+% \begin{syntax}
+% \cs{UseZUGFeRDAddressItem}\marg{trade party (one of seller/buyer/shipto)}\marg{Item}
+% \end{syntax}
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% \begin{function}{\zugferd_use_AddressData_item:nn}
+%    \begin{macrocode}
+\NewExpandableDocumentCommand{\UseZUGFeRDAddressItem}{mm}{\zugferd_use_AddressData_item:nn {#1} {#2}}
+\cs_new:Nn \zugferd_use_AddressData_item:nn {
+	\_@@_access_data:e {\prop_item:cn {g_@@_#1_AddressData_prop } {#2}}
+}
+%    \end{macrocode}
+% \end{function}
+% \end{implementation}
+%
 % \begin{documentation}
 % \section{Commands for template authors}
+%
+% \DescribeEnv{ZUGFeRD}
+% To simplify the structure of the wrapper package, \pkg{zugferd} provides an environment for the \XML mechanism and does the attachment to the PDF file (of course only, if enabled, see \autoref{sec:package-options}).
+% This provides the public interface bundling some steps together to reduce maintenance effort for any template maintainer using this package.
+% It also avoids the use of internal commands.
+%
+% This environment opens the \XMLfile using \cs{startWritingZUGFeRDxml} and afterwards writes the \XML header including the File and Scheme information, the |ExchangedDocumentContext| and information of the |ExchangedDocument|.
+% Notes will also be written within this step.
+% Afterwards the environment should include all the mechanisms to write the invoice positions as well as summation.
+%
+% At the end of the environment the footer is inserted, before the output stream is closed using \cs{stopWritingZUGFeRDxml}. Which also attaches the \XMLfile to the PDF.
+%
+%
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\NewDocumentEnvironment{ZUGFeRD}{o}{
+	\IfNoValueF{#1}{
+		\SetZUGFeRDData{#1}
+	}
+	\zugferd_enable_XML_interfaces:
+	\startWritingZUGFeRDxml
+	\zugferd_write_Header:
+	\ignorespaces
+}{
+	\zugferd_enable_XML_interfaces:
+	\zugferd_write_Footer:
+	\stopWritingZUGFeRDxml
+	\zugferd_disable_XML_interfaces:
+}
+%    \end{macrocode}
+% \end{implementation}
+%
+% \begin{documentation}
+% \begin{function}{\startWritingZUGFeRDxml}
+% \cs[no-index]{startWritingZUGFeRDxml} is opening the output stream for the \XMLfile.
+% It also adjusts the indentation.
+% If \option{write-xml} is false, this option only opens a group to achieve the same structure in both modes.
+% \end{function}
+%
+% \begin{function}{\stopWritingZUGFeRDxml}
+% Here the output stream is closed and the \XMLfile is attached.
+% In case \option{write-xml} is not active, the attachment will be made if that's not deactivated separately using \option{zugferd}.
+% It also ends the group started by \cs[no-index]{startWritingZUGFeRDxml}.
+% \end{function}
+% \end{documentation}
+%
+% \begin{implementation}
+% \begin{macro}{\startWritingZUGFeRDxml}
+%    \begin{macrocode}
+\newcommand*{\startWritingZUGFeRDxml}{
+	\begingroup
+	\bool_if:NTF \g_@@_write_xml_bool {
+		\char_set_active_eq:nN {13} \_@@_xml_newline_indent:
+		\iow_open:Nn \_@@_xml_writer_iow {\g_@@_xml_file_tl}
+	}{
+		\msg_info:nn {zugferd} {no-xml-write}
+	}
+}
+\msg_new:nnn {zugferd} {no-xml-write} {
+	The~option~write-xml=false~was~set.\\
+	Writing~of~XML~file~is~deactivated.
+}
+%    \end{macrocode}
+% \end{macro}
+% The PDF attachment is done after the writing stream is closed.
+% \begin{macro}{\stopWritingZUGFeRDxml}
+%    \begin{macrocode}
+%% The metadata elements are taken from Ulrike Fischer's faktur-x experiments
+%% https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
+\newcommand*{\stopWritingZUGFeRDxml}{%
+	\bool_if:NT \g_@@_write_xml_bool
+		{\iow_close:N \_@@_xml_writer_iow}%
+	\endgroup
+	\bool_if:NT \g_@@_active_bool {
+		\group_begin:
+			\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative}
+			%or /Source in some cases
+			\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
+			\exp_args:NnV \pdffile_embed_file:nnn {\g_@@_xml_file_tl} \g_@@_xml_embedded_file_tl
+				{zugferd/rechnung}
+		\group_end:
+%    \end{macrocode}
+% Since some tools require the Catalog entry to match the file name of the embedded file this this has to be set separately (\issue{26}).
+% \changes{v0.9b}{2024-11-17}{Fix file name of embedded file for the zugferd profile.}
+% \changes{v0.9c}{2024-12–08}{Remove second catalog entry linking to xml \issue{32}}
+%    \begin{macrocode}
+		\pdfmanagement_add:nee
+			{Catalog/Names/EmbeddedFiles}
+			{\g_@@_xml_embedded_file_tl}
+			{\pdf_object_ref:n{zugferd/rechnung}}
+			% steht in der doku ist aber pdf 2.0 ....
+		\pdfmanagement_add:nnx{Catalog}{AF}{\pdf_object_ref:n{zugferd/rechnung}}
+	}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+%
+% \subsection{Formatting ZUGFeRD data for PDF output}
+% \begin{documentation}
 % \begin{function}{\zugferd_print_AddressDataSep:nnn}
 % \begin{syntax}
 % \cs[no-index]{zugferd_print_AddressDataSep:nnn}
@@ -877,136 +1017,9 @@
 %    \end{macrocode}
 % \end{function}
 % \end{implementation}
+%
 % \begin{documentation}
-%
-% \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
-% \begin{function}{\UseZUGFeRDElement}
-% \begin{syntax}
-%   \cs[no-index]{UseZUGFeRDElement}\oarg{scope l/c/g}\marg{name}
-% \end{syntax}
-% For all simple entries it's possible to use this expandable interface to data items.
-% This does not apply for the AddressData, see \cs[no-index]{UseZUGFeRDAddressItem} for an expandable way to access these.
-% \end{function}
-% \end{documentation}
-% \begin{implementation}
-% \begin{function}{\UseZUGFeRDElement}
-%    \begin{macrocode}
-\NewExpandableDocumentCommand{\UseZUGFeRDElement}{O{l}m}{
-	\use:c {#1_@@_#2_tl}
-}
-%    \end{macrocode}
-% \end{function}
-% \end{implementation}
-% \begin{documentation}
-% \begin{function}{\UseZUGFeRDAddressItem}
-% \begin{syntax}
-% \cs{UseZUGFeRDAddressItem}\marg{trade party (one of seller/buyer/shipto)}\marg{Item}
-% \end{syntax}
-% \end{function}
-% \end{documentation}
-% \begin{implementation}
-% \begin{function}{\zugferd_use_AddressData_item:nn}
-%    \begin{macrocode}
-\NewExpandableDocumentCommand{\UseZUGFeRDAddressItem}{mm}{\zugferd_use_AddressData_item:nn {#1} {#2}}
-\cs_new:Nn \zugferd_use_AddressData_item:nn {
-	\_@@_access_data:e {\prop_item:cn {g_@@_#1_AddressData_prop } {#2}}
-}
-%    \end{macrocode}
-% \end{function}
-% \end{implementation}
-% \begin{documentation}
-%
-% \DescribeEnv{ZUGFeRD}
-% To simplify the structure of the wrapper package, \pkg{zugferd} provides an environment for the \XML mechanism and does the attachment to the PDF file (of course only, if enabled, see \autoref{sec:package-options}).
-% This provides the public interface bundling some steps together to reduce maintenance effort for any template maintainer using this package.
-% It also avoids the use of internal commands.
-%
-% This environment opens the \XMLfile using \cs{startWritingZUGFeRDxml} and afterwards writes the \XML header including the File and Scheme information, the |ExchangedDocumentContext| and information of the |ExchangedDocument|.
-% Notes will also be written within this step.
-% Afterwards the environment should include all the mechanisms to write the invoice positions as well as summation.
-%
-% At the end of the environment the footer is inserted, before the output stream is closed using \cs{stopWritingZUGFeRDxml}. Which also attaches the \XMLfile to the PDF.
-%
-%
-% \end{documentation}
-% \begin{implementation}
-%    \begin{macrocode}
-\NewDocumentEnvironment{ZUGFeRD}{o}{
-	\IfNoValueF{#1}{
-		\SetZUGFeRDData{#1}
-	}
-	\zugferd_enable_XML_interfaces:
-	\startWritingZUGFeRDxml
-	\zugferd_write_Header:
-	\ignorespaces
-}{
-	\zugferd_enable_XML_interfaces:
-	\zugferd_write_Footer:
-	\stopWritingZUGFeRDxml
-	\zugferd_disable_XML_interfaces:
-}
-%    \end{macrocode}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeMacro{\startWritingZUGFeRDxml}
-% \cs[no-index]{startWritingZUGFeRDxml} is opening the output stream for the \XMLfile.
-% It also adjusts the indentation.
-% If \option{write-xml} is false, this option only opens a group to achieve the same structure in both modes.
-%
-% \DescribeMacro{\stopWritingZUGFeRDxml}
-% Here the output stream is closed and the \XMLfile is attached.
-% In case \option{write-xml} is not active, the attachment will be made if that's not deactivated separately using \option{zugferd}.
-% It also ends the group started by \cs[no-index]{startWritingZUGFeRDxml}.
-% \end{documentation}
-% \begin{implementation}
-%    \begin{macrocode}
-\newcommand*{\startWritingZUGFeRDxml}{
-	\begingroup
-	\bool_if:NTF \g_@@_write_xml_bool {
-		\char_set_active_eq:nN {13} \_@@_xml_newline_indent:
-		\iow_open:Nn \_@@_xml_writer_iow {\g_@@_xml_file_tl}
-	}{
-		\msg_info:nn {zugferd} {no-xml-write}
-	}
-}
-\msg_new:nnn {zugferd} {no-xml-write} {
-	The~option~write-xml=false~was~set.\\
-	Writing~of~XML~file~is~deactivated.
-}
-%    \end{macrocode}
-% The PDF attachment is done after the writing stream is closed.
-%    \begin{macrocode}
-%% The metadata elements are taken by Ulrike Fischer's faktur-x experiments
-%% https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
-\newcommand*{\stopWritingZUGFeRDxml}{%
-	\bool_if:NT \g_@@_write_xml_bool
-		{\iow_close:N \_@@_xml_writer_iow}%
-	\endgroup
-	\bool_if:NT \g_@@_active_bool {
-		\group_begin:
-			\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative}
-			%or /Source in some cases
-			\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
-			\exp_args:NnV \pdffile_embed_file:nnn {\g_@@_xml_file_tl} \g_@@_xml_embedded_file_tl
-				{zugferd/rechnung}
-		\group_end:
-%    \end{macrocode}
-% Since some tools require the Catalog entry to match the file name of the embedded file this this has to be set separately (\issue{26}).
-% \changes{v0.9b}{2024-11-17}{Fix file name of embedded file for the zugferd profile.}
-% \changes{v0.9c}{2024-12–08}{Remove second catalog entry linking to xml \issue{32}}
-%    \begin{macrocode}
-		\pdfmanagement_add:nee
-			{Catalog/Names/EmbeddedFiles}
-			{\g_@@_xml_embedded_file_tl}
-			{\pdf_object_ref:n{zugferd/rechnung}}
-			% steht in der doku ist aber pdf 2.0 ....
-		\pdfmanagement_add:nnx{Catalog}{AF}{\pdf_object_ref:n{zugferd/rechnung}}
-	}
-}
-%    \end{macrocode}
-% \end{implementation}
-% \begin{documentation}
-% \subsection{Interfaces to write the \XML contents}
+% \subsection{Interfaces to write the \XML content}
 % \changes{v0.6}{2024-09-05}{Provide public interfaces and first version of the documentation.}
 % \label{sec:xml-interfaces}
 % In case you are using |write-xml=true| (which is the default) you need to ensure to call the \XML writing functions in the correct order.
