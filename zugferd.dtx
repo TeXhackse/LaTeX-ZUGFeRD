@@ -1575,7 +1575,7 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeKeyOption{document-type=\meta{type}}{commercial-invoice}
+% \DescribeKeyOption[BT-3]{document-type=\meta{type}}{commercial-invoice}
 % Select the document type. Since \version{0.9c} \pkg{zugferd} supports the following types:
 % \changes{v0.9c}{2024-12-08}{Add support for other invoice types.}
 % \begin{valuelist}
@@ -1615,7 +1615,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Invoice number/document ID}
-% \DescribeKeyOption*{id=komavar/\meta{document ID/invoice number}}{}
+% \DescribeKeyOption*[BT-1]{id=komavar/\meta{document ID/invoice number}}{}
 % This has to be set. Leaving it empty will lead to an invalid \XMLfile.
 %
 % The value |komavar| would reference the data provided the KOMA-Script letter variabe |invoice|. In case you don't use \pkg{scrletter} you should not use this setting.
@@ -1658,9 +1658,9 @@
 % \begin{documentation}
 % \subsubsection{Dates}
 % \label{sec:dates}
-% \DescribeKeyOption{date=auto/\meta{date formatted as YYYYMMDD}}{auto}
-% \DescribeKeyOption{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}
-% \DescribeKeyOption*{due-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption[BT-2]{date=auto/\meta{date formatted as YYYYMMDD}}{auto}
+% \DescribeKeyOption[BT-72]{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}
+% \DescribeKeyOption[BT-9]{due-date=\meta{date formatted as YYYYMMDD}}{}*
 % Currently there are three kinds of dates implemented.
 % The XML-Standard requires them to use the structure \meta{YYYYMMDD}.
 % For the day this document was compiled this would be: \enquote{\InsertZUGFeRDData{date}} (\today).
@@ -1698,7 +1698,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Payment terms}
-% \DescribeKeyOption{payment-terms=\meta{string}}{}
+% \DescribeKeyOption[BT-20]{payment-terms=\meta{string}}{}
 % One option to set payment terms is the \option{due-date} mentioned before.
 % If this is not set or the setting is more complex one can use \option{payment-terms} to add more information.
 %
@@ -1716,7 +1716,7 @@
 % \subsubsection{Notes: Adding additional information}
 % \DescribeKeyOption{subject=komavar/\meta{Tokenlist}}{}
 % \DescribeKeyOption{fromaddress=komavar/\meta{Tokenlist}}{}
-% \DescribeKeyOption{add-note=\meta{Tokenlist}}{}*
+% \DescribeKeyOption[BT-22]{add-note=\meta{Tokenlist}}{}*
 % The ZUGFeRD example files\cite{zugferd-download} use all visible data to add them to the \XML as a note.
 % \option{subject} and \option{fromaddress} are used to support this.
 % \changes{v0.9d}{2025-01-02}{Add note on subject not being the same as subject-code \issue{35}.}%
@@ -2116,7 +2116,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Buyer Reference}
-% \DescribeKeyOption*{buyer/reference=komavar/\meta{Reference}}{}
+% \DescribeKeyOption*[BT-10]{buyer/reference=komavar/\meta{Reference}}{}
 % The reference field only exists for the |buyer| trade party.
 % Depending on the process it's required to use some unique identifier referring to the |buyer|.
 % Within Germany these numbers are called \enquote{Leitweg-ID}\cite{leitweg-id}.
@@ -2167,6 +2167,10 @@
 % Additionally to the general buyer reference there may be additional data used by the buyer a reference.
 % These fields are technically optional, but the buyer may enforce them to be used.
 % These were not supported before \version{0.9c}.
+%
+% \DescribeKeyOption*[BT-12]{contract-reference=\meta{Contract reference}}{}
+% \DescribeKeyOption*[BT-13]{purchase-order-reference=\meta{Purchase order reference}}{}
+% \DescribeKeyOption*[BT-14]{sales-order-reference=\meta{Sales order reference}}{}
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
@@ -2302,7 +2306,7 @@
 % So it's possible to adjust them for a single invoice item if necessary.
 % An example is shown in \autoref{sec:xml-interfaces}.
 % \subsubsection{Units}
-% \DescribeKeyOption*{unit=hour/day/one/piece/\meta{unit code}}{}
+% \DescribeKeyOption*[BT-130]{unit=hour/day/one/piece/\meta{unit code}}{}
 % The Faktur-X standard requires the unit to be selected.
 % These are called \enquote{/UN/CEFACT Common Codes} and can be found withtin \cite{unit-codes}.
 %
@@ -2362,7 +2366,7 @@
 % \begin{documentation}
 % \subsubsection{Tax category and rate}
 % \label{sec:tax-category}
-% \DescribeKeyOption{tax/category=\meta{category code/alias}}{standard}*
+% \DescribeKeyOption[BT-151]{tax/category=\meta{category code/alias}}{standard}*
 % The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g. at][]{spec-xrechnung}.
 % \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
 % The example file includes 2 different VAT values using the same category.
@@ -2539,7 +2543,7 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeKeyOption{tax/rate=\meta{floating point}}{19}*
+% \DescribeKeyOption[BT-152]{tax/rate=\meta{floating point}}{19}*
 % The value given will be used for tax calculation.
 % By default it's configured to |19| to match the German standard VAT rate.
 %
@@ -2556,11 +2560,17 @@
 	unknown .code:n = \keys_set:ne {zugferd} { \l_keys_key_str = \exp_not:V \l_keys_value_tl}
 }
 %    \end{macrocode}
+% data interface to simplify access on tax data
+%    \begin{macrocode}
+\keys_define:nn { zugferd / data / tax } {
+
+}
+%    \end{macrocode}
 % \endoptionenv
 % \end{implementation}
 % \begin{documentation}
-% \DescribeKeyOption*{item/start-date=\meta{date formatted as YYYYMMDD}}{}*
-% \DescribeKeyOption*{item/end-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption*[BT-134]{item/start-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption*[BT-135]{item/end-date=\meta{date formatted as YYYYMMDD}}{}*
 % With version \version{0.9} support for |BillingSpecifiedPeriod| was added.
 % This supports setting |start-date| and |end-date| per item.
 % As this is optional, there is no default.
