@@ -33,9 +33,16 @@
 \RecordChanges
 \usepackage{biblatex}
 
-\usepackage{minted}
+\usepackage[highlightmode=immediate]{minted}
+\newenvironment{examplecode}{%
+        \VerbatimEnvironment%
+        \fvset{gobble=0}%
+        \begin{VerbatimOut}[tabsize=3,gobble=1]{examplecode.out}%
+}{%
+        \end{VerbatimOut}%
+        \inputminted[autogobble, escapeinside=||]{latex}{examplecode.out}%
+}
 
-\newminted[examplecode]{latex}{gobble=2, tabsize=4}
 \usepackage{accsupp}
 \setminted{breaksymbol={\BeginAccSupp{method=escape,ActualText={}}\tiny\ensuremath{\hookrightarrow}\EndAccSupp{}},breaklines}
 
@@ -595,19 +602,19 @@
 % The end user is only asked to set or access the data to be used by \pkg{zugferd}.
 %
 % \subsection{Setting Data}
+% \begin{function}{\SetZUGFeRDData,\SetZugferdData}
 % \begin{syntax}
 % \cs[no-index]{SetZUGFeRDData}*\marg{key value list}
 % \end{syntax}
-% \DescribeMacro{\SetZUGFeRDData}
-% \DescribeMacro[noindex]{\SetZugferdData}
+%
 % The two modes of \cs[no-index]{SetZUGFeRDData} control if the argument is expanded before the data is processed.
 % Depending on the source of the data this might be necessary.
 % In that case activate the expansion by using the star argument.
 % Fields which are involved in the calculation will be expanded anyway, but the text fields will not, to support special characters.
-%
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\SetZUGFeRDData}
+% \begin{macro}{\SetZUGFeRDData}
 %    \begin{macrocode}
 \NewDocumentCommand{\SetZUGFeRDData}{sm}{
 	\IfBooleanTF{#1}
@@ -617,12 +624,11 @@
 }
 \let\SetZugferdData\SetZUGFeRDData
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 % \begin{documentation}
 % \subsection{Accessing Data for PDF output}
-% \DescribeMacro{\InsertZUGFeRDData}
-% \DescribeMacro[noindex]{\InsertZugferdData}
+% \begin{function}{\InsertZUGFeRDData}
 % \begin{syntax}
 % \cs[no-index]{InsertZugferdData}\oarg{special mode option}\marg{data-selection}
 % \end{syntax}
@@ -656,12 +662,13 @@
 % \InsertZUGFeRDData[iso-date]{date}
 % \end{examplecode}
 % As special modes the command currently supports the options \option{AddressData}, \option{set-today} and \option{iso-date}.
-%
+% \end{function}
 % \end{documentation}
 %
 % \begin{implementation}
 % Auxiliary command to support unit testing on the output interfaces.
-% \begin{function}{\_@@_access_data:c}
+% \begin{macro}{\_@@_access_data:c}
+%    \begin{macrocode}
 \bool_if:NTF \g_@@_testing_bool {
 	\cs_new:Nn \_@@_access_data:n {\tl_show:n {#1} #1}
 	\cs_new:Nn \_@@_access_data:N {\tl_show:N #1#1}
@@ -671,8 +678,9 @@
 	\cs_set_eq:NN \_@@_access_data:n \use:n
 }
 \cs_generate_variant:Nn {\_@@_access_data:n} {e}
-%\end{function}
-% \begin{function}{\InsertZUGFeRDData,\InsertZugferdData}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\InsertZUGFeRDData,\InsertZugferdData}
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
 % \version{0.11} added more fleixble interfaces.
 % \changes{v0.10-dev}{2025-07-22}{Add Mechanism to provide explicit interface for data elements}
@@ -725,7 +733,7 @@
 \providecommand{\InsertZugferdData}{\InsertZUGFeRDData}
 \providecommand{\insertZugferdData}{\InsertZUGFeRDData}
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 % \begin{documentation}
 % \DescribeOption{AddressData}
@@ -743,7 +751,7 @@
 			\_@@_set_today:v {g_@@_#1_tl}
 }
 %    \end{macrocode}
-% \end{implementaion}
+% \end{implementation}
 % \begin{documentation}
 % \DescribeOption{iso-date}
 % \changes{version}{date}{add iso-date Option for \InsertZUGFeRDData}
@@ -780,12 +788,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \section{Commands for template authors}
-
-% \begin{implementation}
-
-% \end{implementation}
-% \begin{documentation}
-% \DescribeFunction{\zugferd_print_AddressDataSep:nnn}
+% \begin{function}{\zugferd_print_AddressDataSep:nnn}
 % \begin{syntax}
 % \cs[no-index]{zugferd_print_AddressDataSep:nnn}
 % \marg{trade party (one of seller/buyer/shipto)}
@@ -803,9 +806,11 @@
 % \begin{examplecode}
 %	\cs_set_nopar:Nn \zugferd_print_address_country:n {#1}
 % \end{examplecode}
+% \end{function}
 % \end{documentation}
-% \begin{function}{\zugferd_print_AddressDataSep:nnn}
 % \begin{implementation}
+% \begin{function}{\zugferd_print_AddressDataSep:nnn}
+%    \begin{macrocode}
 \cs_new:Nn \zugferd_print_AddressDataSep:nnn {
 	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
 		\exp_args:Nne \use:c {zugferd_print_address_#2:n}
@@ -828,20 +833,22 @@
 	\zugferd_print_AddressDataSep:nnn {#1} {#2} {}
 }
 %    \end{macrocode}
+% \end{function}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeFunction{\zugferd_print_AddressData:n}
+% \begin{function}{\zugferd_print_AddressData:n}
 % \begin{syntax}
 % \cs[no-index]{zugferd_print_AddressData:n}
 % \marg{type (one of seller/buyer/shipto)}
 % \end{syntax}
 % Used by the \option{AddressData} option of \cs[no-index]{InsertZUGFeRDData}.
-% It uses  \cs[no-index]{\zugferd_print_AddressData:n} to print the name and would be followed by the
+% It uses  \cs[no-index]{zugferd_print_AddressData:n} to print the name and would be followed by the
 % entries |lineone|, |linetwo|, |linethree|, |postcode|, |city| and |country|.
-% These entries would use  \cs[no-index]{\zugferd_print_AddressDataSep:nnn} using |\\| as a separator in case the following entry has been set.
+% These entries would use  \cs[no-index]{zugferd_print_AddressDataSep:nnn} using |\\| as a separator in case the following entry has been set.
 % |\\| is used instead of a more specific command to allow template developers to redefine it locally.
 %
 % This command also could be redefined to support different order of the entries.
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
 % \begin{function}{\zugferd_print_AddressData:n}
@@ -873,12 +880,13 @@
 % \begin{documentation}
 %
 % \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
-% \DescribeMacro{\UseZUGFeRDElement}
+% \begin{function}{\UseZUGFeRDElement}
 % \begin{syntax}
 %   \cs[no-index]{UseZUGFeRDElement}\oarg{scope l/c/g}\marg{name}
 % \end{syntax}
 % For all simple entries it's possible to use this expandable interface to data items.
 % This does not apply for the AddressData, see \cs[no-index]{UseZUGFeRDAddressItem} for an expandable way to access these.
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
 % \begin{function}{\UseZUGFeRDElement}
@@ -890,10 +898,11 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeMacro{\UseZUGFeRDAddressItem}
+% \begin{function}{\UseZUGFeRDAddressItem}
 % \begin{syntax}
-% \cs[no-index]{UseZUGFeRDAddressItem}% \marg{trade party (one of seller/buyer/shipto)}\marg{Item}
+% \cs{UseZUGFeRDAddressItem}\marg{trade party (one of seller/buyer/shipto)}\marg{Item}
 % \end{syntax}
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
 % \begin{function}{\zugferd_use_AddressData_item:nn}
@@ -1015,7 +1024,7 @@
 % \end{ZUGFeRD}
 % \end{examplecode}
 %
-% \DescribeMacro{\zugferd_write_Item:nnnnnn}
+% \begin{function}{\zugferd_write_Item:nnnnnn}
 % This command is the interface to write invoice items to the \XMLfile.
 % If the \XML interface is enabled this is a reference to the internal command \cs{_@@_insert_TradeLineItem:nnnnnn}.
 % \begin{syntax}
@@ -1041,9 +1050,9 @@
 % This structure might look a bit overcomplicated as one might think the options could also be set as an additional argument.
 % This works as long as the Code for the visual part of the invoice is not referencing the internal data.
 % In case you don't do this it's also possible to use the following variant:
+% \end{function}
 %
-% \DescribeMacro{\zugferd_write_Item:nnnnnnn}
-% \DescribeMacro{\zugferd_write_Item:ennnnnn}
+% \begin{function}{\zugferd_write_Item:nnnnnnn,\zugferd_write_Item:ennnnnn}
 % This is grouping the command and adding an argument in front to add additional options.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Item:nnnnnnn}
@@ -1058,17 +1067,18 @@
 % \zugferd_write_Item:nnnnnnn {tax/rate=19,tax/category=S} {1} {Plushie-01} {Plushie \TeX\ lion} {31.89} {2} {63.78}
 %  % visual representation now may not refer to the data
 % \end{examplecode}
+% \end{function}
 %
-% \DescribeMacro{\zugferd_startInvoiceSums:}
+% \begin{function}{\zugferd_startInvoiceSums:}
 % \DescribeMacro{\zugferd_stopInvoiceSums:}
-% There is some global data which is placed in the \XMLfile after the invoice items have been placed.
-% Typically, in \LaTeX{} this block is started after the items have been printed and will enclose the summation block.
+% There is some global data which hast to be placed in the \XMLfile behind the invoice items.
+% As usually this this is where the summation block starts these commands have been named that way to enclose them.
 %
 % The starting includes the so called \enquote{ApplicableHeaderTradeAgreement} which contains the address data of both trade parties, see \autoref{sec:TradeParties}
 % And this will also print the \enquote{SpecifiedTradeSettlementPaymentMeans}, see \autoref{sec:PaymentMeans}.
+% \end{function}
 %
-% \DescribeMacro{\zugferd_write_TaxEntry:nnnn}
-% \DescribeMacro{\zugferd_write_TaxEntry:ennn}
+% \begin{function}{\zugferd_write_TaxEntry:nnnn, \zugferd_write_TaxEntry:ennn}
 % \changes{v0.9c}{2024-12-08}{Added \cs{zugferd_write_TaxEntry:ennn} variant}
 % This command is writing the sum over a tax rate. This command has to be used once per rate applied to the items.
 % \begin{syntax}
@@ -1076,8 +1086,9 @@
 % \end{syntax}
 % The tax amount could of course be calculated internally.
 % In the example package this is done automatically, but the interface needs to support manual input as a lot of use cases for \LaTeX{} invoicing use it only to create the output file.
+% \end{function}
 %
-% \DescribeMacro{\zugferd_write_Summation:nnnnnnnn}\par
+% \begin{function}{\zugferd_write_Summation:nnnnnnnn}
 % \noindent The total values are all collected with a single macro.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Summation:nnnnnnnn}
@@ -1091,21 +1102,21 @@
 %
 % In case you are using some specials like category \enquote{E} the exemption reason will also be written at that point.
 % For that it is referencing the current value of the setting.
+% \end{function}
 %
 % \subsection{Commands to temporary disable/re-enable the \XML writing interfaces}
-% \DescribeMacro{\zugferd_enable_XML_interfaces:}
-% \DescribeMacro{\zugferd_disable_XML_interfaces:}
-% \par\bigskip
+% \begin{function}{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
 % As there are a lot of use cases where code is processed multiple times, it's necessary to provide an interface to temporary disable the \XML writing mechanism.
 % A lot of these situations appear within table structures whereas a local adjustment would not be helpful.
 % Therefore these adjustments have to be done globally.
 %
 % The example package \pkg{zugferd-invoice} provides an example for this to ensure the \XML data is not written multiple times.
 % The \env{ZUGFeRD} environment has been constructed in a way, so it would automatically enable the interface when it begins and also when it ends, to write the data. So you should ensure this environment is only processed once or use the lower level interfaces directly.
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
 % Provide public interfaces and the ZUGFeRD environment.
-% \begin{function}{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
+% \begin{macro}{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_enable_XML_interfaces: {
 	\bool_if:NT \g_@@_write_xml_bool {
@@ -1157,9 +1168,9 @@
 	\zugferd_disable_XML_interfaces:
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \changes{v0.9}{2024-10-23}{Add interface using an argument for the keyval options locally per item}
-% \begin{function}{\zugferd_write_Item:nnnnnnn}
+% \begin{macro}{\zugferd_write_Item:nnnnnnn}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_write_Item:nnnnnnn {
 	\group_begin:
@@ -1169,13 +1180,13 @@
 }
 \cs_generate_variant:Nn \zugferd_write_Item:nnnnnnn {ennnnnn}
 %    \end{macrocode}
-% \end{function}
-% \begin{function}{\zugferd_write_TaxEntry:ennn}
+% \end{macro}
+% \begin{macro}{\zugferd_write_TaxEntry:ennn}
 %    \begin{macrocode}
 \cs_generate_variant:Nn \zugferd_write_TaxEntry:nnnn {ennn}
 %    \end{macrocode}
-% \end{function}
-% \begin{function}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}
+% \end{macro}
+% \begin{macro}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}
 % These commands are used to toggle the writing of the \XMLfile. This corresponds to the option \option{write-xml}.
 %    \begin{macrocode}
 \bool_if:NTF \g_@@_write_xml_bool {
@@ -1192,14 +1203,14 @@
 
 \cs_generate_variant:Nn \_@@_write_xml:n {e}
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \subsection{Number rounding}
 % As \pkg{siunitx} is implementing this, \pkg{zugferd} uses it instead of building our own mechanism.
 % In version \version{0.9a} a public interface was added, as described in section \ref{sec:rounding-interface}.
 %    \begin{macrocode}
 \RequirePackage{siunitx}
 %    \end{macrocode}
-% \begin{function}{\_@@_number_format:nNn,\_@@_number_format:nNe}
+% \begin{macro}{\_@@_number_format:nNn,\_@@_number_format:nNe}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_number_format:nNn {
 	\sisetup{
@@ -1215,8 +1226,8 @@
 }
 \cs_generate_variant:Nn \_@@_number_format:nNn {nNe}
 %    \end{macrocode}
-% \end{function}
-% \begin{function}{\_@@_write_rounded:nnnn,\_@@_write_rounded:nnn}
+% \end{macro}
+% \begin{macro}{\_@@_write_rounded:nnnn,\_@@_write_rounded:nnn}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_write_rounded:nnnn {
 	\_@@_number_format:nNe {#1} \l_@@_tmp_tl {#4}
@@ -1226,7 +1237,7 @@
 	\_@@_write_rounded:nnnn {#1} {#2} {} {#3}
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \subsection{XML indentation}
 % The indentation of the \XML does not really matter.
 % For debugging, it's a lot simpler to have it included and this also helped to maintain the structure of the code during development, so I decided to keep it.
@@ -1606,7 +1617,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Currency}
-% \DescribeKeyOption{currency=EUR/USD/CHF/€}{EUR}
+% \DescribeKeyOption[BT-5]{currency=EUR/USD/CHF/€}{EUR}
 % Currently \pkg{zugferd} only supports one currency for an invoice. This might be extended later.
 % The currency is pre-configured to use Euro.
 % \end{documentation}
@@ -2120,7 +2131,7 @@
 % \begin{documentation}
 % \subsubsection{Buyer Accounting Reference}
 % \changes{v0.10-dev}{2025-07-01}{Add support for accounting-reference}
-% \DescribeKeyOption*{buyer/accounting-reference=\meta{Accounting reference}}{}% BT-19
+% \DescribeKeyOption*[BT-19]{buyer/accounting-reference=\meta{Accounting reference}}{}
 % The reference field only exists for the |buyer| trade party.
 % Buyers will explicitly ask for this field.
 % \end{documentation}
@@ -2746,8 +2757,7 @@
 	</ram:SpecifiedLineTradeAgreement>
 }%
 %    \end{macrocode}
-% \end{function}
-%%%\subsubsection{SpecifiedLineTradeDelivery}%:nn <unit code > <number>
+% \end{function}%:nn <unit code > <number>
 % \begin{function}{\_@@_SpecifiedLineTradeDelivery:nn}
 %    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
