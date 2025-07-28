@@ -21,7 +21,11 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
 %<package>\ProvidesExplPackage{zugferd}{2025-07-01}{0.10-dev}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
-\DocumentMetadata{pdfstandard=a-3b,lang=en}
+\DocumentMetadata{
+	pdfstandard=a-3b,
+	pdfversion=1.7,
+	lang=en
+}
 \documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
 \usepackage{zugferd}[2025-07-01]
 \EnableCrossrefs
@@ -53,7 +57,9 @@
 		\IfBooleanTF{#1}
 			{#2}
 			{(default:~\codefont{#2})}
-	}\strut\par
+	}\strut
+	\tl_if_blank:VF \l_ptxtools_BTkey_tl {\rlap{\qquad\l_ptxtools_BTkey_tl}}
+	\par
 	\endgroup
 }
 
@@ -62,15 +68,17 @@
 }
 
 \bool_new:N \l_ptxtools_last_was_describe_bool
+\tl_new:N \l_ptxtools_BTkey_tl
 
-\NewDocumentCommand{\DescribeKeyOption}{smms}{
+\NewDocumentCommand{\DescribeKeyOption}{sO{}mms}{
+	\tl_set:Nn \l_ptxtools_BTkey_tl {#2}
 	\bool_if:NTF \l_ptxtools_last_was_describe_bool {
 		\vskip -\lastskip
 	}{
 		\par
 		\dim_compare:nNnF {\parskip} > {\c_zero_dim} {\medskip}
 	}
-	\__ptxctools_parse_key_option:w #1 {#3} #4 #2 \q_stop
+	\__ptxctools_parse_key_option:w #1 {#4} #5 #3 \q_stop
 
 	\bool_set_true:N \l_ptxtools_last_was_describe_bool
 	\AddToHookNext{para/begin}{
@@ -355,7 +363,7 @@
 % The package supports a few fundamental settings.
 % These have to be set when the package is loaded as they are used internally to setup the scheme or activate the \XML mechanism.
 %
-% \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic/minimum}{xrechunng}
+% \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic/minimum}{xrechnung}
 % \option{format} selects the scheme to be used for the zugferd invoice.
 % Currently xrechnung3.0, xrechnung2.3, and the basic and minimum schemes are supported.
 %
