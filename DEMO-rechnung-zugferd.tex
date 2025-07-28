@@ -31,8 +31,6 @@
 \setkomavar{date}{{\InsertZUGFeRDData[set-today]{date}\today}}
 \setkomavar{title}{Rechnung}
 
-\newkomafont{invoicetotal}{\bfseries}
-
 \SetZUGFeRDData{
 %	document-type =  commercial-invoice, % commented as this setting matches the initial value
 	id=komavar,
@@ -72,9 +70,8 @@
 
 \begin{document}
 
+\begin{letter}{\InsertZUGFeRDData[AddressData]{buyer}}% Please be aware that this does not print the Country, as this is only available via the Countrycode in this implementation
 
-\begin{letter}{Firma\\Vorname Nachname\\Rechnungsadresse\\PLZ Ort}
-	
 \opening{Guten Tag,}
 
 hiermit stelle ich Ihnen meine Arbeit im Rahmen des Projektes XX in Rechnung. Die Leistung wurde im Januar 2024 erbracht. 
@@ -84,6 +81,7 @@ hiermit stelle ich Ihnen meine Arbeit im Rahmen des Projektes XX in Rechnung. Di
 \AddInvoiceItem{2}{Support an Feiertagen/Wochenende}{180}
 \AddInvoiceItem{3.25}{Rundungstest}{95.38}
 
+
 \PrintInvoiceTabular
 
 Ich bitte Sie oben genannte Betrag binnen 30 Tagen auf unten genanntes Konto zu überweisen.
@@ -91,7 +89,5 @@ Ich bitte Sie oben genannte Betrag binnen 30 Tagen auf unten genanntes Konto zu 
 %Falls gewünscht
 \closing{Happy \TeX{}ing}
 
-
 \end{letter}
-
 \end{document}

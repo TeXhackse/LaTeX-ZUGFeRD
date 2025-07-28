@@ -22,8 +22,6 @@
 \setkomavar{date}{{\InsertZUGFeRDData[set-today]{date}\today}}
 \setkomavar{title}{Rechnung}
 
-\newkomafont{invoicetotal}{\bfseries}
-
 \SetZUGFeRDData{
 %	document-type =  commercial-invoice, % commented as this setting matches the initial value
 	id=komavar,
@@ -34,7 +32,7 @@
 	unit=hour,
 	seller/vatid = {DE123456789},
 %	seller/id=1123,% If no VatID exists a seller/id is required. This might be an ID provided by the buyer
-	seller/name = {peiTeX (Marei Peischl)},
+	seller/name = {Kleinunternehmer*in X},
 	seller/postcode = {20253},
 	seller/city ={Hamburg},
 	seller/country = DE,
@@ -50,9 +48,6 @@
 	buyer/address = {Address 1\\Address 2},
 	buyer/vatid = {DE123456789},
 	buyer/email = {invoice@example.org},
-	shipto/country=NL,
-	shipto/city={Amsterdam},
-	shipto/postcode={xxx},
 	currency=€,
 	payment-terms={Zahlbar innerhalb von 14 Tagen},% either this one or the due-date below is required
 	due-date={20240118},
@@ -60,17 +55,15 @@
 	payment-means / iban = DE68430609671013251700,
 	payment-means / account-holder = Marei Peischl,
 	payment-means / bic =GENODEM1GLS,
-	tax/add-exemption-reason-auto={E={{Kein Ausweis von Umsatzsteuer, da Kleinunternehmer*in gemäß § 19 UStG}}}% avoid umlauts for testing as \SHOWFILE is annoying…
+	tax/add-exemption-reason-auto={E={{Kein Ausweis von Umsatzsteuer, da Kleinunternehmer*in gemäß § 19 UStG}}}
 }
-
 
 \InitVATExempt{E}% Innergemeinschaftliche Lieferung
 
 \AddInvoiceItem<unit=hour>[E]{3}{Support}{90}
 
 \begin{document}
-\begin{letter}{Firma\\Vorname Nachname\\Rechnungsadresse\\PLZ Ort}
-	
+\begin{letter}{\InsertZUGFeRDData[AddressData]{buyer}}
 \opening{Guten Tag,}
 
 hiermit stelle ich Ihnen meine Arbeit im Rahmen des Projektes XX in Rechnung. Die Leistung wurde im Januar 2024 erbracht. 

@@ -580,7 +580,7 @@
 % \section{User Commands}
 % The end user is only asked to set or access the data to be used by \pkg{zugferd}.
 %
-% \subsection{Set Data}
+% \subsection{Setting Data}
 % \begin{syntax}
 % \cs[no-index]{SetZUGFeRDData}*\marg{key value list}
 % \end{syntax}
@@ -606,7 +606,7 @@
 % \end{function}
 % \end{implementation}
 % \begin{documentation}
-% \subsection{Access Data for PDF output}
+% \subsection{Accessing Data for PDF output}
 % \DescribeMacro{\InsertZUGFeRDData}
 % \DescribeMacro[noindex]{\InsertZugferdData}
 % \begin{syntax}
@@ -634,7 +634,7 @@
 % \InsertZUGFeRDData{payment-means/iban}
 % \end{examplecode}
 %
-% \subsubsection{Special modes to access data or control the output}
+% \subsubsection{Special data formats}
 % For some data elements there already have been interfaces implemented to simplify the output.
 % \begin{examplecode}
 % {\InsertZUGFeRDData[set-today]{date}\today}
@@ -768,7 +768,7 @@
 % \end{syntax}
 % Dynamic interface to format address data fields.
 % It would check if a specific command has been defined otherwhise the address item would be used after adding the separator.
-% The separator would not be added if a specific formatting macro was found, so be aware to add it to the definition if necesarry.
+% The separator would not be added if a specific formatting macro was found, so be aware to add it to the definition if necessary.
 % Same applies to checks for empty items.
 %
 % The commands which can be (re-)defined to adjust the output are called: \cs[no-index]{zugferd_print_address_\meta{field}:n}.
@@ -778,7 +778,7 @@
 %	\cs_set_nopar:Nn \zugferd_print_address_country:n {#1}
 % \end{examplecode}
 % \end{documentation}
-% \begin{function}{\zugferd_print_AddressDataSep:nnn }
+% \begin{function}{\zugferd_print_AddressDataSep:nnn}
 % \begin{implementation}
 \cs_new:Nn \zugferd_print_AddressDataSep:nnn {
 	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
