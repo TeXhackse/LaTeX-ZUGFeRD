@@ -754,7 +754,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \DescribeOption{iso-date}
-% \changes{version}{date}{add iso-date Option for \InsertZUGFeRDData}
+% \changes{v0.10-dev}{2025-07-28}{add iso-date Option for \InsertZUGFeRDData}
 % This option enhances the \option{set-today} variant and will group the setting and convert the date to ISO format (YYYY-MM-DD).
 % In contrast to set-today this is creating the date as output and keeps the change local.
 % \end{documentation}
@@ -2272,7 +2272,7 @@
 		#1 .tl_gset:c = {g_@@_payment_#1_tl}
 	}
 %    \end{macrocode}
-% \changes{version}{date}{Add data access-keys for payment-means}
+% \changes{v0.10-dev}{2025-07-28}{Add data access-keys for payment-means}
 %    \begin{macrocode}
   \keys_define:nn {zugferd/data} {
     payment-means / #1 .code:n = \_@@_access_data:c {g_@@_payment_#1_tl},
