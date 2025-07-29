@@ -56,8 +56,15 @@
 
 \cs_new:Npn \__ptxctools_parse_key_option:w #1 #2 #3 #4 = #5 \q_stop {
 	\begingroup
-	\let\PrintDescribeOption\PrintDescribeKeyOption
-	\tl_set:Nn \l__ptxtools_doc_values_tl {\small\IfBooleanTF{#3}{\textsf{#5}}{\textsf{(\codefont{#5})}}}
+	\def\PrintDescribeOption##1{
+		{\MacroFont ##1=}
+		\rlap{
+			\hskip\marginparsep\small
+			\IfBooleanTF{#3}
+				{\textsf{#5}}
+				{\textsf{(\codefont{#5})}}
+		}
+}
 	\noindent\DescribeOption{#4}\hfill
 	\small
 	\tl_if_blank:nTF {#2} {\meta{\textrm{initially~unset}}} {
@@ -540,9 +547,11 @@
 % \changes{v0.9c}{2024-12-08}{Compatbility to show the error message in older formats versions.}
 %    \begin{macrocode}
 	\IfPackageAtLeastTF{pdfmanagement-testphase}{2024/09/13}{}{
-		\msg_new:nnn {zugferd} {PDFmanagement-too-old} {
+		\msg_new:nnnn {zugferd} {PDFmanagement-too-old} {
 			Your~version~of~\LaTeX's~PDF~management~is~too~old.
-			You~need~to~update~your~LaTeX~distribution~to~be~able~to~use~the~zugferd~package~correctly.
+		}{
+			You~need~to~update~your~LaTeX~distribution~to~be~able~
+			to~use~the~zugferd~package~correctly.
 		}
 		\msg_error:nn{zugferd} {PDFmanagement-too-old}
 	}
@@ -586,11 +595,13 @@
 
 	\exp_args:Ne \pdfmeta_xmp_add:n {
 		% fix INVOICE
-		<fx:DocumentType>INVOICE</fx:DocumentType>\iow_newline:
-		% fix factur-x.xml
-		<fx:DocumentFileName>\g_@@_xml_embedded_file_tl</fx:DocumentFileName>\iow_newline:
+		<fx:DocumentType>INVOICE</fx:DocumentType>
+		\iow_newline:
+		<fx:DocumentFileName>\g_@@_xml_embedded_file_tl</fx:DocumentFileName>
+		\iow_newline:
 		% fix schema version
-		<fx:Version>1.0</fx:Version>\iow_newline:
+		<fx:Version>1.0</fx:Version>
+		\iow_newline:
 		% zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG
 		<fx:ConformanceLevel>\g_@@_conformance_level_str</fx:ConformanceLevel>%
 		\iow_newline:
@@ -648,7 +659,7 @@
 % As the variable names may contain underscores and the option usually prefers dashes, dashes are converted to underscores for the detection.
 %
 % Some Variables have a more complex structure either with setting or saving them.
-% To simplicy access \version{0.10-dev} also added a \pkg{l3keys} interface.
+% To simplify accessing those \version{0.10-dev} also added a \pkg{l3keys} interface.
 % The first variables using this by default are the |payment-means|.
 % It's possible to use the same structure to access as to set the variable.
 % Other variabels will follow.
@@ -819,9 +830,12 @@
 % \begin{implementation}
 % \begin{function}{\zugferd_use_AddressData_item:nn}
 %    \begin{macrocode}
-\NewExpandableDocumentCommand{\UseZUGFeRDAddressItem}{mm}{\zugferd_use_AddressData_item:nn {#1} {#2}}
+\NewExpandableDocumentCommand{\UseZUGFeRDAddressItem}{mm}{
+	\zugferd_use_AddressData_item:nn {#1} {#2}
+}
 \cs_new:Nn \zugferd_use_AddressData_item:nn {
-	\_@@_access_data:e {\prop_item:cn {g_@@_#1_AddressData_prop } {#2}}
+	\_@@_access_data:e
+		{\prop_item:cn {g_@@_#1_AddressData_prop } {#2}}
 }
 %    \end{macrocode}
 % \end{function}
@@ -908,7 +922,8 @@
 			\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative}
 			%or /Source in some cases
 			\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
-			\exp_args:NnV \pdffile_embed_file:nnn {\g_@@_xml_file_tl} \g_@@_xml_embedded_file_tl
+			\exp_args:NnV \pdffile_embed_file:nnn {\g_@@_xml_file_tl}
+				\g_@@_xml_embedded_file_tl
 				{zugferd/rechnung}
 		\group_end:
 %    \end{macrocode}
@@ -1088,8 +1103,7 @@
 % \end{examplecode}
 % \end{function}
 %
-% \begin{function}{\zugferd_startInvoiceSums:}
-% \DescribeMacro{\zugferd_stopInvoiceSums:}
+% \begin{function}{\zugferd_startInvoiceSums:, \zugferd_stopInvoiceSums:}
 % There is some global data which hast to be placed in the \XMLfile behind the invoice items.
 % As usually this this is where the summation block starts these commands have been named that way to enclose them.
 %
@@ -1300,7 +1314,7 @@
 % \begin{documentation}
 % \subsection{Escaping macros inside \XML data}
 % \label{sec:disable_macros}
-% \DescribeMacro{\zugferd_disable_macros:}
+% \begin{function}{\zugferd_disable_macros:}
 % Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the \XML output.
 % The mechanism is created similar to the one by \pkg{hyperref}, and we also use some definitions from there to use those as a starting point.
 % To have a detailed list of all redefinitions, please have a look at the implementation of this command.
@@ -1312,9 +1326,10 @@
 %     {newline-to-LF}
 %     {\def\newline{\iow_newline:}}
 % \end{examplecode}
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\zugferd_disable_macros:}
+% \begin{macro}{\zugferd_disable_macros:}
 % The definition was mostly taken from \pkg{hyperref} \cite{hyperref}.
 % Most likely not all of these are required, but it's probably easier to take this as a reasonable choice instead of creating an own collection.
 % \iffalse
@@ -1449,17 +1464,17 @@
 %    \begin{macrocode}
 \hook_new:n {zugferd/disable-macros}
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 % \begin{documentation}
-% \DescribeMacro{\zugferd_tl_set_escaped_xml:Nn}
-% \DescribeMacro{\zugferd_tl_gset_escaped_xml:Nn}
+% \begin{function}{\zugferd_tl_set_escaped_xml:Nn, \zugferd_tl_gset_escaped_xml:Nn}
 % \changes{v0.9c}{2024-12-08}{Added mechanism to escape XML special characters.}
 % As described before and also in \issue{9} there are characters which are special in \XML but not within \LaTeX.
 % Additionally there are also characters which aren't special in \LaTeX{} but within \XML.
 % In version \version{0.9c} \pkg{zugferd} added some auxiliary commands to support users escaping those.
 % This mechanism involves turning the category codes of characters like |"<>'&| to active and might have side effects.
 % It is an experimental feature and should be handled with care!
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
@@ -1509,17 +1524,17 @@
 % It is only an issue if fractions of units are used, but was fixed in \version{0.9a}.
 % To avoid this generally there now exists an interface to be used to do the rounding before the summation.
 %
-% \DescribeMacro{\zugferd_fp_set_rounded:Nn}
-% \DescribeMacro{\zugferd_fp_gset_rounded:Nn}
+% \begin{function}{\zugferd_fp_set_rounded:Nn,zugferd_fp_gset_rounded:Nn}
 % This command can be used to access the \pkg{siunitx}'s rounding mechanism within \pkg{zugferd}.
 % The command is based on \cs[no-index]{fp_set:Nn} just is doing the rounding before the assignment.
 %
 % \begin{examplecode}
 %	\zugferd_fp_gset_rounded:Nn \g_tmpa_fp {|\meta{amount}|* (|\meta{VAT rate}|/100) * |\meta{unit price}|}
 %	\end{examplecode}
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\zugferd_fp_set_rounded:Nn, \zugferd_fp_gset_rounded:Nn}
+% \begin{macro}{\zugferd_fp_set_rounded:Nn, \zugferd_fp_gset_rounded:Nn}
 %    \begin{macrocode}
 % \begin{function}{\zugferd_fp_set_rounded:Nn, \zugferd_fp_gset_rounded:Nn}
 \cs_set:Nn \zugferd_fp_set_rounded:Nn {
@@ -1531,7 +1546,7 @@
 	\fp_gset:Nn  #1 {\l_@@_tmp_tl }
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 % \begin{documentation}
 % \section{Adding data to the XML}
@@ -1677,7 +1692,7 @@
 % \end{documentation}
 %
 % \begin{implementation}
-% \begin{optionenv}{date,delivery-date}
+% \begin{optionenv}{date}
 %    \begin{macrocode}
 	date .choice:,
 	date / auto .code:n = \tl_gset:Ne \g_@@_date_tl {
@@ -1687,6 +1702,10 @@
 	},
 	date / unknown .code:n = \tl_gset:Nn \g_@@_date_tl {#1},
 	date .initial:n = auto,
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{delivery-date}
+%    \begin{macrocode}
 	delivery-date .choice:,
 	delivery-date / auto .code:n = \tl_gset:Ne \g_@@_delivery_date_tl {
 		\the\year
@@ -1697,6 +1716,10 @@
 		\tl_gset:Nn \g_@@_delivery_date_tl {#1}
 	},
 	delivery-date .initial:n = auto,
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{due-date}
+%    \begin{macrocode}
 	due-date .tl_gset:N = \g_@@_due_date_tl,
 	due-date .initial:n =,
 %    \end{macrocode}
@@ -1820,7 +1843,7 @@
 % As shown in the example \option{address} can use three lines separted by |\\|.
 % It's possble to set all fields for all trade contacts, but e.\,g. for the |shipto|-party email and vatid will not be used in the \XML.
 %
-% Alternatively it's also possible to use \option{\meta{party}/lineone}, \option{\meta{party}/linetwo} and \option{\meta{party}/linethree} separately.
+% Alternatively it's also possible to use \option{\meta{party}/lineone}, \option{\meta{party}/linetwo} and \option{\meta{party}\slash{}linethree} separately.
 % This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using \cs[no-index]{zugferd_disable_macros:}.
 %
 % \DescribeKeyOption*{\meta{party}/postcode=\meta{postal code}}{}*
@@ -1869,13 +1892,20 @@
 % \item BuyerTradeParty
 % \end{itemize}
 %
-% \begin{optionenv}{\meta{party}/address}
-% \begin{variable}{\g_@@_seller_AddressData_prop,\g_@@_buyer_AddressData_prop,\g_@@_shipto_AddressData_prop}
-% Seller and Buyer are specified the same way.
+% Seller, buyer and shipping address are specified the same way.
 %    \begin{macrocode}
 \clist_map_inline:nn {seller,buyer,shipto} {
+%    \end{macrocode}
+% \begin{variable}{\g_@@_seller_AddressData_prop,\g_@@_buyer_AddressData_prop,\g_@@_shipto_AddressData_prop}
+%    \begin{macrocode}
 	\prop_new:c {g_@@_#1_AddressData_prop}
+%    \end{macrocode}
+% \end{variable}
+%    \begin{macrocode}
 	\keys_define:nn {zugferd / #1} {
+%    \end{macrocode}
+% \begin{optionenv}{\meta{party}/address}
+%    \begin{macrocode}
 		address .code:n = {
 			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
 			%TODO error if more than 2 lines or only 1
@@ -1885,6 +1915,10 @@
 				linethree={\seq_item:Nn \l_tmpa_seq {3}}
 			}
 		},
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{\meta{party}/contact}
+%    \begin{macrocode}
 		contact .code:n = {
 			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
 			\int_compare:nNnTF {\seq_count:N \l_tmpa_seq} > {3} {
@@ -1902,16 +1936,21 @@
 				}
 			}
 		},
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{\meta{party}/\meta{unknown}}
+%    \begin{macrocode}
 		unknown .code:n = \tl_if_blank:nF {##1} {
 			\prop_gput:cVe {g_@@_#1_AddressData_prop}
 				\l_keys_key_tl {\tl_trim_spaces:n {##1}}
 		}
+%    \end{macrocode}
+% \end{optionenv}
+%    \begin{macrocode}
 	}
 }
 %    \end{macrocode}
-% \end{variable}
-% \end{optionenv}
-% \begin{function}{\_@@_TradePartyIdentity:N \_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
+% \begin{macro}{\_@@_TradePartyIdentity:N \_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
 % Wrappers to map the property list items to the writing macro.
 % \changes{v0.9c}{2024-12-08}{Add TradePartyName to support additional legal information.}
 %    \begin{macrocode}
@@ -1955,34 +1994,44 @@
 		{\prop_item:Nn #1 {contact-email}}
 }%
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 %    \begin{macrocode}
 \cctab_begin:N \g_@@_xml_cctab%
 %    \end{macrocode}
 % \iffalse
 % \_@@_TradePartyIdentity:eeeee ID Name description legal-id trading-name
 % \fi
+% \begin{macro}{\_@@_TradePartyIdentity:nnnnn}
+% \begin{arguments}
+% \item ID
+% \item Name
+% \item Additional legal Information
+% \item Legal registration Identifier
+% \item Trading Name
+% \end{arguments}
 %    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_TradePartyIdentity:nnnnn {%
-	%%<!-- BT-29 -->
+	%%<!-- seller BT-29 | buyer BT-46 | shipto BT-71 -->
 	\_@@_write_inline:nn {ram:ID} {#1}
-	%%<!-- BT-27 -->
+	%%<!-- seller BT-27 | buyer BT-44 | shipto BT-70 -->
 	\_@@_write_inline:nn {ram:Name} {#2}
-	%%<!-- BT-33 -->
+	%%<!-- seller BT-33 -->
 	\_@@_write_inline:nn {ram:Description} {#3}
 	\tl_if_blank:eF {#4#5} {%
 	<ram:SpecifiedLegalOrganization>
-	%%%<!-- BT-30 -->
+	%%%<!-- seller BT-30 | buyer BT-47 -->
 	\_@@_write_inline_i:nnn {ram:ID} {~schemeID="0088"} {#4}
-	%%<!-- BT-28 -->
+	%%<!-- seller BT-28 | buyer BT-45 -->
 	\_@@_write_inline_i:nn {ram:TradingBusinessName} {#5}
 	</ram:SpecifiedLegalOrganization>
 	}%
 }%
 %    \end{macrocode}
+% \end{macro}
 % \iffalse
 % \_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Zeile3 Ort Ländercode Bundesland/Bezirk
 % \fi
+% \begin{macro}{\_@@_PostalTradeAddress:nnnnnnn}
 %    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
 	<ram:PostalTradeAddress>
@@ -2024,8 +2073,10 @@
 		</ram:SpecifiedTaxRegistration>%
 	}%
 }%
-%
+%    \end{macrocode}
+% \end{macro}
 % Contact data phone/email to a specific contact person
+%    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_DefinedTradeContact:nnnn {%
 	% Do not print if name is empty
 	\tl_if_blank:nT {#1} {\use_none:nnn} %
@@ -2033,8 +2084,10 @@
 		<ram:DefinedTradeContact>
 		\_@@_indent: <ram:PersonName>#1</ram:PersonName>
 		\_@@_write_inline_i:nn {ram:DepartmentName} {#2}
-		\_@@_write_inline_wrapped_i:nnn {ram:TelephoneUniversalCommunication} {ram:CompleteNumber} {#3}
-		\_@@_write_inline_wrapped_i:nnn {ram:EmailURIUniversalCommunication} {ram:URIID} {#4}
+		\_@@_write_inline_wrapped_i:nnn
+			{ram:TelephoneUniversalCommunication} {ram:CompleteNumber} {#3}
+		\_@@_write_inline_wrapped_i:nnn
+			{ram:EmailURIUniversalCommunication} {ram:URIID} {#4}
 		</ram:DefinedTradeContact>%
 	}%
 }%
@@ -2562,7 +2615,11 @@
 }%
 \keys_define:nn {zugferd/item} {
 	tax .choice:,
-	tax / unknown .code:n = \keys_set:ne {zugferd/tax} { \l_keys_key_str = \exp_not:V \l_keys_value_tl},
+	tax / unknown .code:n = {
+		\keys_set:ne {zugferd/tax} {
+			\l_keys_key_str = \exp_not:V \l_keys_value_tl
+		}
+	},
 	unknown .code:n = \keys_set:ne {zugferd} { \l_keys_key_str = \exp_not:V \l_keys_value_tl}
 }
 %    \end{macrocode}
