@@ -1294,15 +1294,21 @@
 \cs_new:Nn \_@@_indent:n {
 	\prg_replicate:nn {#1} {\_@@_indent:}
 }
+\cs_new:Nn \_@@_xml_auto_indent:n {
+	\_@@_indent:n {\g_@@_indent_int #1}
+}
 \cs_new:Nn \_@@_xml_auto_indent: {
-	\_@@_indent:n {\g_@@_indent_int}
+	\_@@_xml_auto_indent:n {}
 }
 %    \end{macrocode}
 % \end{function}
 % The idea was to redefine the \cs[no-index]{newlinechar} to automatically indent the following line.
 %    \begin{macrocode}
+\cs_new:Nn \_@@_xml_newline_indent:n {
+	\iow_newline: \_@@_xml_auto_indent:n {#1}
+}
 \cs_new:Nn \_@@_xml_newline_indent: {
-	\iow_newline: \_@@_xml_auto_indent:
+	\_@@_xml_newline_indent:n {}
 }
 %    \end{macrocode}
 % \end{implementation}
@@ -2002,7 +2008,6 @@
 %    \end{macrocode}
 % \end{macro}
 %    \begin{macrocode}
-\cctab_begin:N \g_@@_xml_cctab%
 %    \end{macrocode}
 % \iffalse
 % \_@@_TradePartyIdentity:eeeee ID Name description legal-id trading-name
@@ -2040,6 +2045,7 @@
 % \begin{macro}{\_@@_PostalTradeAddress:nnnnnnn}
 %    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
+	\_@@_xml_newline_indent:
 	<ram:PostalTradeAddress>
 	\bool_if:NF \g_@@_minimum_bool {%
 		\_@@_write_inline_i:nn {ram:PostcodeCode} {#1}
@@ -2048,12 +2054,14 @@
 		\_@@_write_inline_i:nn {ram:LineThree} {#4}
 		\_@@_write_inline_i:nn {ram:CityName} {#5}
 	}%
-	\_@@_indent: <ram:CountryID>#6</ram:CountryID>
+	\_@@_write_inline_i:nn {ram:CountryID} {#6}
 	\bool_if:NF \g_@@_minimum_bool {%
 		\_@@_write_inline_i:nn {ram:CountrySubDivisionName} {#7}
 	}%
+	\_@@_xml_newline_indent:
 	</ram:PostalTradeAddress>%
 }%
+\cctab_begin:N \g_@@_xml_cctab%
 \bool_if:NTF \g_@@_minimum_bool {%
 	\cs_set_eq:NN \_@@_UniversalCommunication:n \use_none:n%
 } {%
@@ -2083,18 +2091,21 @@
 % \end{macro}
 % Contact data phone/email to a specific contact person
 %    \begin{macrocode}
+\cctab_end:
 \_@@_define_xml_content:Nn \_@@_DefinedTradeContact:nnnn {%
 	% Do not print if name is empty
 	\tl_if_blank:nT {#1} {\use_none:nnn} %
 	\bool_if:NT \g_@@_writeTradeContact_bool {%
+		\_@@_xml_newline_indent:
 		<ram:DefinedTradeContact>
-		\_@@_indent: <ram:PersonName>#1</ram:PersonName>
+		\_@@_write_inline_i:nn {ram:PersonName} {#1}
 		\_@@_write_inline_i:nn {ram:DepartmentName} {#2}
 		\_@@_write_inline_wrapped_i:nnn
 			{ram:TelephoneUniversalCommunication} {ram:CompleteNumber} {#3}
 		\_@@_write_inline_wrapped_i:nnn
 			{ram:EmailURIUniversalCommunication} {ram:URIID} {#4}
-		</ram:DefinedTradeContact>%
+		\_@@_xml_newline_indent:
+			</ram:DefinedTradeContact>%
 	}%
 }%
 %
@@ -2119,6 +2130,7 @@
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
 		</ram:SellerTradeParty>
+		\_@@_xml_newline_indent:
 		<ram:BuyerTradeParty>%
 	}%
 	\int_gincr:N \g_@@_indent_int%
@@ -2141,6 +2153,7 @@
 		{\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl}%
 }%
 %
+\cctab_begin:N \g_@@_xml_cctab%
 %
 % delivery date
 \_@@_define_xml_content:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
@@ -2662,16 +2675,21 @@
 	\_@@_write_inline:nnn {#1} {} {#2}
 }
 \cs_generate_variant:Nn \_@@_write_inline:nn {ne}
-\_@@_define_xml_content:Nn \_@@_write_inline:nnn {
-	\tl_if_blank:nF {#3} {
-		<#1#2>#3</#1>
+\_@@_define_xml_content:Nn \_@@_write_inline:nnnn {
+	\tl_if_blank:nF {#4} {
+		\_@@_xml_newline_indent:n {#1}
+		<#2#3>#4</#2>
 	}
+}
+\_@@_define_xml_content:Nn \_@@_write_inline:nnn {
+	\_@@_write_inline:nnnn {} {#1} {#2} {#3}
 }
 \_@@_define_xml_content:Nn \_@@_write_inline_wrapped:nnnn {
 	\tl_if_blank:nF {#4} {
-	\_@@_indent:n {#1} <#2>\_@@_xml_newline_indent:
-	\_@@_indent:n {#1+1} <#3>#4</#3>\_@@_xml_newline_indent:
-	\_@@_indent:n {#1} </#2>
+		\_@@_xml_newline_indent:
+		\_@@_indent:n {#1} <#2>\_@@_xml_newline_indent:
+		\_@@_indent:n {#1+1} <#3>#4</#3>\_@@_xml_newline_indent:
+		\_@@_indent:n {#1} </#2>
 	}
 }
 \cs_generate_variant:Nn \_@@_write_inline_wrapped:nnnn {nnne}
@@ -2700,7 +2718,7 @@
 }
 \cs_generate_variant:Nn \_@@_write_wrapped:nnn {nne}
 \_@@_define_xml_content:Nn  \_@@_write_inline_i:nnn {
-	\_@@_indent: \_@@_write_inline:nnn {#1} {#2} {#3}
+	\_@@_write_inline:nnnn {+1} {#1} {#2} {#3}
 }
 \_@@_define_xml_content:Nn  \_@@_write_inline_i:nn {
 	\_@@_write_inline_i:nnn {#1} {} {#2}
@@ -2856,7 +2874,7 @@
 	<ram:SpecifiedLineTradeDelivery>
 	% SPACE!
 	\_@@_indent: <ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
-	</ram:SpecifiedLineTradeDelivery>
+	</ram:SpecifiedLineTradeDelivery>%
 }%
 %    \end{macrocode}
 % \end{function}
@@ -2868,7 +2886,7 @@
 	\int_gincr:N \g_@@_indent_int%
 	 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
 	 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
-	\_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
+	 \_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeSettlement>}%
 }%
@@ -2881,7 +2899,7 @@
 	\_@@_indent:  <ram:CategoryCode>#1</ram:CategoryCode>
 	%BT-152
 	\_@@_indent: <ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
-	</ram:ApplicableTradeTax>
+	</ram:ApplicableTradeTax>%
 }%
 \_@@_define_xml_content:Nn \_@@_BillingSpecifiedPeriod:nn {%
 	\bool_lazy_or:nnF {\tl_if_blank_p:n {#1}} {\tl_if_blank_p:n {#2}} {%
@@ -2895,7 +2913,7 @@
 	\_@@_indent:n {2} <udt:DateTimeString~format="102">#2</udt:DateTimeString>
 	\_@@_indent:</ram:EndDateTime>
      </ram:BillingSpecifiedPeriod>%
-     }%
+   }%
 }%
 \_@@_define_xml_content:Nn \_@@_SpecifiedTradeSettlementLineMonetarySummation:n {%
 	<ram:SpecifiedTradeSettlementLineMonetarySummation>
@@ -2946,7 +2964,7 @@
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeAgreement>}
 	\_@@_write_xml:e {%
-		\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}
+		\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}%
 	}%
 	\_@@_write_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl %
 			{ \fp_use:N \l_@@_tax_rate_fp} {#6}%
@@ -3056,21 +3074,21 @@
 		\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
 		\int_gincr:N \g_@@_indent_int%
 		\_@@_write_xml:e {%
-			<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>
+			<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>%
 			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
 				\_@@_write_inline:ne {ram:Information} {%
 					\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
 				}
 			}%
 			\tl_if_blank:nF {#1#2} {%
-				<ram:PayeePartyCreditorFinancialAccount>
-				\_@@_write_inline_i:nn {ram:IBANID} {#2}
+				<ram:PayeePartyCreditorFinancialAccount>%
+				\_@@_write_inline_i:nn {ram:IBANID} {#2}%
 				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {\_@@_write_inline_i:nn {ram:AccountName} {#1}}
 				</ram:PayeePartyCreditorFinancialAccount>
 			}%
 			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
 				\tl_if_blank:nF {#3} {%
-					<ram:PayeeSpecifiedCreditorFinancialInstitution>
+					<ram:PayeeSpecifiedCreditorFinancialInstitution>%
 					\_@@_write_inline_i:nn {ram:BICID} {#3}
 					</ram:PayeeSpecifiedCreditorFinancialInstitution>%
 				}%
