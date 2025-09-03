@@ -48,13 +48,14 @@
 
 \ExplSyntaxOn
 \makeatletter
-\tl_new:N \l__ptxtools_doc_values_tl
+\tl_new:N \l_ptxtools_doc_values_tl
 \newcommand*{\codefamily}{\MacroFont}
 \DeclareTextFontCommand{\codefont}{\codefamily}
 \providecommand{\option}[1]{\codefont{#1}}
 \providecommand{\value}[1]{\codefont{#1}}
 
-\cs_new:Npn \__ptxctools_parse_key_option:w #1 #2 #3 #4 = #5 \q_stop {
+\cs_new:Npn \_ptxtools_parse_key_option:w #1 #2 #3 #4 = #5 \q_stop {
+	\par
 	\begingroup
 	\def\PrintDescribeOption##1{
 		{\MacroFont ##1=}
@@ -78,7 +79,7 @@
 }
 
 \newcommand*{\PrintDescribeKeyOption}[1]{
-	{\MacroFont #1=}\rlap{\hskip\marginparsep\l__ptxtools_doc_values_tl}
+	{\MacroFont #1=}\rlap{\hskip\marginparsep \l_ptxtools_doc_values_tl}
 }
 
 \bool_new:N \l_ptxtools_last_was_describe_bool
@@ -92,7 +93,7 @@
 		\par
 		\dim_compare:nNnF {\parskip} > {\c_zero_dim} {\medskip}
 	}
-	\__ptxctools_parse_key_option:w #1 {#4} #5 #3 \q_stop
+	\_ptxtools_parse_key_option:w #1 {#4} #5 #3 \q_stop
 	\bool_set_true:N \l_ptxtools_last_was_describe_bool
 	\AddToHookNext{para/begin}{
 		\bool_set_false:N \l_ptxtools_last_was_describe_bool
