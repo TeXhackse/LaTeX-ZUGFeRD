@@ -1224,7 +1224,13 @@
 %    \begin{macrocode}
 \bool_if:NTF \g_@@_write_xml_bool {
 	\cs_new:Nn \_@@_write_xml:n {
-		\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: #1}
+		\tl_if_blank:nF {#1} {
+			\exp_last_unbraced:Nnf \tl_if_head_eq_charcode:nNTF {#1} \iow_newline: {
+				\iow_now:Ne \_@@_xml_writer_iow {\use_none:n  #1}
+			} {
+				\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: #1}
+			}
+		}
 	}
 	\cs_new_eq:NN \_@@_define_xml_writer:Nn \cs_new:Nn
 	\cs_new_eq:NN \_@@_define_xml_content:Nn \cs_new:Nn
