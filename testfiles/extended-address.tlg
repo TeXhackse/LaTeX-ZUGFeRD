@@ -63,7 +63,8 @@ Don't change this file in any respect.
           <ram:EmailURIUniversalCommunication>
             <ram:URIID>marei@peitex.de</ram:URIID>
           </ram:EmailURIUniversalCommunication>
-        </ram:DefinedTradeContact><ram:PostalTradeAddress>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
           <ram:PostcodeCode>20253</ram:PostcodeCode>
           <ram:LineOne>Address Line 1</ram:LineOne>
           <ram:LineTwo>Address Line 2</ram:LineTwo>
@@ -92,7 +93,8 @@ Don't change this file in any respect.
           <ram:EmailURIUniversalCommunication>
             <ram:URIID>loewe@customer.com</ram:URIID>
           </ram:EmailURIUniversalCommunication>
-        </ram:DefinedTradeContact><ram:PostalTradeAddress>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
           <ram:PostcodeCode>20253</ram:PostcodeCode>
           <ram:CityName>Hamburg</ram:CityName>
           <ram:CountryID>DE</ram:CountryID>
