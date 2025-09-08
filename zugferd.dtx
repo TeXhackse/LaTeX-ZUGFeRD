@@ -1122,6 +1122,16 @@
 % In the example package this is done automatically, but the interface needs to support manual input as a lot of use cases for \LaTeX{} invoicing use it only to create the output file.
 % \end{function}
 %
+% \begin{function}{\zugferd_write_AllowanceCharge:, \zugferd_write_AllowanceCharge:n}
+% \changes{version}{date}{Add user interface for document level allowancaes and charges}
+% \begin{syntax}
+% \cs[no-index]{zugferd_write_AllowanceCharge:n} \marg{key-value settings to configure allowance/charge}
+% \end{syntax}
+% The command to write allowances or charges exists in two variants.
+% \cs[no-index]{zugferd_write_AllowanceCharge:n} takes an argument with the values, whereas \cs[no-index]{zugferd_write_AllowanceCharge:} iterates over the sequence configured by \option{add-allowance} and \option{add-charge}.
+% Examples can be found within the corresponding testfile \TestFiles{allowance-charge.lvt}.
+% \end{function}
+%
 % \begin{function}{\zugferd_write_Summation:nnnnnnnn}
 % \noindent The total values are all collected with a single macro.
 % \begin{syntax}
@@ -1180,7 +1190,7 @@
 		} {
 			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
 		}
-		\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge: \_@@_SpecifiedTradeAllowanceCharge:
+		\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge:n \_@@_SpecifiedTradeAllowanceCharge:n
 		\cs_gset:Nn \zugferd_write_Summation:nnnnnnnn {
 			\_@@_SpecifiedTradePaymentTerms:
 
@@ -1196,7 +1206,7 @@
 	\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
 	\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
 	\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
-	\cs_gset_eq:NN \zugferd_write_AllowanceCharge: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_write_AllowanceCharge:n \use_none:n
 	\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn \use_none:nnnnnnnn
 }
 \bool_if:NTF \g_@@_write_xml_bool {
@@ -1221,6 +1231,11 @@
 % \begin{macro}{\zugferd_write_TaxEntry:ennn}
 %    \begin{macrocode}
 \cs_generate_variant:Nn \zugferd_write_TaxEntry:nnnn {ennn}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\zugferd_write_AllowanceCharge:}
+%    \begin{macrocode}
+\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge: \_@@_SpecifiedTradeAllowanceCharge:
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}
@@ -1754,6 +1769,56 @@
 %    \begin{macrocode}
 	payment-terms .str_gset:N = \g_@@_payment_terms_str,
 	payment-terms .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Allowances and Charges}
+% \changes{version}{date}{add the options add-charge and add-allowance.}
+% \DescribeKeyOption{add-allowance=\marg{keyval-list}}{}
+% \DescribeKeyOption{add-charge=\marg{keyval-list}{}
+% Allowances and charges can added using these options.
+% They will be applied to a sequence which is used by \cs[no-index]{zugferd_write_AllowanceCharge:} to write all contained elements.
+% The Values match the actual \XML element names. There might be alias definitions added later to simplify the usage.
+% Please be aware that any calculation has to be imlemented within your own \pkg{zugferd-invoice.sty} variant.
+% \begin{examplecode}
+% \SetZUGFeRDData{
+%	add-allowance={
+%		CalculationPercent=100,
+%		BasisAmount=50,
+%		ActualAmount=50,% could be calculated
+%		Reason=TEXT,
+%		tax/category=S,
+%		tax/rate=19
+%	},
+%	add-charge={
+%		ActualAmount=50,
+%		Reason=TEXT,
+%		tax/category=S,
+%		tax/rate=19
+%	}
+% }
+%\end{examplecode}
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{add-allowance}
+%    \begin{macrocode}
+	add-allowance .code:n = {
+		\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
+			Indicator=false,
+			#1
+		}
+	},
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{add-charge}
+%    \begin{macrocode}
+	add-charge .code:n = {
+		\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
+			Indicator=true,
+			#1
+		}
+	}
 %    \end{macrocode}
 % \end{optionenv}
 % \end{implementation}
@@ -3072,21 +3137,6 @@
 %    \begin{macrocode}
 \seq_new:N \g_@@_AllowanceCharge_seq
 
-\keys_define:nn {zugferd} {
-	add-allowance .code:n = {
-		\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
-			Indicator=false,
-			#1
-		}
-	},
-	add-charge .code:n = {
-			\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
-				Indicator=true,
-				#1
-			}
-	}
-}
-
 \clist_map_inline:nn {
 	Indicator,
 	CalculationPercent,
@@ -3129,6 +3179,9 @@
 			<ram:TypeCode>VAT</ram:TypeCode>
 		}
 		\int_incr:N \g_@@_indent_int
+%    \end{macrocode}
+% %TODO fall back to default VAT if unset?
+%    \begin{macrocode}
 			%<!-- BT-95/BT-102 -->
 			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop {CategoryCode} {tax/category}
 			%<!-- BT-96/BT-103 -->
