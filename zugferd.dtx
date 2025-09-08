@@ -1123,7 +1123,7 @@
 % \end{function}
 %
 % \begin{function}{\zugferd_write_AllowanceCharge:, \zugferd_write_AllowanceCharge:n}
-% \changes{version}{date}{Add user interface for document level allowancaes and charges}
+% \changes{v0.10-dev}{2025-09-08}{Add user interface for document level allowancaes and charges}
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_AllowanceCharge:n} \marg{key-value settings to configure allowance/charge}
 % \end{syntax}
@@ -1235,7 +1235,7 @@
 % \end{macro}
 % \begin{macro}{\zugferd_write_AllowanceCharge:}
 %    \begin{macrocode}
-\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge: \_@@_SpecifiedTradeAllowanceCharge:
+\cs_new:Nn \zugferd_write_AllowanceCharge: {\_@@_SpecifiedTradeAllowanceCharge:}
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}
@@ -1774,9 +1774,9 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Allowances and Charges}
-% \changes{version}{date}{add the options add-charge and add-allowance.}
+% \changes{v0.10-dev}{2025-09-08}{add the options add-charge and add-allowance.}
 % \DescribeKeyOption{add-allowance=\marg{keyval-list}}{}
-% \DescribeKeyOption{add-charge=\marg{keyval-list}{}
+% \DescribeKeyOption{add-charge=\marg{keyval-list}}{}
 % Allowances and charges can added using these options.
 % They will be applied to a sequence which is used by \cs[no-index]{zugferd_write_AllowanceCharge:} to write all contained elements.
 % The Values match the actual \XML element names. There might be alias definitions added later to simplify the usage.
@@ -1818,7 +1818,7 @@
 			Indicator=true,
 			#1
 		}
-	}
+	},
 %    \end{macrocode}
 % \end{optionenv}
 % \end{implementation}
@@ -3122,7 +3122,7 @@
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}
 	\int_gincr:N \g_@@_indent_int
-	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}
+	\_@@_write_inline:nn {ram:InvoiceCurrencyCode} {\l_@@_currency_tl}
 }
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {
 	\_@@_write_optional_wrapped:nnn {ReceivableSpecifiedTradeAccountingAccount} {ID} {BT-19}% BT-19
@@ -3130,9 +3130,7 @@
 	\_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}
 }
 %    \end{macrocode}
-%    \end{macrocode}
 % \changes{v0.10-dev}{2025-09-08}{Add support for document level allowances and charges as requested by \issue{55}.}
-%    \begin{macrocode}
 % SpecifiedTradeAllowanceCharge
 %    \begin{macrocode}
 \seq_new:N \g_@@_AllowanceCharge_seq
@@ -3163,7 +3161,8 @@
 	\keys_set:nn {zugferd/allowance-charge} {#1}
 	\_@@_write_xml:n {<ram:SpecifiedTradeAllowanceCharge>}
 	\int_gincr:N \g_@@_indent_int
-		\_@@_write_prop_wrapped:Nnnn \l_@@_AllowanceCharge_prop {ram:ChargeIndicator} {udt:Indicator} {Indicator}
+		\_@@_write_prop_wrapped:Nnnn \l_@@_AllowanceCharge_prop
+			{ram:ChargeIndicator} {udt:Indicator} {Indicator}
 		\clist_map_inline:nn {
 			CalculationPercent,% BT-101/BT-94
 			BasisAmount,% BT-100/BT-93
@@ -3179,13 +3178,13 @@
 			<ram:TypeCode>VAT</ram:TypeCode>
 		}
 		\int_incr:N \g_@@_indent_int
-%    \end{macrocode}
-% %TODO fall back to default VAT if unset?
-%    \begin{macrocode}
+			% TODO fall back to default VAT if unset?
 			%<!-- BT-95/BT-102 -->
-			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop {CategoryCode} {tax/category}
+			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop
+				{CategoryCode} {tax/category}
 			%<!-- BT-96/BT-103 -->
-			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop {RateApplicablePercent} {tax/rate}
+			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop
+				{RateApplicablePercent} {tax/rate}
 		\int_gdecr:N \g_@@_indent_int
 		\_@@_write_xml:n {</ram:CategoryTradeTax>}
 	\int_gdecr:N \g_@@_indent_int
@@ -3211,43 +3210,46 @@
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradePaymentTerms>}%
 }%
-%
-%
+%    \end{macrocode}
 % sums
-\_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {%
-	\bool_if:NT \g_@@_writePaymentMeans_bool {%
-		\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
-		\int_gincr:N \g_@@_indent_int%
-		\_@@_write_xml:e {%
-			<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>%
-			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
-				\_@@_write_inline:ne {ram:Information} {%
-					\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn%
+	\_@@_SpecifiedTradeSettlementPaymentMeans:nnn%
+	{%
+		\bool_if:NT \g_@@_writePaymentMeans_bool {%
+			\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
+			\int_gincr:N \g_@@_indent_int%
+			\_@@_write_xml:e {%
+				<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>%
+				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+					\_@@_write_inline:ne {ram:Information} {%
+						\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
+					}%
+				}%
+				\tl_if_blank:nF {#1#2} {%
+					<ram:PayeePartyCreditorFinancialAccount>%
+					\_@@_write_inline_i:nn {ram:IBANID} {#2}%
+					\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {\_@@_write_inline_i:nn {ram:AccountName} {#1}}
+					</ram:PayeePartyCreditorFinancialAccount>
+				}%
+				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+					\tl_if_blank:nF {#3} {%
+						<ram:PayeeSpecifiedCreditorFinancialInstitution>%
+						\_@@_write_inline_i:nn {ram:BICID} {#3}
+						</ram:PayeeSpecifiedCreditorFinancialInstitution>%
+					}%
 				}%
 			}%
-			\tl_if_blank:nF {#1#2} {%
-				<ram:PayeePartyCreditorFinancialAccount>%
-				\_@@_write_inline_i:nn {ram:IBANID} {#2}%
-				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {\_@@_write_inline_i:nn {ram:AccountName} {#1}}
-				</ram:PayeePartyCreditorFinancialAccount>
-			}%
-			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
-				\tl_if_blank:nF {#3} {%
-					<ram:PayeeSpecifiedCreditorFinancialInstitution>%
-					\_@@_write_inline_i:nn {ram:BICID} {#3}
-					</ram:PayeeSpecifiedCreditorFinancialInstitution>%
-				}%
-			}%
+			\int_gdecr:N \g_@@_indent_int%
+			\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
 		}%
-		\int_gdecr:N \g_@@_indent_int%
-		\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
 	}%
-}%
 \cctab_end:
 \cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nn {VV}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms: {
 	\bool_if:NF \g_@@_minimum_bool {
-		\_@@_SpecifiedTradePaymentTerms:VV \g_@@_payment_terms_str \g_@@_due_date_tl
+		\_@@_SpecifiedTradePaymentTerms:VV
+			\g_@@_payment_terms_str \g_@@_due_date_tl
 	}
 }
 %    \end{macrocode}
@@ -3257,7 +3259,8 @@
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
 	\tl_if_blank:VF \g_@@_payment_means_tl {
 		\_@@_SpecifiedTradeSettlementPaymentMeans:vvv
-			{g_@@_payment_account-holder_tl} {g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
+			{g_@@_payment_account-holder_tl}
+			{g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
 	}
 }
 %    \end{macrocode}
