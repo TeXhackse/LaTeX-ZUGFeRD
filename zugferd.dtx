@@ -2716,7 +2716,10 @@
 % data interface to simplify access on tax data
 %    \begin{macrocode}
 \keys_define:nn { zugferd / data / tax } {
-
+	rate .code:n = \fp_use:N \l__zugferd_tax_rate_fp,
+	category .code:n = \l__zugferd_tax_category_code_tl,
+	exemption-reason .code:n = \l__zugferd_tax_exemption_reason_tl,
+	exemption-reason-code .code:n = \l__zugferd_tax_exemption_code_tl,
 }
 %    \end{macrocode}
 % \endoptionenv
