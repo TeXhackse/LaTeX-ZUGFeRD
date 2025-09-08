@@ -3125,7 +3125,7 @@
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}
 	\int_gincr:N \g_@@_indent_int
-	\_@@_write_inline:nn {ram:InvoiceCurrencyCode} {\l_@@_currency_tl}
+	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}%
 }
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {
 	\_@@_write_optional_wrapped:nnn {ReceivableSpecifiedTradeAccountingAccount} {ID} {BT-19}% BT-19
