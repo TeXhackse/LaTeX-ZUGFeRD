@@ -1180,8 +1180,10 @@
 		} {
 			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
 		}
+		\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge: \_@@_SpecifiedTradeAllowanceCharge:
 		\cs_gset:Nn \zugferd_write_Summation:nnnnnnnn {
 			\_@@_SpecifiedTradePaymentTerms:
+
 			\_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn
 				{##1} {##2} {##3} {##4} {##5} {##6} {##7} {##8}
 		}
@@ -1194,6 +1196,7 @@
 	\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
 	\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
 	\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
+	\cs_gset_eq:NN \zugferd_write_AllowanceCharge: \prg_do_nothing:
 	\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn \use_none:nnnnnnnn
 }
 \bool_if:NTF \g_@@_write_xml_bool {
@@ -2697,19 +2700,32 @@
 }
 \cs_generate_variant:Nn \_@@_write_inline_wrapped:nnnn {nnne}
 
+\_@@_define_xml_writer:Nn \_@@_write_prop:Nnn {
+		\prop_if_in:NeT #1 {#3} {
+				\_@@_write_xml:e {
+					<ram:#2>\prop_item:Ne #1 {#3}</ram:#2>
+				}
+		}
+}
 
+\_@@_define_xml_writer:Nn \_@@_write_prop:Nn {
+	 \_@@_write_prop:Nnn #1 {#2} {#2}
+}
 
 \cctab_begin:N \g_@@_xml_cctab%
-\_@@_define_xml_writer:Nn \_@@_write_optional_wrapped:nnn {%
-	\prop_if_in:NeT \g_@@_extra_fields_prop {#3} {%
+\_@@_define_xml_writer:Nn \_@@_write_prop_wrapped:Nnnn {%
+	\prop_if_in:NeT #1 {#4} {%
 		\_@@_write_xml:e {%
-		<ram:#1>
-		\_@@_indent:<ram:#2>\prop_item:Ne \g_@@_extra_fields_prop {#3}</ram:#2>
-		</ram:#1>%
+		<#2>
+		\_@@_indent:<#3>\prop_item:Ne #1 {#4}</#3>
+		</#2>%
 		}%
 	}%
 }%
 \cctab_end:
+\_@@_define_xml_writer:Nn \_@@_write_optional_wrapped:nnn {%
+	\_@@_write_prop_wrapped:Nnnn \g_@@_extra_fields_prop {#1} {ram:#2} {ram:#3}
+}
 
 \_@@_define_xml_content:Nn \_@@_write_inline_wrapped_i:nnn {
 	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
@@ -2915,7 +2931,7 @@
 	\_@@_indent:<ram:EndDateTime>
 	\_@@_indent:n {2} <udt:DateTimeString~format="102">#2</udt:DateTimeString>
 	\_@@_indent:</ram:EndDateTime>
-     </ram:BillingSpecifiedPeriod>%
+	</ram:BillingSpecifiedPeriod>%
    }%
 }%
 \_@@_define_xml_content:Nn \_@@_SpecifiedTradeSettlementLineMonetarySummation:n {%
@@ -3034,25 +3050,98 @@
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
 }%
-%
-\cctab_begin:N \g_@@_xml_cctab%
 % ApplicableHeaderTradeSettlement
 %    \end{macrocode}
 % ApplicableHeaderTradeSettlement needs to be splitted to be used in separate parts of the tabular.
 %    \begin{macrocode}
-\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {%
-	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}%
-	\int_gincr:N \g_@@_indent_int%
-	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}%
-}%
-\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {%
+\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {
+	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}
+	\int_gincr:N \g_@@_indent_int
+	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}
+}
+\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {
 	\_@@_write_optional_wrapped:nnn {ReceivableSpecifiedTradeAccountingAccount} {ID} {BT-19}% BT-19
-	\int_gdecr:N \g_@@_indent_int%
-	\_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}%
-}%
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}
+}
+%    \end{macrocode}
+%    \end{macrocode}
+% \changes{v0.10-dev}{2025-09-08}{Add support for document level allowances and charges as requested by \issue{55}.}
+%    \begin{macrocode}
+% SpecifiedTradeAllowanceCharge
+%    \begin{macrocode}
+\seq_new:N \g_@@_AllowanceCharge_seq
+
+\keys_define:nn {zugferd} {
+	add-allowance .code:n = {
+		\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
+			Indicator=false,
+			#1
+		}
+	},
+	add-charge .code:n = {
+			\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
+				Indicator=true,
+				#1
+			}
+	}
+}
+
+\clist_map_inline:nn {
+	Indicator,
+	CalculationPercent,
+	BasisAmount,
+	ActualAmount,
+	ReasonCode,
+	Reason,
+	tax/category,
+	tax/rate,
+} {
+	\keys_define:nn {zugferd/allowance-charge} {
+		#1 .code:n 	= \prop_put:Nnn \l_@@_AllowanceCharge_prop {#1} {##1}
+	}
+}
+
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradeAllowanceCharge: {
+	\seq_map_inline:Nn \g_@@_AllowanceCharge_seq {
+		\_@@_SpecifiedTradeAllowanceCharge:n {##1}
+	}
+}
+
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradeAllowanceCharge:n {
+	\prop_clear_new:N \l_@@_AllowanceCharge_prop
+	\keys_set:nn {zugferd/allowance-charge} {#1}
+	\_@@_write_xml:n {<ram:SpecifiedTradeAllowanceCharge>}
+	\int_gincr:N \g_@@_indent_int
+		\_@@_write_prop_wrapped:Nnnn \l_@@_AllowanceCharge_prop {ram:ChargeIndicator} {udt:Indicator} {Indicator}
+		\clist_map_inline:nn {
+			CalculationPercent,% BT-101/BT-94
+			BasisAmount,% BT-100/BT-93
+			ActualAmount,% BT-99/BT-92
+			ReasonCode,% BT-105/BT-98
+			Reason% BT-104/BT-97
+		} {
+			\_@@_write_prop:Nn \l_@@_AllowanceCharge_prop {##1}
+		}
+		\_@@_write_xml:e {<ram:CategoryTradeTax>\iow_newline:
+			\_@@_xml_auto_indent:n {+1}
+			%<!-- BT-95/BT-102 -->
+			<ram:TypeCode>VAT</ram:TypeCode>
+		}
+		\int_incr:N \g_@@_indent_int
+			%<!-- BT-95/BT-102 -->
+			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop {CategoryCode} {tax/category}
+			%<!-- BT-96/BT-103 -->
+			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop {RateApplicablePercent} {tax/rate}
+		\int_gdecr:N \g_@@_indent_int
+		\_@@_write_xml:n {</ram:CategoryTradeTax>}
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:n {</ram:SpecifiedTradeAllowanceCharge>}
+}
 %    \end{macrocode}
 % SpecifiedTradePaymentTerms
 %    \begin{macrocode}
+\cctab_begin:N \g_@@_xml_cctab%
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms:nn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradePaymentTerms>}%
 	\int_gincr:N \g_@@_indent_int%
