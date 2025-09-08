@@ -2030,12 +2030,14 @@
 	%%<!-- seller BT-33 -->
 	\_@@_write_inline:nn {ram:Description} {#3}
 	\tl_if_blank:eF {#4#5} {%
-	<ram:SpecifiedLegalOrganization>
+	\_@@_xml_newline_indent:
+		<ram:SpecifiedLegalOrganization>
 	%%%<!-- seller BT-30 | buyer BT-47 -->
 	\_@@_write_inline_i:nnn {ram:ID} {~schemeID="0088"} {#4}
 	%%<!-- seller BT-28 | buyer BT-45 -->
 	\_@@_write_inline_i:nn {ram:TradingBusinessName} {#5}
-	</ram:SpecifiedLegalOrganization>
+	\_@@_xml_newline_indent:
+		</ram:SpecifiedLegalOrganization>
 	}%
 }%
 %    \end{macrocode}
@@ -3079,7 +3081,7 @@
 			\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
 				\_@@_write_inline:ne {ram:Information} {%
 					\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
-				}
+				}%
 			}%
 			\tl_if_blank:nF {#1#2} {%
 				<ram:PayeePartyCreditorFinancialAccount>%
