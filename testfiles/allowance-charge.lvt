@@ -1,0 +1,77 @@
+\input regression-test.tex\relax
+\documentclass{article}
+
+\usepackage[zugferd=false]{zugferd}
+
+\SetZUGFeRDData{
+	id=1337,
+	unit=hour,
+	tax/category=S,
+	seller/name = {peiTeX (Marei Peischl)},
+	seller/postcode = {20253},
+	seller/city ={Hamburg},
+	seller/country = DE,
+	seller/address = {Address 1},
+	seller/vatid = {DE123456789},
+	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
+	seller/email = {kontakt@peitex.de},
+	buyer/reference = {buyer-reference},
+	buyer/name = {Buyer Name},
+	buyer/postcode = {20253},
+	buyer/city ={Hamburg},
+	buyer/country = DE,
+	buyer/vatid = {DE123456789},
+	buyer/email = {invoice@example.org},
+	due-date={20240118},
+	payment-means / type = 1,
+	delivery-date=auto,
+	add-allowance={
+		CalculationPercent=100,
+		BasisAmount=50,
+		ActualAmount=50,% could be calculated
+		Reason=TEXT,
+		tax/category=S,
+		tax/rate=19
+	},
+	add-allowance={
+		ActualAmount=50,
+		ReasonCode=41,% optional
+		Reason=TEXT,
+		tax/category=S,
+		tax/rate=19
+	},
+	add-charge={
+		CalculationPercent=100,
+		BasisAmount=50,
+		ActualAmount=50,% could be calculated
+		Reason=TEXT,
+		tax/category=S,
+		tax/rate=19
+	}
+}
+
+\begin{document}
+\ExplSyntaxOn
+ 	\begin{ZUGFeRD}
+	\zugferd_write_Item:nnnnnn  {1} {} {Plushie ~ \TeX\ lion} {31.89} {2} {63.78}%special requied for space in expl3-mode
+	\zugferd_startInvoiceSums:
+	\zugferd_write_TaxEntry:nnnn {S} {19} {13.78} {2.62}
+	\zugferd_write_AllowanceCharge:
+	\zugferd_write_Summation:nnnnnnnn
+		{63.78}% LineTotalAmount
+		{50} %ChargeTotalAmount
+		{100} %AllowanceTotalAmount
+		{13.78} %TaxBasisTotalAmount
+		{2.62} %TaxTotalAmount
+		{16.40} %GrandTotalAmount
+		{0} % TotalPrepaidAmount
+		{16.40} %DuePayableAmount = GrandTotalAmount - TotalPrepaidAmount
+	\zugferd_stopInvoiceSums:
+ \end{ZUGFeRD}
+\endlinechar=10
+\char_set_catcode:nn {10}{12}%
+\START%
+\SHOWFILE{\jobname _zugferd.xml}%
+\END%
+\ExplSyntaxOff%
+\end{document}%
