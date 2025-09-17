@@ -87,7 +87,7 @@ Don't change this file in any respect.
       </ram:BuyerTradeParty>
       <ram:SpecifiedProcuringProject>
         <ram:ID>ID</ram:ID>
-        <ram:Name>Project Name with , and another\\to ensure to keep track of chages</ram:Name>
+        <ram:Name>Project Name with , and another\\to ensure to keep track of changes</ram:Name>
       </ram:SpecifiedProcuringProject>
     </ram:ApplicableHeaderTradeAgreement>
     <ram:ApplicableHeaderTradeDelivery>
@@ -129,3 +129,5 @@ Don't change this file in any respect.
   </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>
 -------- project_zugferd.xml (end) -----------
+***************
+Compilation 1 of test file completed with exit status 0

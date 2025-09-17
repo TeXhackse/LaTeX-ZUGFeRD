@@ -684,8 +684,8 @@
 % \begin{macro}{\_@@_access_data:c}
 %    \begin{macrocode}
 \bool_if:NTF \g_@@_testing_bool {
-	\cs_new:Nn \_@@_access_data:n {\tl_show:n {#1} #1}
-	\cs_new:Nn \_@@_access_data:N {\tl_show:N #1#1}
+	\cs_new:Nn \_@@_access_data:n {\tl_log:n {#1} #1}
+	\cs_new:Nn \_@@_access_data:N {\tl_log:N #1#1}
 	\cs_generate_variant:Nn \_@@_access_data:N {c}
 } {
 	\cs_set_eq:NN \_@@_access_data:c \use:c
