@@ -1,0 +1,62 @@
+\input regression-test.tex\relax
+\documentclass{article}
+
+\usepackage[zugferd=false,testing=true]{zugferd}
+
+\SetZUGFeRDData{
+	id=1337,
+	unit=hour,
+	tax/category=S,
+	seller/name = {peiTeX (Marei Peischl)},
+	seller/postcode = {20253},
+	seller/city ={Hamburg},
+	seller/country = DE,
+	seller/address = {Address 1},
+	seller/vatid = {DE123456789},
+	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
+	seller/email = {kontakt@peitex.de},
+	buyer/reference = {buyer-reference},
+	buyer/name = {Buyer Name},
+	buyer/postcode = {20253},
+	buyer/city ={Hamburg},
+	buyer/country = DE,
+	buyer/vatid = {DE123456789},
+	buyer/email = {invoice@example.org},
+	due-date={20240118},
+	payment-means / type = 58, % SEPA Übereisung,
+	payment-means / iban = DE68430609671013251700,
+	payment-means / account-holder = Marei Peischl,
+	payment-means / bic =GENODEM1GLS,
+	delivery-date=auto,
+	shipto/name = {ShipTo Name},
+	shipto/postcode = {Postcode},
+	shipto/city ={City},
+	shipto/country = AT,
+}
+
+\begin{document}
+\ExplSyntaxOn
+\cs_set:Nn \zugferd_print_address_country:n {Country:~#1}
+\START
+\keys_set:nn {zugferd/data} {payment-means / iban }
+
+\zugferd_use_AddressData_item:nn {seller} {lineone}
+
+\zugferd_use_AddressData_item:nn {seller} {contact-name}
+\OMIT
+\ExplSyntaxOff
+\TIMO
+\InsertZUGFeRDData{	payment-means / bic}
+
+\InsertZUGFeRDData[AddressData]{buyer}
+
+\InsertZUGFeRDData[AddressData]{seller}
+
+\UseZUGFeRDAddressItem{seller}{lineone}
+
+\UseZUGFeRDAddressItem{seller} {contact-name}
+
+ \InsertZUGFeRDData{tax/category}
+\END
+\ExplSyntaxOff
+\end{document}

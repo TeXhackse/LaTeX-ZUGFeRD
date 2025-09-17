@@ -1,0 +1,47 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+> \g__zugferd_payment_iban_tl=DE68430609671013251700.
+<recently read> }
+l. ......:nn {zugferd/data} {payment-means / iban }
+> Address 1.
+<recently read> }
+l. ......use_AddressData_item:nn {seller} {lineone}
+> Marei.
+<recently read> }
+l. ......ddressData_item:nn {seller} {contact-name}
+> \g__zugferd_payment_bic_tl=GENODEM1GLS.
+<recently read> }
+l. ...\InsertZUGFeRDData{^^Ipayment-means / bic}
+> Buyer Name.
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{buyer}
+> 20253.
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{buyer}
+> Hamburg.
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{buyer}
+> DE.
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{buyer}
+> peiTeX (Marei Peischl).
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{seller}
+> Address 1.
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{seller}
+> 20253.
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{seller}
+> Hamburg.
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{seller}
+> DE.
+<recently read> }
+l. ...\InsertZUGFeRDData[AddressData]{seller}
+> Address 1.
+<recently read> }
+l. ...\UseZUGFeRDAddressItem{seller}{lineone}
+> Marei.
+<recently read> }
+l. ...\UseZUGFeRDAddressItem{seller} {contact-name}
