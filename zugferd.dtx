@@ -59,7 +59,7 @@
 	\par
 	\begingroup
 	\def\PrintDescribeOption##1{
-		{\MacroFont ##1=}
+		\parbox[b]{\marginparwidth}{\raggedleft\MacroFont ##1=}
 		\rlap{
 			\hskip\marginparsep\small
 			\IfBooleanTF{#3}
@@ -111,9 +111,9 @@
 
 \newenvironment{valuelist}{
 	\list{}{
-		\labelwidth.3\linewidth
+		\labelwidth0pt
 		\itemindent0pt
-		\leftmargin.3\linewidth
+		\leftmargin0pt
 		\let\makelabel\valuelistlabel
 		\parskip\z@\itemsep\z@
 	}
@@ -617,7 +617,8 @@
 		<fx:Version>1.0</fx:Version>
 		\iow_newline:
 		% zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG
-		<fx:ConformanceLevel>\g_@@_conformance_level_str</fx:ConformanceLevel>%
+		<fx:ConformanceLevel>\g_@@_conformance_level_str%
+			</fx:ConformanceLevel>%
 		\iow_newline:
 		%
 	}
@@ -786,6 +787,7 @@
 % In contrast to set-today this is creating the date as output and keeps the change local.
 % \end{documentation}
 % \begin{implementation}
+% \begin{macro}{\zugferd_print_iso-date:n}
 %    \begin{macrocode}
 \cs_new:cn {zugferd_print_iso-date:n} {
 	{
@@ -798,7 +800,8 @@
 	}
 }
 %    \end{macrocode}
-% \begin{function}{\_@@_set_today:c}
+% \end{macro}
+% \begin{macro}{\_@@_set_today:c}
 % Auxiliary function to use a date variable within the current group to be used as \cs[no-index]{today}.
 %    \begin{macrocode}
 \cs_new:Nn \_@@_set_today:n {
@@ -811,19 +814,19 @@
 	\int_set:Nn \day {#7#8}
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 %
 % \begin{documentation}
 %
 % \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
-% \begin{macro}{\UseZUGFeRDElement}
+% \begin{function}{\UseZUGFeRDElement}
+% For all simple entries it's possible to use this expandable interface to data items.
 % \begin{syntax}
 %   \cs[no-index]{UseZUGFeRDElement}\oarg{scope l/c/g}\marg{name}
 % \end{syntax}
-% For all simple entries it's possible to use this expandable interface to data items.
 % This does not apply for the AddressData, see \cs[no-index]{UseZUGFeRDAddressItem} for an expandable way to access these.
-% \end{macro}
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
 % \begin{macro}{\UseZUGFeRDElement}
@@ -835,14 +838,15 @@
 % \end{macro}
 % \end{implementation}
 % \begin{documentation}
-% \begin{macro}{\UseZUGFeRDAddressItem}
+% \begin{function}{\UseZUGFeRDAddressItem,\zugferd_use_AddressData_item:nn}
+% Expandable command to access single items of a trade party address.
 % \begin{syntax}
 % \cs{UseZUGFeRDAddressItem}\marg{trade party (one of seller/buyer/shipto)}\marg{Item}
 % \end{syntax}
-% \end{macro}
+% \end{function}
 % \end{documentation}
 % \begin{implementation}
-% \begin{function}{\zugferd_use_AddressData_item:nn}
+% \begin{macro}{\UseZUGFeRDAddressItem,\zugferd_use_AddressData_item:nn}
 %    \begin{macrocode}
 \NewExpandableDocumentCommand{\UseZUGFeRDAddressItem}{mm}{
 	\zugferd_use_AddressData_item:nn {#1} {#2}
@@ -852,7 +856,7 @@
 		{\prop_item:cn {g_@@_#1_AddressData_prop } {#2}}
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 %
 % \begin{documentation}
@@ -970,14 +974,19 @@
 % It would check if a specific command has been defined otherwhise the address item would be used after adding the separator.
 % The separator would not be added if a specific formatting macro was found, so be aware to add it to the definition if necessary.
 % Same applies to checks for empty items.
+% \end{function}
 %
+% \DescribeMacro{\zugferd_print_AddressData:nn}
+% There also is a variant without the separator argument.
+% This one would only access the formatted value.
+%
+% \DescribeMacro{\zugferd_print_address_country:n}
 % The commands which can be (re-)defined to adjust the output are called: \cs[no-index]{zugferd_print_address_\meta{field}:n}.
 % The argument will receive the value of the element.
 % So e.g. to enable to output the country code one can use:
 % \begin{examplecode}
 %	\cs_set_nopar:Nn \zugferd_print_address_country:n {#1}
 % \end{examplecode}
-% \end{function}
 % \end{documentation}
 % \begin{implementation}
 % \begin{macro}{\zugferd_print_AddressDataSep:nnn}
@@ -985,26 +994,26 @@
 \cs_new:Nn \zugferd_print_AddressDataSep:nnn {
 	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
 		\exp_args:Nne \use:c {zugferd_print_address_#2:n}
-			{\UseZUGFeRDAddressItem{#1}{#2}}
+			{\zugferd_use_AddressData_item:nn {#1}{#2}}
 	} {
 %    \end{macrocode}
 % Add line break before item to avoid issues using the newline at the end of a paragraph.
 %    \begin{macrocode}
 		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {#2} {
 			#3
-			\UseZUGFeRDAddressItem{#1}{#2}
+			\zugferd_use_AddressData_item:nn {#1}{#2}
 		}
 	}
 }
 %    \end{macrocode}
 % \end{macro}
-% \begin{function}{\zugferd_print_AddressData:nn}
+% \begin{macro}{\zugferd_print_AddressData:nn}
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_print_AddressData:nn {
 	\zugferd_print_AddressDataSep:nnn {#1} {#2} {}
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 % \begin{documentation}
 % \begin{function}{\zugferd_print_AddressData:n}
@@ -1013,7 +1022,7 @@
 % \marg{type (one of seller/buyer/shipto)}
 % \end{syntax}
 % Used by the \option{AddressData} option of \cs[no-index]{InsertZUGFeRDData}.
-% It uses  \cs[no-index]{zugferd_print_AddressData:n} to print the name and would be followed by the
+% It uses  \cs[no-index]{zugferd_print_AddressData:nn} to print the name and would be followed by the
 % entries |lineone|, |linetwo|, |linethree|, |postcode|, |city| and |country|.
 % These entries would use  \cs[no-index]{zugferd_print_AddressDataSep:nnn} using |\\| as a separator in case the following entry has been set.
 % |\\| is used instead of a more specific command to allow template developers to redefine it locally.
@@ -1026,7 +1035,14 @@
 %    \begin{macrocode}
 \cs_new:Nn \zugferd_print_AddressData:n {
 	\zugferd_print_AddressData:nn {#1} {name}
-	\clist_map_inline:nn {lineone, linetwo, linethree, postcode, city, country} {
+	\clist_map_inline:nn {
+		lineone,
+		linetwo,
+		linethree,
+		postcode,
+		city,
+		country
+	} {
 		\zugferd_print_AddressDataSep:nnn {#1} {##1} {\\}
 	}
 }
@@ -1142,7 +1158,7 @@
 % \end{syntax}
 % The command to write allowances or charges exists in two variants.
 % \cs[no-index]{zugferd_write_AllowanceCharge:n} takes an argument with the values, whereas \cs[no-index]{zugferd_write_AllowanceCharge:} iterates over the sequence configured by \option{add-allowance} and \option{add-charge}.
-% Examples can be found within the corresponding testfile \TestFiles{allowance-charge.lvt}.
+% Examples can be found within the corresponding testfile \file{allowance-charge.lvt}.
 % \end{function}
 %
 % \begin{function}{\zugferd_write_Summation:nnnnnnnn}
@@ -1199,9 +1215,10 @@
 			\_@@_ApplicableHeaderTradeSettlement_stop:
 		}
 		\bool_if:NTF \g_@@_minimum_bool {
-			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn  \use_none:nnnn
+			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
 		} {
-			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
+			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn
+				\_@@_ApplicableTradeTax:nnnn
 		}
 		\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge:n
 			\_@@_SpecifiedTradeAllowanceCharge:n
@@ -1646,7 +1663,7 @@
 % \DescribeKeyOption[BT-3]{document-type=\meta{type}}{commercial-invoice}
 % Select the document type. Since \version{0.9c} \pkg{zugferd} supports the following types:
 % \changes{v0.9c}{2024-12-08}{Add support for other invoice types.}
-% \begin{valuelist}
+% \begin{valuelist}\setlength{\leftskip}{.5\linewidth}
 % \item[commercial-invoice] 380
 % \item[partial-invoice] 326
 % \item[corrected-invoice] 384
@@ -1810,8 +1827,8 @@
 % \begin{documentation}
 % \subsubsection{Allowances and Charges}
 % \changes{v0.10-dev}{2025-09-08}{add the options add-charge and add-allowance.}
-% \DescribeKeyOption{add-allowance=\marg{keyval-list}}{}
-% \DescribeKeyOption{add-charge=\marg{keyval-list}}{}
+% \DescribeKeyOption[BT-92,BT-93,BT-94,BT-97,BT-98]{add-allowance=\marg{keyval-list}}{}
+% \DescribeKeyOption[BT-99,BT-100,BT-101,BT-104,BT-105]{add-charge=\marg{keyval-list}}{}
 % Allowances and charges can added using these options.
 % They will be applied to a sequence which is used by \cs[no-index]{zugferd_write_AllowanceCharge:} to write all contained elements.
 % The Values match the actual \XML element names. There might be alias definitions added later to simplify the usage.
@@ -2195,7 +2212,9 @@
 	}%
 }%
 \cctab_end:
-\cs_new:Nn \_@@_TaxRegistration:Nnn { \_@@_TaxRegistration:nn {\prop_item:Nn #1 {#2}} {\prop_item:Nn #1 {#3}}}
+\cs_new:Nn \_@@_TaxRegistration:Nnn {
+	\_@@_TaxRegistration:nn {\prop_item:Nn #1 {#2}} {\prop_item:Nn #1 {#3}}
+}
 %    \end{macrocode}
 % \end{macro}
 % Contact data phone/email to a specific contact person
@@ -2264,8 +2283,9 @@
 }
 
 \cctab_begin:N \g_@@_xml_cctab%
-%
+%    \end{macrocode}
 % delivery date
+%    \begin{macrocode}
 \_@@_define_xml_content:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
 	\bool_lazy_and:nnF {\prop_if_empty_p:N \g_@@_shipto_AddressData_prop}%
 			{\tl_if_blank_p:n {#1}}%
@@ -3116,7 +3136,7 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{implementation}
-% \begin{function}{ \_@@_insert_TradeLineItem:nnnnnn,\@@_write_TradeLineItem:nnnnnn}
+% \begin{macro}{ \_@@_insert_TradeLineItem:nnnnnn,\@@_write_TradeLineItem:nnnnnn}
 % Writing an invoice item using the helper commands defined before, to the \XMLfile.
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_insert_TradeLineItem:nnnnnn {
@@ -3143,10 +3163,11 @@
 	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
 }
 %    \end{macrocode}
-% \end{function}
+% \end{macro}
 % \end{implementation}
 % \begin{implementation}
 % ApplicableHeaderTradeSettlement
+% \begin{macro}{\_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn}
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
 	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
@@ -3167,6 +3188,10 @@
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
 }%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\_@@_ApplicableTradeTax:nnnn}
+%    \begin{macrocode}
 % ApplicableTradeTax CategoryCode Rate BaseAmount Result
 \_@@_define_xml_writer:Nn \_@@_ApplicableTradeTax:nnnn {%
 	\_@@_write_xml:n {<ram:ApplicableTradeTax>}
@@ -3203,9 +3228,10 @@
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
 }%
-% ApplicableHeaderTradeSettlement
 %    \end{macrocode}
+% \end{macro}
 % ApplicableHeaderTradeSettlement needs to be splitted to be used in separate parts of the tabular.
+% \begin{macro}{\_@@_ApplicableHeaderTradeSettlement_start:,\_@@_ApplicableHeaderTradeSettlement_stop:}
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}
@@ -3220,6 +3246,7 @@
 	\_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}
 }
 %    \end{macrocode}
+% \end{macro}
 % \changes{v0.10-dev}{2025-09-08}{Add support for document level allowances and charges as requested by \issue{55}.}
 % SpecifiedTradeAllowanceCharge
 %    \begin{macrocode}
