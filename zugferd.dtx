@@ -1757,6 +1757,25 @@
 % \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
+% \DescribeKeyOption*[BT-73]{item/start-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption*[BT-74]{item/end-date=\meta{date formatted as YYYYMMDD}}{}*
+% With version \version{0.10} support for a invoice wide |BillingSpecifiedPeriod| was added.
+% This supports setting |start-date| and |end-date| for the whole invoice in contrast to setting it for each item.
+% As this is optional, there is no default.
+% The element will be printed if both dates are set, as setting a single one will enforce the element to be invalid.
+% This element should be set as all the other dates (see \autoref{sec:dates}).
+% \end{documentation}
+% \begin{implementation}
+% \optionenv{start-date,end-date}
+%    \begin{macrocode}
+	start-date .tl_gset:N = \g_@@_start_date_tl,
+	start-date .initial:n =,
+	end-date .tl_gset:N = \g_@@_end_date_tl,
+	end-date .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
 % \subsubsection{Payment terms}
 % \DescribeKeyOption[BT-20]{payment-terms=\meta{string}}{}
 % One option to set payment terms is the \option{due-date} mentioned before.
@@ -2764,12 +2783,13 @@
 % This element should be set as all the other dates (see \autoref{sec:dates}).
 % \end{documentation}
 % \begin{implementation}
+% \changes{version}{date}{Bugfix: set start-date only locally}
 % \optionenv{start-date,end-date}
 %    \begin{macrocode}
 \keys_define:nn { zugferd / item } {
-	start-date .tl_gset:N = \l_@@_start_date_tl,
+	start-date .tl_set:N = \l_@@_start_date_tl,
 	start-date .initial:n =,
-	end-date .tl_gset:N = \l_@@_end_date_tl,
+	end-date .tl_set:N = \l_@@_end_date_tl,
 	end-date .initial:n =,
 }%
 %    \end{macrocode}
@@ -3033,12 +3053,12 @@
 }%
 \_@@_define_xml_content:Nn \_@@_BillingSpecifiedPeriod:nn {%
 	\bool_lazy_or:nnF {\tl_if_blank_p:n {#1}} {\tl_if_blank_p:n {#2}} {%
-	<ram:BillingSpecifiedPeriod>
-	%<!-- BT-134 -->
+	<ram:BillingSpecifiedPeriod>%
+	%<!-- BT-134 -- BT-73 -->
 	\_@@_indent:<ram:StartDateTime>
 	\_@@_indent:n {2} <udt:DateTimeString~format="102">#1</udt:DateTimeString>
-	\_@@_indent:</ram:StartDateTime>
-	%<!-- BT-135 -->
+	\_@@_indent:</ram:StartDateTime>%
+	%<!-- BT-135 -- BT-74 -->
 	\_@@_indent:<ram:EndDateTime>
 	\_@@_indent:n {2} <udt:DateTimeString~format="102">#2</udt:DateTimeString>
 	\_@@_indent:</ram:EndDateTime>
@@ -3241,6 +3261,7 @@
 %    \begin{macrocode}
 \cctab_begin:N \g_@@_xml_cctab%
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms:nn {%
+	\_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \g_@@_start_date_tl \g_@@_end_date_tl}%
 	\_@@_write_xml:n {<ram:SpecifiedTradePaymentTerms>}%
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {%
