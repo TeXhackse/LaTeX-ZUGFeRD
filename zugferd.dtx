@@ -74,7 +74,13 @@
 			{#2}
 			{(default:~\codefont{#2})}
 	}\strut
-	\tl_if_blank:VF \l_ptxtools_BTkey_tl {\rlap{\qquad\l_ptxtools_BTkey_tl}}
+	\seq_if_empty:NF \l_ptxtools_BTkey_seq {
+	\rlap{\qquad\int_compare:nNnTF {\seq_count:N \l_ptxtools_BTkey_seq} = 1 {\seq_use:Nn \l_ptxtools_BTkey_seq {,}\seq_gclear:N \l_ptxtools_BTkey_seq} {BT-\meta{n}}}
+	}
+	\seq_if_empty:NF \l_ptxtools_BTkey_seq {
+		\par\strut\hfill
+		\seq_use:Nn \l_ptxtools_BTkey_seq {,~}
+	}
 	\par
 	\endgroup
 }
@@ -84,10 +90,10 @@
 }
 
 \bool_new:N \l_ptxtools_last_was_describe_bool
-\tl_new:N \l_ptxtools_BTkey_tl
+\seq_new:N \l_ptxtools_BTkey_seq
 
 \NewDocumentCommand{\DescribeKeyOption}{sO{}mms}{
-	\tl_set:Nn \l_ptxtools_BTkey_tl {#2}
+	\seq_set_from_clist:Nn \l_ptxtools_BTkey_seq {#2}
 	\bool_if:NTF \l_ptxtools_last_was_describe_bool {
 		\vskip -\lastskip
 	}{
@@ -105,16 +111,17 @@
 
 \newenvironment{valuelist}{
 	\list{}{
-		\labelwidth0pt
+		\labelwidth.3\linewidth
 		\itemindent0pt
-		\leftmargin0pt
+		\leftmargin.3\linewidth
 		\let\makelabel\valuelistlabel
+		\parskip\z@\itemsep\z@
 	}
 }{
 	\endlist
 }
 \newcommand*\valuelistlabel[1]{
-	\llap{
+	\makebox[\labelwidth][r]{
 		\normalfont\codefamily\color_select:n {black!60}
 		\begin{tabular}[t]{@{}r@{}}
 			\clist_use:nn {#1} {\\}
