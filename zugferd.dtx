@@ -26,7 +26,8 @@
 	pdfversion=1.7,
 	lang=en
 }
-\documentclass[lm-default=false,cs-break-nohyphen]{l3doc}
+\documentclass[english,lm-default=false,cs-break-nohyphen]{l3doc}
+\usepackage{babel}
 \usepackage{zugferd}[2025-07-01]
 \EnableCrossrefs
 %\CodelineIndex
@@ -809,13 +810,13 @@
 % \begin{documentation}
 %
 % \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
-% \begin{function}{\UseZUGFeRDElement}
+% \begin{macro}{\UseZUGFeRDElement}
 % \begin{syntax}
 %   \cs[no-index]{UseZUGFeRDElement}\oarg{scope l/c/g}\marg{name}
 % \end{syntax}
 % For all simple entries it's possible to use this expandable interface to data items.
 % This does not apply for the AddressData, see \cs[no-index]{UseZUGFeRDAddressItem} for an expandable way to access these.
-% \end{function}
+% \end{macro}
 % \end{documentation}
 % \begin{implementation}
 % \begin{macro}{\UseZUGFeRDElement}
@@ -827,11 +828,11 @@
 % \end{macro}
 % \end{implementation}
 % \begin{documentation}
-% \begin{function}{\UseZUGFeRDAddressItem}
+% \begin{macro}{\UseZUGFeRDAddressItem}
 % \begin{syntax}
 % \cs{UseZUGFeRDAddressItem}\marg{trade party (one of seller/buyer/shipto)}\marg{Item}
 % \end{syntax}
-% \end{function}
+% \end{macro}
 % \end{documentation}
 % \begin{implementation}
 % \begin{function}{\zugferd_use_AddressData_item:nn}
@@ -1962,7 +1963,7 @@
 % The two letter country codes allowed here can be found in \cite{country-codes}.
 %
 % % \DescribeKeyOption*{\meta{party}/contact=\meta{Combined contact data}}{}*
-% The contact person can either be set using the combined structure similar to \option{\meta{party}/address}.
+% The contact person can either be set using the combined structure similar to \option{\meta{party}/\allowbreak address}.
 % It either consists of 3 or 4 entries, depending on if a department should be used or not.
 %
 % \begin{examplecode}
@@ -2205,55 +2206,56 @@
 		\_@@_write_inline_wrapped_i:nnn
 			{ram:EmailURIUniversalCommunication} {ram:URIID} {#4}
 		\_@@_xml_newline_indent:
-			</ram:DefinedTradeContact>%
-	}%
-}%
-%
-\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeAgreement: {%
-	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}%
-	\int_gincr:N \g_@@_indent_int%
-	\bool_lazy_and:nnF%
-		{\tl_if_blank_p:V \g_@@_buyer_reference_tl}%
-		{\g_@@_minimum_bool}%
-	{%
-		\_@@_write_xml:e {%
+			</ram:DefinedTradeContact>
+	}
+}
+
+\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeAgreement: {
+	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}
+	\int_gincr:N \g_@@_indent_int
+	\bool_lazy_and:nnF
+		{\tl_if_blank_p:V \g_@@_buyer_reference_tl}
+		{\g_@@_minimum_bool}
+	{
+		\_@@_write_xml:e {
 			<ram:BuyerReference>\g_@@_buyer_reference_tl</ram:BuyerReference>
-		}%
-	}%
-	\_@@_write_xml:n {<ram:SellerTradeParty>}%
-	\int_gincr:N \g_@@_indent_int%
-	\_@@_write_xml:e {%
+		}
+	}
+	\_@@_write_xml:n {<ram:SellerTradeParty>}
+	\int_gincr:N \g_@@_indent_int
+	\_@@_write_xml:e {
 		\_@@_TradePartyIdentity:N \g_@@_seller_AddressData_prop
-		\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop%
-		\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop%
-	}%
-	\int_gdecr:N \g_@@_indent_int%
-	\_@@_write_xml:e {%
+		\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop
+		\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop
+	}
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:e {
 		</ram:SellerTradeParty>
 		\_@@_xml_newline_indent:
-		<ram:BuyerTradeParty>%
-	}%
-	\int_gincr:N \g_@@_indent_int%
-	\_@@_write_xml:e {%
+		<ram:BuyerTradeParty>
+	}
+	\int_gincr:N \g_@@_indent_int
+	\_@@_write_xml:e {
 		\_@@_TradePartyIdentity:N \g_@@_buyer_AddressData_prop
 		\bool_if:NF \g_@@_minimum_bool {
-			\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop%
-			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop%
+			\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop
+			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop
 		}%
 	}%
-	\int_gdecr:N \g_@@_indent_int%
-	\_@@_write_xml:n {</ram:BuyerTradeParty>}%
-	\clist_map_inline:nn {SellerOrder,BuyerOrder,Contract} {%
-		\_@@_write_ReferencedDocument:n {##1}%
-	}%
-	\_@@_write_keyval:Nnn \g__zugferd_extra_fields_prop {SpecifiedProcuringProject} {BT-11}
-	\int_gdecr:N \g_@@_indent_int%
-	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}%
-	\bool_if:NTF \g_@@_minimum_bool%
-		{\_@@_write_xml:n {<ram:ApplicableHeaderTradeDelivery/>}}%
-		{\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl}%
-}%
-%
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:n {</ram:BuyerTradeParty>}
+	\clist_map_inline:nn {SellerOrder,BuyerOrder,Contract} {
+		\_@@_write_ReferencedDocument:n {##1}
+	}
+	\_@@_write_keyval:Nnn \g_@@_extra_fields_prop
+		{SpecifiedProcuringProject} {BT-11}
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}
+	\bool_if:NTF \g_@@_minimum_bool
+		{\_@@_write_xml:n {<ram:ApplicableHeaderTradeDelivery/>}}
+		{\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl}
+}
+
 \cctab_begin:N \g_@@_xml_cctab%
 %
 % delivery date
@@ -2344,10 +2346,10 @@
 % \begin{documentation}
 % \subsubsection{Project Reference}
 % \changes{version}{date}{Add support for project reference}
-% \DescribeKeyOption*[BT-11]{project=\meta{Project ID}\\\meta{name}}{}
+% \DescribeKeyOption*[BT-11]{project=\meta{Project ID}\string\\\meta{name}}{}
 % The project reference consits of two two entries |id| and |name|.
 % As both are required most implementations use \enquote{Project Reference} for the name entry.
-% \pkg{zugferd also uses this as a default if only one value was provided within \option{project}.
+% \pkg{zugferd} also uses this as a default if only one value was provided within \option{project}.
 %
 % Please be aware, that the first |\\| is used to separate ID and name, following ones will be part of the name.
 % In case none is found the text |Project~Reference| will be used as the name may not be empty.
