@@ -132,13 +132,13 @@
 		\bool_if:NF \g__codedoc_typeset_implementation_bool {#1}
 	}
 }
-%add a subtitle
+% add a subtitle
 \def\@maketitle{%
   \newpage
   \null
   \vskip 2em%
   \begin{center}%
-  \let \footnote \thanks
+    \let \footnote \thanks
     {\LARGE \@title \par}%
     \vskip 1.5em%
     {\large \@subtitle \par}%
@@ -254,6 +254,12 @@
 }
 \newcommand*{\version}[1]{v#1}
 
+\ExplSyntaxOn
+\DoNotIndex{today,\bool_new:N,\bool_new:N,\str_gset:Nn,\newcommand,\newenvironment,\jobname,\def,\begin,\begingroup,
+\let,\SetZugferdData,\today,\str_new:N,\keys,\tl_new:N,\str_gset:Nn,\bool_gset_false:N,\keys_set:nn,\tl_gset:Nn,
+\char_set_catcode_parameter:N,\cs_if_exist:NTF,\iow_new:N,\pdfmeta_xmp_xmlns_new:nn,
+\msg_new:nnnn,\msg_new:nnn,\keys_define:nn,\char_set_catcode_other:N,\bool_gset_true:N,\c_hash_str,\pdfmeta_xmp_property_new:nnnnn,\iow_newline:,\bool_if:NTF}
+\ExplSyntaxOff
 
 \begin{document}
 \EnableDocumentation\DisableImplementation
@@ -274,7 +280,6 @@
 %
 % \GetFileInfo{zugferd.dtx}
 %
-% \DoNotIndex{\newcommand,\newenvironment}
 % \begin{documentation}
 % \title{The \pkg{zugferd} package\thanks{This document
 %   corresponds to \textsf{zugferd}~\fileversion, dated \filedate.}}
@@ -685,7 +690,7 @@
 %    \begin{macrocode}
 \bool_if:NTF \g_@@_testing_bool {
 	\cs_new:Nn \_@@_access_data:n {\tl_log:n {#1} #1}
-	\cs_new:Nn \_@@_access_data:N {\tl_log:N #1#1}
+	\cs_new:Nn \_@@_access_data:N {\tl_log:N #1 #1}
 	\cs_generate_variant:Nn \_@@_access_data:N {c}
 } {
 	\cs_set_eq:NN \_@@_access_data:c \use:c
@@ -1066,8 +1071,8 @@
 % \cs[no-index]{zugferd_write_Item:nnnnn}
 %    \marg{LineID}\marg{optional: item id (\enquote{SellerAssignedID})}\marg{item name}
 %    \marg{NetPriceProductTradePrice}
-%		\marg{BilledQuantity}
-%               \marg{LineTotalAmount}
+%    \marg{BilledQuantity}
+%    \marg{LineTotalAmount}
 % \end{syntax}
 % Within the product name macros are disabled using \cs[no-index]{zugferd_disable_macros:}, see \autoref{sec:disable_macros}.
 %
@@ -1091,11 +1096,11 @@
 % This is grouping the command and adding an argument in front to add additional options.
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_Item:nnnnnnn}
-%    \marg{additional local options}
-%    \marg{LineID}\marg{optional: item id (\enquote{SellerAssignedID})}\marg{item name}
-%    \marg{NetPriceProductTradePrice}
-%		\marg{BilledQuantity}
-%               \marg{LineTotalAmount}
+%   \marg{additional local options}
+%   \marg{LineID}\marg{optional: item id (\enquote{SellerAssignedID})}\marg{item name}
+%   \marg{NetPriceProductTradePrice}
+%   \marg{BilledQuantity}
+%   \marg{LineTotalAmount}
 % \end{syntax}
 % The example above could then be replaced by
 % \begin{examplecode}
@@ -1190,7 +1195,8 @@
 		} {
 			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \_@@_ApplicableTradeTax:nnnn
 		}
-		\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge:n \_@@_SpecifiedTradeAllowanceCharge:n
+		\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge:n
+			\_@@_SpecifiedTradeAllowanceCharge:n
 		\cs_gset:Nn \zugferd_write_Summation:nnnnnnnn {
 			\_@@_SpecifiedTradePaymentTerms:
 
@@ -1235,7 +1241,9 @@
 % \end{macro}
 % \begin{macro}{\zugferd_write_AllowanceCharge:}
 %    \begin{macrocode}
-\cs_new:Nn \zugferd_write_AllowanceCharge: {\_@@_SpecifiedTradeAllowanceCharge:}
+\cs_new:Nn \zugferd_write_AllowanceCharge: {
+	\_@@_SpecifiedTradeAllowanceCharge:
+}
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}
@@ -1623,7 +1631,7 @@
 % \begin{implementation}
 %    \begin{macrocode}
 \keys_define:nn { zugferd } {
-%TODO define others
+% TODO define others
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
@@ -1766,7 +1774,7 @@
 % This element should be set as all the other dates (see \autoref{sec:dates}).
 % \end{documentation}
 % \begin{implementation}
-% \optionenv{start-date,end-date}
+% \begin{optionenv}{start-date,end-date}
 %    \begin{macrocode}
 	start-date .tl_gset:N = \g_@@_start_date_tl,
 	start-date .initial:n =,
@@ -2064,7 +2072,8 @@
 }
 \cs_new:Nn \_@@_PostalTradeAddress_short:N {
 	\exp_args:Ne \tl_if_blank:nF {\prop_item:Nn #1 {name}}
-	{<ram:Name>\prop_item:Nn #1 {name}</ram:Name>\iow_newline:\_@@_xml_auto_indent:}
+	{<ram:Name>\prop_item:Nn #1 {name}</ram:Name>
+		\iow_newline:\_@@_xml_auto_indent:}
 	\_@@_PostalTradeAddress:eeeeeee
 		{\prop_item:Nn #1 {postcode}}
 		{\prop_item:Nn #1 {lineone}}
@@ -2084,7 +2093,7 @@
 		{\prop_item:Nn #1 {country}}
 		{\prop_item:Nn #1 {subdivision}}
 	\_@@_UniversalCommunication:n {\prop_item:Nn #1 {email}}
-	\_@@_TaxRegistration:nn {\prop_item:Nn #1 {vatid}} {\prop_item:Nn #1 {taxid}}
+	\_@@_TaxRegistration:Nnn #1 {vatid} {taxid}
 }%
 \cs_new:Nn \_@@_DefinedTradeContact:N {%
 	\_@@_DefinedTradeContact:eeee
@@ -2177,15 +2186,16 @@
 		</ram:SpecifiedTaxRegistration>%
 	}%
 }%
+\cctab_end:
+\cs_new:Nn \_@@_TaxRegistration:Nnn { \_@@_TaxRegistration:nn {\prop_item:Nn #1 {#2}} {\prop_item:Nn #1 {#3}}}
 %    \end{macrocode}
 % \end{macro}
 % Contact data phone/email to a specific contact person
 %    \begin{macrocode}
-\cctab_end:
 \_@@_define_xml_content:Nn \_@@_DefinedTradeContact:nnnn {%
 	% Do not print if name is empty
-	\tl_if_blank:nT {#1} {\use_none:nnn} %
-	\bool_if:NT \g_@@_writeTradeContact_bool {%
+	\tl_if_blank:eT {#1} {\use_none:nnn}
+	\bool_if:NT \g_@@_writeTradeContact_bool {
 		\_@@_xml_newline_indent:
 		<ram:DefinedTradeContact>
 		\_@@_write_inline_i:nn {ram:PersonName} {#1}
@@ -2489,7 +2499,8 @@
 	\prop_if_empty:cT {g_@@_payment-means_names_prop} {
 		\exp_args:Nne \setupZUGFeRDStrings{payment-means}{
 			\use:c {zugferd@paymentMeans@
-				\cs_if_exist:cTF {zugferd@paymentMeans@\languagename} {\languagename} {english}
+				\cs_if_exist:cTF {zugferd@paymentMeans@\languagename}
+					{\languagename} {english}
 			}
 		}
 	}
@@ -2759,16 +2770,17 @@
 			\l_keys_key_str = \exp_not:V \l_keys_value_tl
 		}
 	},
-	unknown .code:n = \keys_set:ne {zugferd} { \l_keys_key_str = \exp_not:V \l_keys_value_tl}
+	unknown .code:n = \keys_set:ne {zugferd}
+		{ \l_keys_key_str = \exp_not:V \l_keys_value_tl}
 }
 %    \end{macrocode}
 % data interface to simplify access on tax data
 %    \begin{macrocode}
 \keys_define:nn { zugferd / data / tax } {
-	rate .code:n = \fp_use:N \l__zugferd_tax_rate_fp,
-	category .code:n = \l__zugferd_tax_category_code_tl,
-	exemption-reason .code:n = \l__zugferd_tax_exemption_reason_tl,
-	exemption-reason-code .code:n = \l__zugferd_tax_exemption_code_tl,
+	rate .code:n = \fp_use:N \l_@@_tax_rate_fp,
+	category .code:n = \l_@@_tax_category_code_tl,
+	exemption-reason .code:n = \l_@@_tax_exemption_reason_tl,
+	exemption-reason-code .code:n = \l_@@_tax_exemption_code_tl,
 }
 %    \end{macrocode}
 % \endoptionenv
@@ -2842,7 +2854,8 @@
 }%
 \cctab_end:
 \_@@_define_xml_writer:Nn \_@@_write_optional_wrapped:nnn {%
-	\_@@_write_prop_wrapped:Nnnn \g_@@_extra_fields_prop {ram:#1} {ram:#2} {#3}
+	\_@@_write_prop_wrapped:Nnnn \g_@@_extra_fields_prop
+		{ram:#1} {ram:#2} {#3}
 }
 
 \_@@_define_xml_content:Nn \_@@_write_inline_wrapped_i:nnn {
@@ -2861,13 +2874,13 @@
 	\_@@_write_inline_i:nnn {#1} {} {#2}
 }
 
-\__zugferd_define_xml_writer:Nn \__zugferd_write_keyval:Nnn {
+\_@@_define_xml_writer:Nn \_@@_write_keyval:Nnn {
 	\prop_if_in:NeT #1 {#3} {
-		\__zugferd_write_xml:e {
+		\_@@_write_xml:e {
 			<ram:#2>
 			\exp_args:Nnne \keyval_parse:nnn {\use_none:n} {
-				\__zugferd_write_inline_i:nn
-			} {\prop_item:Ne \g__zugferd_extra_fields_prop {#3}}
+				\_@@_write_inline_i:nn
+			} {\prop_item:Ne \g_@@_extra_fields_prop {#3}}
 			\_@@_xml_newline_indent:
 			</ram:#2>
 		}
@@ -3136,7 +3149,8 @@
 		\_@@_write_rounded:nnn {2} {AllowanceTotalAmount} {#3}
 	}
 	\_@@_write_rounded:nnn {2} {TaxBasisTotalAmount} {#4}
-	\_@@_write_rounded:nnnn {2} {TaxTotalAmount} {~currencyID="\l_@@_currency_tl "} {#5}
+	\_@@_write_rounded:nnnn {2} {TaxTotalAmount}
+		{~currencyID="\l_@@_currency_tl "} {#5}
 	\_@@_write_rounded:nnn {2} {GrandTotalAmount} {#6}
 	\bool_if:NF \g_@@_minimum_bool {
 		\_@@_write_rounded:nnn {2} {TotalPrepaidAmount} {#7}
@@ -3188,7 +3202,9 @@
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}
 	\int_gincr:N \g_@@_indent_int
-	\_@@_write_xml:e {<ram:InvoiceCurrencyCode>\l_@@_currency_tl</ram:InvoiceCurrencyCode>}%
+	\_@@_write_xml:e {
+		\_@@_write_inline:ne {ram:InvoiceCurrencyCode} {\l_@@_currency_tl}
+	}
 }
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {
 	\_@@_write_optional_wrapped:nnn {ReceivableSpecifiedTradeAccountingAccount} {ID} {BT-19}% BT-19
@@ -3293,10 +3309,12 @@
 						\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
 					}%
 				}%
-				\tl_if_blank:nF {#1#2} {%
+				\tl_if_blank:nF {#1#2} {
 					<ram:PayeePartyCreditorFinancialAccount>%
 					\_@@_write_inline_i:nn {ram:IBANID} {#2}%
-					\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {\_@@_write_inline_i:nn {ram:AccountName} {#1}}
+					\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+						\_@@_write_inline_i:nn {ram:AccountName} {#1}
+					}%
 					</ram:PayeePartyCreditorFinancialAccount>
 				}%
 				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
