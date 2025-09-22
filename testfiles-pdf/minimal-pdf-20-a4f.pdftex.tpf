@@ -12,8 +12,8 @@ endobj
 endobj
 7 0 obj
 <<
-/Subtype /application#2Fxml/Type /EmbeddedFile /Params<</ModDate (D:20241114194206Z) /Size 6093 /CheckSum (0959D45E97A032A39778C798B9AA6E34) >>
-/Length 6093      
+/Subtype /application#2Fxml/Type /EmbeddedFile /Params<</ModDate (D:20241114194206Z) /Size 6007 /CheckSum <F4594D710A949C86165959CF5519A915> >>
+/Length 6007      
 >>
 stream
 <?xml version='1.0' encoding='UTF-8' ?>
@@ -72,7 +72,8 @@ stream
           <ram:EmailURIUniversalCommunication>
             <ram:URIID>marei@peitex.de</ram:URIID>
           </ram:EmailURIUniversalCommunication>
-        </ram:DefinedTradeContact><ram:PostalTradeAddress>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
           <ram:PostcodeCode>20253</ram:PostcodeCode>
           <ram:LineOne>Address 1</ram:LineOne>
           <ram:CityName>Hamburg</ram:CityName>
@@ -146,7 +147,7 @@ endobj
 9 0 obj
 <<
 /Type /Metadata /Subtype /XML
-/Length 13818     
+/Length 13084     
 >>
 stream
 <?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
@@ -163,7 +164,6 @@ stream
     xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/"
     xmlns:pdfuaid="http://www.aiim.org/pdfua/ns/id/"
     xmlns:pdfx="http://ns.adobe.com/pdfx/1.3/"
-    xmlns:pdfxid="http://www.npes.org/pdfx/ns/id/"
     xmlns:prism="http://prismstandard.org/namespaces/basic/3.0/"
     xmlns:stFnt="http://ns.adobe.com/xap/1.0/sType/Font#"
     xmlns:Iptc4xmpCore="http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/"
@@ -228,21 +228,6 @@ stream
          <pdfaProperty:valueType>Integer</pdfaProperty:valueType>
          <pdfaProperty:category>internal</pdfaProperty:category>
          <pdfaProperty:description>Revision of ISO 14289 standard</pdfaProperty:description>
-        </rdf:li>
-       </rdf:Seq>
-      </pdfaSchema:property>
-     </rdf:li>
-     <rdf:li rdf:parseType="Resource">
-      <pdfaSchema:schema>PDF/X ID Schema</pdfaSchema:schema>
-      <pdfaSchema:prefix>pdfxid</pdfaSchema:prefix>
-      <pdfaSchema:namespaceURI>http://www.npes.org/pdfx/ns/id/</pdfaSchema:namespaceURI>
-      <pdfaSchema:property>
-       <rdf:Seq>
-        <rdf:li rdf:parseType="Resource">
-         <pdfaProperty:name>GTS_PDFXVersion</pdfaProperty:name>
-         <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-         <pdfaProperty:category>internal</pdfaProperty:category>
-         <pdfaProperty:description>ID of PDF/X standard</pdfaProperty:description>
         </rdf:li>
        </rdf:Seq>
       </pdfaSchema:property>
@@ -430,7 +415,7 @@ stream
 0 g 0 G
 0 g 0 G
 BT
-/F37 9.9626 Tf 148.712 657.235 Td [(test)]TJ
+/F41 9.9626 Tf 148.712 657.235 Td [(test)]TJ
 0 g 0 G
  154.422 -567.87 Td [(1)]TJ
 0 g 0 G
@@ -449,7 +434,7 @@ endobj
 10 0 obj
 <<
 /ExtGState 1 0 R 
-/Font << /F37 13 0 R >>
+/Font << /F41 13 0 R >>
 >>
 endobj
 1 0 obj
@@ -677,34 +662,34 @@ endobj
 xref
 0 25
 0000000002 65535 f 
-0000024340 00000 n 
+0000023520 00000 n 
 0000000003 00000 f 
 0000000004 00000 f 
 0000000000 00000 f 
 0000000015 00000 n 
 0000003346 00000 n 
 0000003577 00000 n 
-0000009872 00000 n 
-0000010079 00000 n 
-0000024276 00000 n 
-0000024168 00000 n 
-0000023985 00000 n 
-0000036983 00000 n 
-0000037161 00000 n 
-0000024387 00000 n 
-0000024413 00000 n 
-0000024439 00000 n 
-0000034820 00000 n 
-0000024491 00000 n 
-0000024908 00000 n 
-0000034613 00000 n 
-0000034894 00000 n 
-0000037220 00000 n 
-0000037264 00000 n 
+0000009786 00000 n 
+0000009993 00000 n 
+0000023456 00000 n 
+0000023348 00000 n 
+0000023165 00000 n 
+0000036163 00000 n 
+0000036341 00000 n 
+0000023567 00000 n 
+0000023593 00000 n 
+0000023619 00000 n 
+0000034000 00000 n 
+0000023671 00000 n 
+0000024088 00000 n 
+0000033793 00000 n 
+0000034074 00000 n 
+0000036400 00000 n 
+0000036444 00000 n 
 trailer
 << /Size 25
 /Root 24 0 R
 /ID [<9BD18DF3359C1216B83ADB4AA401CC9A> <9BD18DF3359C1216B83ADB4AA401CC9A>] >>
 startxref
-37386
+36566
 %%EOF

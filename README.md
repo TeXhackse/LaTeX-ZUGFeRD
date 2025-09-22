@@ -2,7 +2,7 @@
 
 Copyright (C) 2023–2025 by Marei Peischl (peiTeX) <marei@peitex.de>
 
-zugferd version 0.10-dev (2025-07-01)
+zugferd version 0.10 (2025-09-22)
 
 ***************************************************************************
 
@@ -23,6 +23,13 @@ This package does not provide any validation. Please be aware of you have to use
 
 ## Version History
 
+* 0.10 (2025-09-08)
+    - extend interfaces to simplify accessing ZUGFeRD data
+    - add support for allowances and charges
+    - add support for  accounting-reference
+    - add direct support to output dates using the ISO format
+    - add support for global invoicing period
+    - Bugfix: Set item/start-date and end-date only locally
 * 0.9d (2025-01-02)
    - extend documentation
    - fix purchase-order-reference

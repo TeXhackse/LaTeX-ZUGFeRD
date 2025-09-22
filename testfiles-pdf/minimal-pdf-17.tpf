@@ -8,7 +8,7 @@ endobj
 << /Type /OutputIntent /S /GTS_PDFA1 /DestOutputProfile 5 0 R /OutputConditionIdentifier (IEC\040sRGB) /Info (IEC\04061966-2.1\040Default\040RGB\040colour\040space\040-\040sRGB) /RegistryName (http://www.iec.ch)  >>
 endobj
 7 0 obj
-<< /Subtype /application#2Fxml/Type /EmbeddedFile /Params<</ModDate (D:20241114194206Z) /Size 6093 /CheckSum (0959D45E97A032A39778C798B9AA6E34) >> /Length 6093 >>       
+<< /Subtype /application#2Fxml/Type /EmbeddedFile /Params<</ModDate (D:20241114194206Z) /Size 6007 /CheckSum <F4594D710A949C86165959CF5519A915> >> /Length 6007 >>       
 stream
 <?xml version='1.0' encoding='UTF-8' ?>
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
@@ -66,7 +66,8 @@ stream
           <ram:EmailURIUniversalCommunication>
             <ram:URIID>marei@peitex.de</ram:URIID>
           </ram:EmailURIUniversalCommunication>
-        </ram:DefinedTradeContact><ram:PostalTradeAddress>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
           <ram:PostcodeCode>20253</ram:PostcodeCode>
           <ram:LineOne>Address 1</ram:LineOne>
           <ram:CityName>Hamburg</ram:CityName>
@@ -138,7 +139,7 @@ endobj
 << /Type /Filespec /AFRelationship /Alternative /Desc (Factur-X/ZUGFeRD-Rechnung) /F (xrechnung.xml) /UF <FEFF00780072006500630068006E0075006E0067002E0078006D006C> /EF<</F 7 0 R/UF 7 0 R>> >>
 endobj
 9 0 obj
-<< /Type /Metadata /Subtype /XML /Length 13818 >>      
+<< /Type /Metadata /Subtype /XML /Length 13084 >>      
 stream
 <?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
@@ -154,7 +155,6 @@ stream
     xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/"
     xmlns:pdfuaid="http://www.aiim.org/pdfua/ns/id/"
     xmlns:pdfx="http://ns.adobe.com/pdfx/1.3/"
-    xmlns:pdfxid="http://www.npes.org/pdfx/ns/id/"
     xmlns:prism="http://prismstandard.org/namespaces/basic/3.0/"
     xmlns:stFnt="http://ns.adobe.com/xap/1.0/sType/Font#"
     xmlns:Iptc4xmpCore="http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/"
@@ -219,21 +219,6 @@ stream
          <pdfaProperty:valueType>Integer</pdfaProperty:valueType>
          <pdfaProperty:category>internal</pdfaProperty:category>
          <pdfaProperty:description>Revision of ISO 14289 standard</pdfaProperty:description>
-        </rdf:li>
-       </rdf:Seq>
-      </pdfaSchema:property>
-     </rdf:li>
-     <rdf:li rdf:parseType="Resource">
-      <pdfaSchema:schema>PDF/X ID Schema</pdfaSchema:schema>
-      <pdfaSchema:prefix>pdfxid</pdfaSchema:prefix>
-      <pdfaSchema:namespaceURI>http://www.npes.org/pdfx/ns/id/</pdfaSchema:namespaceURI>
-      <pdfaSchema:property>
-       <rdf:Seq>
-        <rdf:li rdf:parseType="Resource">
-         <pdfaProperty:name>GTS_PDFXVersion</pdfaProperty:name>
-         <pdfaProperty:valueType>Text</pdfaProperty:valueType>
-         <pdfaProperty:category>internal</pdfaProperty:category>
-         <pdfaProperty:description>ID of PDF/X standard</pdfaProperty:description>
         </rdf:li>
        </rdf:Seq>
       </pdfaSchema:property>
@@ -456,7 +441,7 @@ endobj
 << /Type /FontDescriptor /FontName /DDBCUX+LMRoman10-Regular /Flags 4 /FontBBox [ -430 -290 1417 1127 ] /Ascent 1127 /CapHeight 683 /Descent -290 /ItalicAngle 0 /StemV 93 /XHeight 431 /FontFile3 20 0 R >>
 endobj
 21 0 obj
-<< /Length 734 >>        
+<< /Length 708 >>        
 stream
 %!PS-Adobe-3.0 Resource-CMap
 %%DocumentNeededResources: ProcSet (CIDInit)
@@ -478,8 +463,6 @@ begincmap
 1 begincodespacerange
 <0000> <FFFF>
 endcodespacerange
-0 beginbfrange
-endbfrange
 4 beginbfchar
 <0032> <0065>
 <0052> <0031>
@@ -515,33 +498,33 @@ endobj
 xref
 0 26
 0000000002 65535 f 
-0000024404 00000 n 
+0000023584 00000 n 
 0000000003 00000 f 
 0000000004 00000 f 
 0000000000 00000 f 
 0000000020 00000 n 
 0000003352 00000 n 
 0000003583 00000 n 
-0000009879 00000 n 
-0000010086 00000 n 
-0000024317 00000 n 
-0000024207 00000 n 
-0000023993 00000 n 
-0000026661 00000 n 
-0000027015 00000 n 
-0000024451 00000 n 
-0000024477 00000 n 
-0000024503 00000 n 
-0000024555 00000 n 
-0000025646 00000 n 
-0000024620 00000 n 
-0000025867 00000 n 
-0000026815 00000 n 
-0000027077 00000 n 
-0000027121 00000 n 
-0000027243 00000 n 
+0000009793 00000 n 
+0000010000 00000 n 
+0000023497 00000 n 
+0000023387 00000 n 
+0000023173 00000 n 
+0000025815 00000 n 
+0000026169 00000 n 
+0000023631 00000 n 
+0000023657 00000 n 
+0000023683 00000 n 
+0000023735 00000 n 
+0000024826 00000 n 
+0000023800 00000 n 
+0000025047 00000 n 
+0000025969 00000 n 
+0000026231 00000 n 
+0000026275 00000 n 
+0000026397 00000 n 
 trailer
 << /Size 26 /Root 24 0 R /Info 25 0 R /ID [ <2350CAD05F8A7AF0AA4058486855344F> <2350CAD05F8A7AF0AA4058486855344F> ] >>
 startxref
-27375
+26529
 %%EOF
