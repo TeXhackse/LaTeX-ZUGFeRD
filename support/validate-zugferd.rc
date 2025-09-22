@@ -1,0 +1,23 @@
+# simple example latexmk config to add ZUGFeRD validation
+
+# You can either rename it to .latexmkrc/latexmkrc or select it manually, e.g. by running
+# latexmk -r support/validate-zugferd.rc DEMO-Rechnung-zugferd
+# within the root directory of this repository
+
+# There also is a script, which would automatically download the mustang libary if not available, you could use it instead.
+# You can find it in the support directory of this repository.
+# In that case you could set
+# $ success_cmd = "validate_zugferd.sh %D";
+
+# If you manually download the jar file and installed java, you can use the following workflow
+# The jar files are available on GitHub: https://github.com/ZUGFeRD/mustangproject/releases/
+# Edit the variable below to match your setup:
+$MustangJar="./support/Mustang-CLI.jar";
+
+$pdf_mode=4;# use lualatex
+
+$success_cmd = "java -Xmx1G -Dfile.encoding=UTF-8 -jar \"$MustangJar\" --no-notices --action validate --source %D";
+# Alternatively one could do the validation only on the XML file, e.g. using : "%A_zugferd.xml" instead of the PDF %D;
+
+# Add the xml file to be cleaned when the PDF file is cleaned
+$clean_full_ext="%R_zugferd.xml";
