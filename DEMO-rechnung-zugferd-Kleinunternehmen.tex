@@ -58,9 +58,16 @@
 	tax/add-exemption-reason-auto={E={{Kein Ausweis von Umsatzsteuer, da Kleinunternehmer*in gemäß § 19 UStG}}}
 }
 
-\InitVATExempt{E}% Innergemeinschaftliche Lieferung
+\InitVATExempt{E}% Intra-community supply
 
 \AddInvoiceItem<unit=hour>[E]{3}{Support}{90}
+
+\setkomavar{firsthead}{%
+	\InsertZUGFeRDData[AddressData]{seller}\\
+	Steuernummer: \UseZUGFeRDAddressItem{seller}{taxid}\\
+	Umsatzsteuer-ID: \UseZUGFeRDAddressItem{seller}{vatid}\\
+	IBAN: \InsertZUGFeRDData{payment-means/iban}
+}
 
 \begin{document}
 \begin{letter}{\InsertZUGFeRDData[AddressData]{buyer}}
