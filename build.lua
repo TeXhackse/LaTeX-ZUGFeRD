@@ -28,7 +28,9 @@ sourcefiles={"*.dtx","*.ins", "*.sty"}
 demofiles={"*.tex"}
 
 -- demofiles should be typeset for testing but not for the ctan upload
-if options["target"] ~= "ctan" then
+if options["target"] == "ctan" then
+	typesetcmds="\\def\\DoNotTypesetImplementation{don't typeset implementation for CTAN}"
+else
 	typesetdemofiles={"*.tex"}
 end
 

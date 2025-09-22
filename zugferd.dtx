@@ -266,16 +266,18 @@
 \DoNotIndex{today,\bool_new:N,\bool_new:N,\str_gset:Nn,\newcommand,\newenvironment,\jobname,\def,\begin,\begingroup,
 \let,\SetZugferdData,\today,\str_new:N,\keys,\tl_new:N,\str_gset:Nn,\bool_gset_false:N,\keys_set:nn,\tl_gset:Nn,
 \char_set_catcode_parameter:N,\cs_if_exist:NTF,\iow_new:N,\pdfmeta_xmp_xmlns_new:nn,
-\msg_new:nnnn,\msg_new:nnn,\keys_define:nn,\char_set_catcode_other:N,\bool_gset_true:N,\c_hash_str,\pdfmeta_xmp_property_new:nnnnn,\iow_newline:,\bool_if:NTF}
+\msg_new:nnnn,\msg_new:nnn,\keys_define:nn,\char_set_catcode_other:N,\bool_gset_true:N,\c_hash_str,\pdfmeta_xmp_property_new:nnnnn,\iow_newline:,\bool_if:NTF,\NewExpandableDocumentCommand,\NewDocumentEnvironment,\NewDocumentCommand,\IfPackageAtLeastTF,\IfNoValueTF,\IfNoValueT,\IfNoValueF,\IfNoValueTF,\iffalse,\fi,\ExplSyntaxOn,\ExplSyntaxOff}
 \ExplSyntaxOff
 
 \begin{document}
 \EnableDocumentation\DisableImplementation
 \DocInput{zugferd.dtx}
 
+% don't typeset implementation for CTAN
+\expandafter\ifx\csname DoNotTypesetImplementation\endcsname\relax
 \DisableDocumentation\EnableImplementation
-
 \DocInputAgain
+\fi
 
 \PrintChanges
 \printbibliography
