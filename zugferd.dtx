@@ -2278,9 +2278,7 @@
 		\tl_if_blank:nF {#1} {%
 			\_@@_write_xml:n {%
 				\_@@_indent: <ram:ActualDeliverySupplyChainEvent>
-				\_@@_indent:n {2} <ram:OccurrenceDateTime>
-				\_@@_indent:n {3}<udt:DateTimeString~format="102">#1</udt:DateTimeString>
-				\_@@_indent:n {2} </ram:OccurrenceDateTime>
+				\_@@_xml_date:nnn {2} {Occurrence} {#1}
 				\_@@_indent: </ram:ActualDeliverySupplyChainEvent>%
 			}%
 		}%
@@ -2822,15 +2820,23 @@
 \_@@_define_xml_content:Nn \_@@_write_inline:nnn {
 	\_@@_write_inline:nnnn {} {#1} {#2} {#3}
 }
+\_@@_define_xml_content:Nn \_@@_xml_wrapped:nnnnn {
+		\_@@_indent:n {#1} <#2>\_@@_xml_newline_indent:
+		\_@@_indent:n {#1+1} <#3#4>#5</#3>\_@@_xml_newline_indent:
+		\_@@_indent:n {#1} </#2>
+}
 \_@@_define_xml_content:Nn \_@@_write_inline_wrapped:nnnn {
 	\tl_if_blank:nF {#4} {
 		\_@@_xml_newline_indent:
-		\_@@_indent:n {#1} <#2>\_@@_xml_newline_indent:
-		\_@@_indent:n {#1+1} <#3>#4</#3>\_@@_xml_newline_indent:
-		\_@@_indent:n {#1} </#2>
+		\_@@_xml_wrapped:nnnnn {#1} {#2} {#3} {} {#4}
 	}
 }
 \cs_generate_variant:Nn \_@@_write_inline_wrapped:nnnn {nnne}
+
+\_@@_define_xml_content:Nn \_@@_xml_date:nnn {%
+	 \_@@_xml_wrapped:nnnnn  {#1} {ram:#2DateTime}
+		{udt:DateTimeString}{~format="102"}{#3}%
+}
 
 \_@@_define_xml_writer:Nn \_@@_write_prop:Nnn {
 		\prop_if_in:NeT #1 {#3} {
@@ -2944,10 +2950,7 @@
 	\_@@_write_xml:e {%
 		<ram:ID>\g_@@_id_tl</ram:ID>
 		<ram:TypeCode>\g_@@_DocumentTypeCode_tl</ram:TypeCode>
-		<ram:IssueDateTime>
-		% space required!
-		\_@@_indent:<udt:DateTimeString~format="102">\g_@@_date_tl</udt:DateTimeString>
-		</ram:IssueDateTime>%
+		\_@@_xml_date:nnn {0} {Issue} {\g_@@_date_tl}%
 	}%
 	\_@@_note_if_not_empty:N \g_@@_subject_tl%
 	\_@@_note_if_not_empty:N \g_@@_fromaddress_tl%
@@ -3070,13 +3073,9 @@
 	\bool_lazy_or:nnF {\tl_if_blank_p:n {#1}} {\tl_if_blank_p:n {#2}} {%
 	<ram:BillingSpecifiedPeriod>%
 	%<!-- BT-134 -- BT-73 -->
-	\_@@_indent:<ram:StartDateTime>
-	\_@@_indent:n {2} <udt:DateTimeString~format="102">#1</udt:DateTimeString>
-	\_@@_indent:</ram:StartDateTime>%
+	\_@@_xml_date:nnn {1} {Start} {#1}%
 	%<!-- BT-135 -- BT-74 -->
-	\_@@_indent:<ram:EndDateTime>
-	\_@@_indent:n {2} <udt:DateTimeString~format="102">#2</udt:DateTimeString>
-	\_@@_indent:</ram:EndDateTime>
+	\_@@_xml_date:nnn {1} {End} {#2}
 	</ram:BillingSpecifiedPeriod>%
    }%
 }%
@@ -3286,10 +3285,8 @@
 		\tl_if_blank:nF {#1} {%
 			<ram:Description>#1</ram:Description>%
 		}%
-		\tl_if_blank:nF {#2} {%
-			<ram:DueDateDateTime>
-			\_@@_indent: <udt:DateTimeString~format="102">#2</udt:DateTimeString>
-			</ram:DueDateDateTime>%
+		\tl_if_blank:nF {#2} {
+			\_@@_xml_date:nnn {0} {DueDate} {#2}%
 		}%
 	}%
 	\int_gdecr:N \g_@@_indent_int%
