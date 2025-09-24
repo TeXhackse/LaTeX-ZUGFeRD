@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install TeX Live
-        uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
+        uses: ${{ GITHUB_SERVER_URL == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
         with:
            package_file: .tl_packages
       # download validate_zugferd.sh to support/ so it's not done multiple times later
@@ -27,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install TeX Live
-        uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
+        uses: ${{ GITHUB_SERVER_URL == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
         with:
            package_file: .tl_packages
       # download validate_zugferd.sh to support/ so it's not done multiple times later
@@ -36,7 +36,7 @@ jobs:
       - run: bash support/validate_zugferd.sh build/doc/DEMO*.pdf
       - name: move pdf
         run: mkdir -p pdf-output && mv *.pdf pdf-output/.
-      - uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://github.com' }}/crazy-max/ghaction-github-pages@v4
+      - uses: ${{ GITHUB_SERVER_URL == 'https://github.com' && 'actions' || 'https://github.com' }}/crazy-max/ghaction-github-pages@v4
         # only publish pdf from main branch
         if: github.ref == 'refs/heads/main'
         with:
@@ -53,7 +53,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install TeX Live
-        uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
+        uses: ${{ GITHUB_SERVER_URL == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
         with:
            package_file: .tl_packages
       # download validate_zugferd.sh to support/ so it's not done multiple times later
@@ -61,7 +61,7 @@ jobs:
       - run: l3build ctan
       - name: Upload build artifats
         # temporary workaround for forgejo ci
-        uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://code.forgejo.org/forgejo' }}/upload-artifact@v4
+        uses: ${{ GITHUB_SERVER_URL == 'https://github.com' && 'actions' || 'https://code.forgejo.org/forgejo' }}/upload-artifact@v4
         with:
           name: zugferd-ctan.zip
           path: "build/distrib/ctan/zugferd/"
