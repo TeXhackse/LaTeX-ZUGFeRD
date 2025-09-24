@@ -23,7 +23,7 @@ This package does not provide any validation. Please be aware of you have to use
 
 ## Version History
 
-* 0.10 (2025-09-08)
+* 0.10 (2025-09-22)
     - extend interfaces to simplify accessing ZUGFeRD data
     - add support for allowances and charges
     - add support for  accounting-reference

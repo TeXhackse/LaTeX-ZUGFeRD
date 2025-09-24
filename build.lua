@@ -30,10 +30,9 @@ demofiles={"*.tex"}
 -- demofiles should be typeset for testing but not for the ctan upload
 if options["target"] == "ctan" then
 	typesetcmds="\\def\\DoNotTypesetImplementation{don't typeset implementation for CTAN}"
-else
-	typesetdemofiles={"*.tex"}
 end
 
+typesetdemofiles={"DEMO*.tex"}
 typesetexe="lualatex"
 typesetopts=""
 
@@ -132,10 +131,10 @@ uploadconfig = {
     repository = {gitlab_base_url..".git",github_base_url..".git"},
     bugtracker = {gitlab_base_url.."/issues",github_base_url.."/issues"},
     support = {gitlab_base_url.."/issues",github_base_url.."/issues"},
-    announcement_file = "ctan.ann",
+    announcement_file = "ctan-v"..packageversion..".ann",
     update = true,
     topic   = "invoice",
-    note_file = "ctan.note"
+    note_file = "ctan-v"..packageversion..".note"
 }
 
 function runtest_tasks ( name , run )

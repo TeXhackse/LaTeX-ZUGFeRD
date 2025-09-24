@@ -15,7 +15,7 @@ In case you want to use a minimal setup for this the file `.tl_packages` contain
 ## Local user level installation using l3build
 
 Additionally to the CTAN release this package includes an `l3build` installation script inside the package repository.
-Details on usage can be found in the [l3build](https://github.com/latex3/l3build) [documentation](https://ctan.math.utah.edu/ctan/tex-archive/macros/latex/contrib/l3build/l3build.pdf).
+Details on usage can be found in the [l3build](https://github.com/latex3/l3build) [documentation](https://mirrors.ctan.org/macros/latex/contrib/l3build/l3build.pdf).
 
 To get started one can run:
 
