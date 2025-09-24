@@ -2,7 +2,7 @@
 
 --[[
 	Build script for the LaTeX-ZUGFeRD project
-	Copyright (C) 2024 Marei Peischl <marei@peitex.de>
+	Copyright (C) 2024–2025 Marei Peischl <marei@peitex.de>
 
 	This file is part of the build system of the zugferd package.
 
