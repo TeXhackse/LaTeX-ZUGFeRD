@@ -1,4 +1,4 @@
-name: Build CTAN
+name: Test and build CTAN
 
 on:
   push:
@@ -9,24 +9,59 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
-    name: check
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       - name: Install TeX Live
-        uses: zauguin/install-texlive@v4
+        uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
         with:
            package_file: .tl_packages
       # download validate_zugferd.sh to support/ so it's not done multiple times later
       - run: cd support && bash validate_zugferd.sh && cd -
       - run: l3build check
-      - run: bash support/validate_zugferd.sh build/doc/DEMO*.pdf
-      - name: Upload build artifats
-        uses: actions/upload-artifact@v4
+  doc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install TeX Live
+        uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
         with:
-          name: zugferd-ctan
+           package_file: .tl_packages
+      # download validate_zugferd.sh to support/ so it's not done multiple times later
+      - run: cd support && bash validate_zugferd.sh && cd -
+      - run: l3build doc
+      - run: bash support/validate_zugferd.sh build/doc/DEMO*.pdf
+      - name: move pdf
+        run: mkdir -p pdf-output && mv *.pdf pdf-output/.
+      - uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://github.com' }}/crazy-max/ghaction-github-pages@v4
+        # only publish pdf from main branch
+        if: github.ref == 'refs/heads/main'
+        with:
+          target_branch: pdf-output
+          build_dir: pdf-output
+          domain: ${{ github.server_url }}
+          commit_message: Publish PDF Output
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ctan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install TeX Live
+        uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://github.com' }}/zauguin/install-texlive@v4
+        with:
+           package_file: .tl_packages
+      # download validate_zugferd.sh to support/ so it's not done multiple times later
+      - run: cd support && bash validate_zugferd.sh && cd -
+      - run: l3build ctan
+      - name: Upload build artifats
+        # temporary workaround for forgejo ci
+        uses: ${{ github.server_url == 'https://github.com' && 'actions' || 'https://code.forgejo.org/forgejo' }}/upload-artifact@v4
+        with:
+          name: zugferd-ctan.zip
           path: "build/distrib/ctan/zugferd/"
