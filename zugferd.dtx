@@ -1863,12 +1863,24 @@
 			#1
 		}
 	},
+	item / add-allowance .code:n = {
+		\seq_put_right:Nn \l_@@_AllowanceCharge_seq {
+			Indicator=false,
+			#1
+		}
+	},
 %    \end{macrocode}
 % \end{optionenv}
 % \begin{optionenv}{add-charge}
 %    \begin{macrocode}
 	add-charge .code:n = {
 		\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
+			Indicator=true,
+			#1
+		}
+	},
+	item / add-charge .code:n = {
+		\seq_put_right:Nn \l_@@_AllowanceCharge_seq {
 			Indicator=true,
 			#1
 		}
@@ -3083,6 +3095,10 @@
 	\int_gincr:N \g_@@_indent_int%
 	 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
 	 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
+	 % allowance
+	\seq_map_inline:Nn \l_@@_AllowanceCharge_seq {
+		\_@@_SpecifiedTradeAllowanceCharge:n {##1}
+	}
 	 \_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeSettlement>}%
@@ -3253,7 +3269,7 @@
 % SpecifiedTradeAllowanceCharge
 %    \begin{macrocode}
 \seq_new:N \g_@@_AllowanceCharge_seq
-
+\seq_new:N \l_@@_AllowanceCharge_seq
 \clist_map_inline:nn {
 	Indicator,
 	CalculationPercent,
