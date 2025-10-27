@@ -3307,21 +3307,23 @@
 		} {
 			\_@@_write_prop:Nn \l_@@_AllowanceCharge_prop {##1}
 		}
-		\_@@_write_xml:e {<ram:CategoryTradeTax>\iow_newline:
-			\_@@_xml_auto_indent:n {+1}
-			%<!-- BT-95/BT-102 -->
-			<ram:TypeCode>VAT</ram:TypeCode>
-		}
-		\int_incr:N \g_@@_indent_int
-			% TODO fall back to default VAT if unset?
-			%<!-- BT-95/BT-102 -->
-			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop
-				{CategoryCode} {tax/category}
-			%<!-- BT-96/BT-103 -->
-			\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop
-				{RateApplicablePercent} {tax/rate}
-		\int_gdecr:N \g_@@_indent_int
-		\_@@_write_xml:n {</ram:CategoryTradeTax>}
+		\prop_if_in:NnT  \l_@@_AllowanceCharge_prop {tax/category} {
+			\_@@_write_xml:e {<ram:CategoryTradeTax>\iow_newline:
+				\_@@_xml_auto_indent:n {+1}
+				%<!-- BT-95/BT-102 -->
+				<ram:TypeCode>VAT</ram:TypeCode>
+			}
+			\int_incr:N \g_@@_indent_int
+				% TODO fall back to default VAT if unset?
+				%<!-- BT-95/BT-102 -->
+				\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop
+					{CategoryCode} {tax/category}
+				%<!-- BT-96/BT-103 -->
+				\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop
+					{RateApplicablePercent} {tax/rate}
+			\int_gdecr:N \g_@@_indent_int
+			\_@@_write_xml:n {</ram:CategoryTradeTax>}
+	}
 	\int_gdecr:N \g_@@_indent_int
 	\_@@_write_xml:n {</ram:SpecifiedTradeAllowanceCharge>}
 }
