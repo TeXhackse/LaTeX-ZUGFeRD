@@ -3095,10 +3095,13 @@
 	\int_gincr:N \g_@@_indent_int%
 	 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
 	 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
-	 % allowance
-	\seq_map_inline:Nn \l_@@_AllowanceCharge_seq {
-		\_@@_SpecifiedTradeAllowanceCharge:n {##1}
-	}
+%    \end{macrocode}
+% Allowance/Charge per item.
+% In this case the tax information has not to be added and should not be written to the XML.
+%    \begin{macrocode}
+   \seq_map_inline:Nn \l_@@_AllowanceCharge_seq {%
+     \_@@_SpecifiedTradeAllowanceCharge:n {##1}%
+   }%
 	 \_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedLineTradeSettlement>}%
@@ -3307,23 +3310,24 @@
 		} {
 			\_@@_write_prop:Nn \l_@@_AllowanceCharge_prop {##1}
 		}
-		\prop_if_in:NnT  \l_@@_AllowanceCharge_prop {tax/category} {
-			\_@@_write_xml:e {<ram:CategoryTradeTax>\iow_newline:
-				\_@@_xml_auto_indent:n {+1}
-				%<!-- BT-95/BT-102 -->
-				<ram:TypeCode>VAT</ram:TypeCode>
-			}
-			\int_incr:N \g_@@_indent_int
-				% TODO fall back to default VAT if unset?
-				%<!-- BT-95/BT-102 -->
-				\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop
-					{CategoryCode} {tax/category}
-				%<!-- BT-96/BT-103 -->
-				\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop
-					{RateApplicablePercent} {tax/rate}
-			\int_gdecr:N \g_@@_indent_int
-			\_@@_write_xml:n {</ram:CategoryTradeTax>}
-	}
+		% TODO: maybe switch to only activate optional part if per-item?
+		\prop_if_in:NnT  \l_@@_AllowanceCharge_prop {tax/category} {%
+			\_@@_write_xml:e {<ram:CategoryTradeTax>\iow_newline:%
+				\_@@_xml_auto_indent:n {+1}%
+				%<!-- BT-95/BT-102 -->%
+				<ram:TypeCode>VAT</ram:TypeCode>%
+			}%
+			\int_incr:N \g_@@_indent_int%
+				% TODO fall back to default VAT if unset?%
+				%<!-- BT-95/BT-102 -->%
+				\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop%
+					{CategoryCode} {tax/category}%
+				%<!-- BT-96/BT-103 -->%
+				\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop%
+					{RateApplicablePercent} {tax/rate}%
+			\int_gdecr:N \g_@@_indent_int%
+			\_@@_write_xml:n {</ram:CategoryTradeTax>}%
+	}%
 	\int_gdecr:N \g_@@_indent_int
 	\_@@_write_xml:n {</ram:SpecifiedTradeAllowanceCharge>}
 }
