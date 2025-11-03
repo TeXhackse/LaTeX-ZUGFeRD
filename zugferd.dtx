@@ -1827,6 +1827,51 @@
 % \end{optionenv}
 % \end{implementation}
 % \begin{documentation}
+% \subsubsection{Creditor Reference ID}
+% \DescribeKeyOption[BT-90]{creditor-id=\meta{string}}{}
+% If SEPA direct debit is selected (49),
+% this option specifies the "Bank assigned creditor identifier"
+% used in order to pre-notify the Buyer of a SEPA direct debit.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{creditor-id}
+%    \begin{macrocode}
+	creditor-id .tl_gset:N = \g_@@_creditor_id_tl,
+	creditor-id .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Mandate Reference ID}
+% \DescribeKeyOption[BT-89]{mandate-id=\meta{string}}{}
+% If SEPA direct debit is selected (49),
+% this option specifies the "Mandate reference identifier"
+% used in order to pre-notify the Buyer of a SEPA direct debit.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{mandate-id}
+%    \begin{macrocode}
+	mandate-id .tl_gset:N = \g_@@_mandate_id_tl,
+	mandate-id .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+	% \subsubsection{Remittance information}
+% \DescribeKeyOption[BT-83]{payment-reference=\meta{string}}{}
+% If SEPA direct debit is selected (49),
+% this option specifies the "Remittance information"
+% used in order to pre-notify the Buyer of a SEPA direct debit.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{payment-reference}
+%    \begin{macrocode}
+	payment-reference .tl_gset:N = \g_@@_payment_reference_tl,
+	payment-reference .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
 % \subsubsection{Allowances and Charges}
 % \changes{v0.10-dev}{2025-09-08}{add the options add-charge and add-allowance.}
 % \DescribeKeyOption[BT-92,BT-93,BT-94,BT-97,BT-98]{add-allowance=\marg{keyval-list}}{}
@@ -2516,7 +2561,7 @@
 	}
 }
 
-\clist_map_inline:nn {iban,account-holder,bic} {
+\clist_map_inline:nn {account-holder,iban,proprietary-id,bic,payer-iban,card-number,card-holder} {
 	\keys_define:nn {zugferd/payment-means} {
 		#1 .tl_gset:c = {g_@@_payment_#1_tl}
 	}
@@ -3335,7 +3380,7 @@
 % SpecifiedTradePaymentTerms
 %    \begin{macrocode}
 \cctab_begin:N \g_@@_xml_cctab%
-\_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms:nn {%
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms:nnnnn {%
 	\_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \g_@@_start_date_tl \g_@@_end_date_tl}%
 	\_@@_write_xml:n {<ram:SpecifiedTradePaymentTerms>}%
 	\int_gincr:N \g_@@_indent_int%
@@ -3346,6 +3391,15 @@
 		\tl_if_blank:nF {#2} {
 			\_@@_xml_date:nnn {0} {DueDate} {#2}%
 		}%
+		\tl_if_blank:nF {#3} {%
+			\_@@_write_inline:nn {ram:CreditorReferenceID} {#3}%
+		}%
+		\tl_if_blank:nF {#4} {%
+			\_@@_write_inline:nn {ram:DirectDebitMandateID} {#4}%
+		}%
+		\tl_if_blank:nF {#5} {%
+			\_@@_write_inline:nn {ram:PaymentReference} {#5}%
+		}%
 	}%
 	\int_gdecr:N \g_@@_indent_int%
 	\_@@_write_xml:n {</ram:SpecifiedTradePaymentTerms>}%
@@ -3354,32 +3408,53 @@
 % sums
 %    \begin{macrocode}
 \_@@_define_xml_writer:Nn%
-	\_@@_SpecifiedTradeSettlementPaymentMeans:nnn%
+	\_@@_SpecifiedTradeSettlementPaymentMeans:nnnnnnn%
 	{%
 		\bool_if:NT \g_@@_writePaymentMeans_bool {%
 			\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
 			\int_gincr:N \g_@@_indent_int%
 			\_@@_write_xml:e {%
+				%%% PAYMENT INSTRUCTIONS
 				<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>%
 				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
 					\_@@_write_inline:ne {ram:Information} {%
 						\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
 					}%
 				}%
-				\tl_if_blank:nF {#1#2} {
+				%%% CREDIT TRANSFER
+				\tl_if_blank:nF {#1#2#3} {
 					<ram:PayeePartyCreditorFinancialAccount>%
-					\_@@_write_inline_i:nn {ram:IBANID} {#2}%
+					\tl_if_blank:nF {#2} {%
+						\_@@_write_inline_i:nn {ram:IBANID} {#2}%
+					}%
+					\tl_if_blank:nF {#3} {%
+						\_@@_write_inline_i:nn {ram:ProprietaryID} {#3}%
+					}%
 					\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
-						\_@@_write_inline_i:nn {ram:AccountName} {#1}
+						\_@@_write_inline_i:nn {ram:AccountName} {#1}%
 					}%
 					</ram:PayeePartyCreditorFinancialAccount>
 				}%
 				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
-					\tl_if_blank:nF {#3} {%
+					\tl_if_blank:nF {#4} {%
 						<ram:PayeeSpecifiedCreditorFinancialInstitution>%
-						\_@@_write_inline_i:nn {ram:BICID} {#3}
+						\_@@_write_inline_i:nn {ram:BICID} {#4}
 						</ram:PayeeSpecifiedCreditorFinancialInstitution>%
 					}%
+				}%
+				%%% PAYMENT CARD INFORMATION
+				\tl_if_blank:nF {#5} {
+					<ram:PayerPartyDebtorFinancialAccount>%
+					\_@@_write_inline_i:nn {ram:IBANID} {#5}%
+					</ram:PayerPartyDebtorFinancialAccount>
+				}%
+				\tl_if_blank:nF {#6#7} {
+					<ram:ApplicableTradeSettlementFinancialCard>%
+					\_@@_write_inline_i:nn {ram:ID} {#6}%
+					\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+						\_@@_write_inline_i:nn {ram:CardholderName} {#7}
+					}%
+					</ram:ApplicableTradeSettlementFinancialCard>
 				}%
 			}%
 			\int_gdecr:N \g_@@_indent_int%
@@ -3387,22 +3462,33 @@
 		}%
 	}%
 \cctab_end:
-\cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nn {VV}
+\cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nnnnn {VVVVV}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms: {
 	\bool_if:NF \g_@@_minimum_bool {
-		\_@@_SpecifiedTradePaymentTerms:VV
-			\g_@@_payment_terms_str \g_@@_due_date_tl
+		\_@@_SpecifiedTradePaymentTerms:VVVVV
+			\g_@@_payment_terms_str
+			\g_@@_due_date_tl
+			\g_@@_creditor_id_tl
+			\g_@@_mandate_id_tl
+			\g_@@_payment_reference_tl
 	}
 }
 %    \end{macrocode}
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
 %    \begin{macrocode}
-\cs_generate_variant:Nn  \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {vvv}
+\cs_generate_variant:Nn  \_@@_SpecifiedTradeSettlementPaymentMeans:nnnnnnn {vvvvvvv}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
 	\tl_if_blank:VF \g_@@_payment_means_tl {
-		\_@@_SpecifiedTradeSettlementPaymentMeans:vvv
+		\_@@_SpecifiedTradeSettlementPaymentMeans:vvvvvvv
+			%%% CREDIT TRANSFER
 			{g_@@_payment_account-holder_tl}
-			{g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
+			{g_@@_payment_iban_tl}
+			{g_@@_payment_proprietary-id_tl}
+			{g_@@_payment_bic_tl}
+			%%% PAYMENT CARD INFORMATION
+			{g_@@_payment_payer-iban_tl}
+			{g_@@_payment_card-number_tl}
+			{g_@@_payment_card-holder_tl}
 	}
 }
 %    \end{macrocode}
