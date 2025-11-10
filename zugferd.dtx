@@ -562,14 +562,16 @@
 % \changes{v0.9a}{2024-11-07}{Add error message if pdfmanagement is outdated.}
 % \changes{v0.9c}{2024-12-08}{Compatbility to show the error message in older formats versions.}
 %    \begin{macrocode}
-	\IfPackageAtLeastTF{pdfmanagement-testphase}{2024/09/13}{}{
-		\msg_new:nnnn {zugferd} {PDFmanagement-too-old} {
-			Your~version~of~\LaTeX's~PDF~management~is~too~old.
-		}{
-			You~need~to~update~your~LaTeX~distribution~to~be~able~
-			to~use~the~zugferd~package~correctly.
+	\IfPackageAtLeastF{pdfmanagement}{2025-08-05}{
+		\IfPackageAtLeastF{pdfmanagement-testphase}{2024/09/13}{
+			\msg_new:nnnn {zugferd} {PDFmanagement-too-old} {
+				Your~version~of~\LaTeX's~PDF~management~is~too~old.
+			}{
+				You~need~to~update~your~LaTeX~distribution~to~be~able~
+				to~use~the~zugferd~package~correctly.
+			}
+			\msg_error:nn{zugferd} {PDFmanagement-too-old}
 		}
-		\msg_error:nn{zugferd} {PDFmanagement-too-old}
 	}
 	%% based on experiments for l3pdfmeta by Ulrike Fischer
 	\pdfmeta_xmp_xmlns_new:nn {fx}{
