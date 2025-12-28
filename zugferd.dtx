@@ -454,7 +454,7 @@
 		}
 		\keys_set:nn {zugferd}{xrechnung}
 	},
-	format  / basic .code:n = {
+	format / basic .code:n = {
 		\str_gset:Nx \g_@@_format_str {
 			urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic
 		}
@@ -463,7 +463,7 @@
 		\str_gset:Nn \g_@@_conformance_level_str {BASIC}
 		\tl_gset:Nn \g_@@_xml_embedded_file_tl {factur-x.xml}
 	},
-	format  / minimum .code:n = {
+	format / minimum .code:n = {
 		\str_gset:Nx \g_@@_format_str {
 			urn:factur-x.eu:1p0:minimum
 		}
@@ -745,7 +745,7 @@
 				\clist_map_inline:nn {g, l} {
 					\use:c {##1 _if_exist:cT} {####1_@@_ \l_tmpa_str _##1}
 						{
-							\_@@_access_data:c  {####1_@@_ \l_tmpa_str _##1}
+							\_@@_access_data:c {####1_@@_ \l_tmpa_str _##1}
 							\bool_gset_false:N \g_tmpa_bool
 						}
 					\bool_if:NF \g_tmpa_bool {\clist_map_break:}
@@ -1028,9 +1028,9 @@
 % \marg{type (one of seller/buyer/shipto)}
 % \end{syntax}
 % Used by the \option{AddressData} option of \cs[no-index]{InsertZUGFeRDData}.
-% It uses  \cs[no-index]{zugferd_print_AddressData:nn} to print the name and would be followed by the
+% It uses \cs[no-index]{zugferd_print_AddressData:nn} to print the name and would be followed by the
 % entries |lineone|, |linetwo|, |linethree|, |postcode|, |city| and |country|.
-% These entries would use  \cs[no-index]{zugferd_print_AddressDataSep:nnn} using |\\| as a separator in case the following entry has been set.
+% These entries would use \cs[no-index]{zugferd_print_AddressDataSep:nnn} using |\\| as a separator in case the following entry has been set.
 % |\\| is used instead of a more specific command to allow template developers to redefine it locally.
 %
 % This command also could be redefined to support different order of the entries.
@@ -1217,7 +1217,7 @@
 			\_@@_ApplicableHeaderTradeSettlement_start:
 			\_@@_SpecifiedTradeSettlementPaymentMeans:
 		}
-		\cs_gset:Nn \zugferd_stopInvoiceSums:  {
+		\cs_gset:Nn \zugferd_stopInvoiceSums: {
 			\_@@_ApplicableHeaderTradeSettlement_stop:
 		}
 		\bool_if:NTF \g_@@_minimum_bool {
@@ -1284,7 +1284,7 @@
 	\cs_new:Nn \_@@_write_xml:n {
 		\tl_if_blank:nF {#1} {
 			\exp_last_unbraced:Nnf \tl_if_head_eq_charcode:nNTF {#1} \iow_newline: {
-				\iow_now:Ne \_@@_xml_writer_iow {\use_none:n  #1}
+				\iow_now:Ne \_@@_xml_writer_iow {\use_none:n #1}
 			} {
 				\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: #1}
 			}
@@ -1614,7 +1614,7 @@
 %    \begin{macrocode}
 \cs_set:Nn \zugferd_fp_set_rounded:Nn {
 	\_@@_gset_formatted_number:nNn {2} \g_@@_tmp_tl {\fp_eval:n {#2}}
-	\fp_set:Nn  #1 {\g_@@_tmp_tl}
+	\fp_set:Nn #1 {\g_@@_tmp_tl}
 }
 \cs_set:Nn \zugferd_fp_gset_rounded:Nn {
 	\_@@_gset_formatted_number:nNn {2} \g_@@_tmp_tl {\fp_eval:n {#2}}
@@ -1920,7 +1920,7 @@
 	subject / komavar .code:n = {
 		\tl_gset:Nf \g_@@_subject_tl {\scr@subject@var}
 	},
-	subject / unknown .code:n  = \tl_gset:Nn \g_@@_subject_tl {#1},
+	subject / unknown .code:n = \tl_gset:Nn \g_@@_subject_tl {#1},
 	fromaddress .choice:,
 	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl
 		{\scr@fromaddress@var},
@@ -2435,10 +2435,10 @@
 \prop_new:N \g_@@_document_references_prop
 \clist_new:N \g_@@_buyer_document_references_clist
 \keys_define:nn {zugferd} {
-	contract-reference .prop_gput:N =  \g_@@_document_references_prop,
-	buyerorder-reference .prop_gput:N =  \g_@@_document_references_prop,
+	contract-reference .prop_gput:N = \g_@@_document_references_prop,
+	buyerorder-reference .prop_gput:N = \g_@@_document_references_prop,
 	purchase-order-reference .meta:n = {buyerorder-reference=#1},
-	sellerorder-reference .prop_gput:N =  \g_@@_document_references_prop,
+	sellerorder-reference .prop_gput:N = \g_@@_document_references_prop,
 	sales-order-reference .meta:n = {sellerorder-reference=#1},
 }
 \cctab_begin:N \g_@@_xml_cctab%
@@ -2634,7 +2634,7 @@
 % This option is not case sensitive.
 % \begin{valuelist}
 % \item[standard] Standard rate and reduced rate item, |category=S|
-% \item[zero] Zero rated sale,  |category=Z|
+% \item[zero] Zero rated sale, |category=Z|
 % \item[exempt] Exempted from VAT. This requires a reason via \option{exemption-reason},|category=E|
 % \item[reverse-charge] Reverse Charge, |category=AE|
 % \item[intra-community\\\textnormal{or} EEA] Intra-Community Supply, |category=K|
@@ -2691,8 +2691,8 @@
 	category .choices:nn = {S,Z,E,AE,K,G,O,L,M} {
 		\tl_set_eq:NN \l_@@_tax_category_code_tl \l_keys_choice_tl
 		\bool_if:NT \g_@@_auto_exemption_bool {
-			\keys_if_choice_exist:nnnTF {zugferd/tax}  {exemption-reason-auto} {#1} {
-				\keys_set:nn  {zugferd/tax}  {exemption-reason-auto=#1}
+			\keys_if_choice_exist:nnnTF {zugferd/tax} {exemption-reason-auto} {#1} {
+				\keys_set:nn {zugferd/tax} {exemption-reason-auto=#1}
 			} {
 				\msg_warning:nnn { zugferd } {no-auto-exemption} {#1}
 			}
@@ -2726,10 +2726,10 @@
 % \begin{implementation}
 %    \begin{macrocode}
 	exemption-reason .tl_set:N = \l_@@_tax_exemption_reason_tl,
-	exemption-reason  .initial:V = \c_empty_tl,
+	exemption-reason .initial:V = \c_empty_tl,
 	exemption-reason .usage:n = general,
-	exemption-reason-code .tl_set:N  = \l_@@_tax_exemption_code_tl,
-	exemption-reason-code  .initial:V = \c_empty_tl,
+	exemption-reason-code .tl_set:N = \l_@@_tax_exemption_code_tl,
+	exemption-reason-code .initial:V = \c_empty_tl,
 	exemption-reason .usage:n = general,
 %    \end{macrocode}
 % \changes{v0.7}{2024-09-10}{Added exemption-reason-auto key for pre-configured exemption-reasons.}
@@ -2797,7 +2797,7 @@
 			}
 		}
 	},
-	category .initial:n =  S,
+	category .initial:n = S,
 	category .usage:n = general,
 %    \end{macrocode}
 % \end{implementation}
@@ -2809,7 +2809,7 @@
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
-	rate .fp_set:N =  \l_@@_tax_rate_fp,
+	rate .fp_set:N = \l_@@_tax_rate_fp,
 	rate .initial:n = 19,
 	rate .usage:n = general
 }%
@@ -2884,7 +2884,7 @@
 \cs_generate_variant:Nn \_@@_write_inline_wrapped:nnnn {nnne}
 
 \_@@_define_xml_content:Nn \_@@_xml_date:nnn {%
-	 \_@@_xml_wrapped:nnnnn  {#1} {ram:#2DateTime}
+	 \_@@_xml_wrapped:nnnnn {#1} {ram:#2DateTime}
 		{udt:DateTimeString}{~format="102"}{#3}%
 }
 
@@ -2925,10 +2925,10 @@
 	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
 }
 \cs_generate_variant:Nn \_@@_write_wrapped:nnn {nne}
-\_@@_define_xml_content:Nn  \_@@_write_inline_i:nnn {
+\_@@_define_xml_content:Nn \_@@_write_inline_i:nnn {
 	\_@@_write_inline:nnnn {+1} {#1} {#2} {#3}
 }
-\_@@_define_xml_content:Nn  \_@@_write_inline_i:nn {
+\_@@_define_xml_content:Nn \_@@_write_inline_i:nn {
 	\_@@_write_inline_i:nnn {#1} {} {#2}
 }
 
@@ -3121,7 +3121,7 @@
 	%BT-151
 	\_@@_indent: <ram:TypeCode>VAT</ram:TypeCode>
 	%BT-151
-	\_@@_indent:  <ram:CategoryCode>#1</ram:CategoryCode>
+	\_@@_indent: <ram:CategoryCode>#1</ram:CategoryCode>
 	%BT-152
 	\_@@_indent: <ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
 	</ram:ApplicableTradeTax>%
@@ -3233,7 +3233,7 @@
 %    \begin{macrocode}%
 	\begingroup
 	\bool_if:NT \g_@@_auto_exemption_bool {%
-		\keys_set:nn  { zugferd / tax } {exemption-reason-auto=#1}
+		\keys_set:nn { zugferd / tax } {exemption-reason-auto=#1}
 	}%
 	\tl_if_blank:VF \l_@@_tax_exemption_reason_tl {%BT-120
 		\_@@_write_xml:e {<ram:ExemptionReason>
@@ -3320,7 +3320,7 @@
 			\_@@_write_prop:Nn \l_@@_AllowanceCharge_prop {##1}
 		}
 		% TODO: maybe switch to only activate optional part if per-item?
-		\prop_if_in:NnT  \l_@@_AllowanceCharge_prop {tax/category} {%
+		\prop_if_in:NnT \l_@@_AllowanceCharge_prop {tax/category} {%
 			\_@@_write_xml:e {<ram:CategoryTradeTax>\iow_newline:%
 				\_@@_xml_auto_indent:n {+1}%
 				%<!-- BT-95/BT-102 -->%
@@ -3370,7 +3370,7 @@
 			\int_gincr:N \g_@@_indent_int%
 			\_@@_write_xml:e {%
 				<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>%
-				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+				\str_if_eq:VnT \g_@@_conformance_level_str {XRECHNUNG} {%
 					\_@@_write_inline:ne {ram:Information} {%
 						\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
 					}%
@@ -3378,12 +3378,12 @@
 				\tl_if_blank:nF {#1#2} {
 					<ram:PayeePartyCreditorFinancialAccount>%
 					\_@@_write_inline_i:nn {ram:IBANID} {#2}%
-					\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+					\str_if_eq:VnT \g_@@_conformance_level_str {XRECHNUNG} {%
 						\_@@_write_inline_i:nn {ram:AccountName} {#1}
 					}%
 					</ram:PayeePartyCreditorFinancialAccount>
 				}%
-				\str_if_eq:VnT  \g_@@_conformance_level_str {XRECHNUNG} {%
+				\str_if_eq:VnT \g_@@_conformance_level_str {XRECHNUNG} {%
 					\tl_if_blank:nF {#3} {%
 						<ram:PayeeSpecifiedCreditorFinancialInstitution>%
 						\_@@_write_inline_i:nn {ram:BICID} {#3}
@@ -3406,7 +3406,7 @@
 %    \end{macrocode}
 % \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
 %    \begin{macrocode}
-\cs_generate_variant:Nn  \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {vvv}
+\cs_generate_variant:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {vvv}
 \_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
 	\tl_if_blank:VF \g_@@_payment_means_tl {
 		\_@@_SpecifiedTradeSettlementPaymentMeans:vvv
