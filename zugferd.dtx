@@ -377,9 +377,11 @@
 % \fi
 % \begin{implementation}
 % \section{Implementation}
-% \begin{variable}{\l_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_minimum_bool,\g_@@_conformance_level_str,\g_@@_xml_embedded_file_tl}
+% \changes{v0.11-dev}{2025-12-28}{Move definition of globa temporary tl}
+% \begin{variable}{\l_@@_tmp_tl,\g_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_minimum_bool,\g_@@_conformance_level_str,\g_@@_xml_embedded_file_tl}
 %    \begin{macrocode}
 \tl_new:N \l_@@_tmp_tl
+\tl_new:N \g_@@_tmp_tl
 \str_new:N \g_@@_format_str
 \str_new:N \g_@@_businessProcessId_str
 \bool_new:N \g_@@_writeTradeContact_bool
@@ -1306,8 +1308,12 @@
 \RequirePackage{siunitx}
 %    \end{macrocode}
 % \begin{macro}{\_@@_number_format:nNn,\_@@_number_format:nNe}
+% \changes{v0.11-dev}{2025-12-28}{Bugfix: Group the change of siunitx options to keep it local}
+% \cs{\_@@_gset_formatted_number:nNn} does only exist as a global variant.
+% To keep the change local one can use \variable{\g_@@_tmp_tl } and use that value for a local assignment.
 %    \begin{macrocode}
-\cs_new:Nn \_@@_number_format:nNn {
+\cs_new:Nn \_@@_gset_formatted_number:nNn {
+	\group_begin:
 	\sisetup{
 		parse-numbers=true,
 		round-mode=places,
@@ -1317,16 +1323,18 @@
 		minimum-decimal-digits=#1,
 		output-decimal-marker=.
 	}
-	\siunitx_number_format:nN {#3} #2
+	\siunitx_number_format:nN {#3} \l_@@_tmp_tl
+	\tl_gset_eq:NN #2 \l_@@_tmp_tl
+	\group_end:
 }
-\cs_generate_variant:Nn \_@@_number_format:nNn {nNe}
+\cs_generate_variant:Nn \_@@_gset_formatted_number:nNn {nNe}
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\_@@_write_rounded:nnnn,\_@@_write_rounded:nnn}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_write_rounded:nnnn {
-	\_@@_number_format:nNe {#1} \l_@@_tmp_tl {#4}
-	\_@@_write_xml:e {<ram:#2#3>\l_@@_tmp_tl</ram:#2>}
+	\_@@_gset_formatted_number:nNn {#1} \g_@@_tmp_tl {#4}
+	\_@@_write_xml:e {<ram:#2#3>\g_@@_tmp_tl</ram:#2>}
 }
 \cs_new:Nn \_@@_write_rounded:nnn {
 	\_@@_write_rounded:nnnn {#1} {#2} {} {#3}
@@ -1546,7 +1554,6 @@
 % \end{documentation}
 % \begin{implementation}
 %    \begin{macrocode}
-\tl_new:N \g_@@_tmp_tl
 \cs_new:Nn \zugferd_tl_gset_escaped_xml:Nn {
 	\group_begin:
 		\zugferd_disable_macros:
@@ -1603,15 +1610,15 @@
 % \end{documentation}
 % \begin{implementation}
 % \begin{macro}{\zugferd_fp_set_rounded:Nn, \zugferd_fp_gset_rounded:Nn}
+% \changes{v0.11-dev}{2025-12-28}{Bugfix: Group the change of siunitx options to keep it local}
 %    \begin{macrocode}
-% \begin{function}{\zugferd_fp_set_rounded:Nn, \zugferd_fp_gset_rounded:Nn}
 \cs_set:Nn \zugferd_fp_set_rounded:Nn {
-	\_@@_number_format:nNn {2} \l_@@_tmp_tl {\fp_eval:n {#2}}
-	\fp_set:Nn  #1 {\l_@@_tmp_tl }
+	\_@@_gset_formatted_number:nNn {2} \g_@@_tmp_tl {\fp_eval:n {#2}}
+	\fp_set:Nn  #1 {\g_@@_tmp_tl}
 }
 \cs_set:Nn \zugferd_fp_gset_rounded:Nn {
-	\_@@_number_format:nNn {2} \l_@@_tmp_tl {\fp_eval:n {#2}}
-	\fp_gset:Nn  #1 {\l_@@_tmp_tl }
+	\_@@_gset_formatted_number:nNn {2} \g_@@_tmp_tl {\fp_eval:n {#2}}
+	\fp_gset:Nn #1 {\g_@@_tmp_tl}
 }
 %    \end{macrocode}
 % \end{macro}
