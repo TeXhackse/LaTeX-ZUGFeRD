@@ -715,7 +715,7 @@
 % \begin{macro}{\InsertZUGFeRDData,\InsertZugferdData}
 % To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
 % \version{0.11} added more fleixble interfaces.
-% \changes{v0.10-dev}{2025-07-22}{Add Mechanism to provide explicit interface for data elements}
+% \changes{v0.10}{2025-07-22}{Add Mechanism to provide explicit interface for data elements}
 %    \begin{macrocode}
 \NewDocumentCommand{\InsertZUGFeRDData}{om}{
 	\IfNoValueTF{#1} {
@@ -786,7 +786,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \DescribeOption{iso-date}
-% \changes{v0.10-dev}{2025-07-28}{add iso-date Option for \InsertZUGFeRDData}
+% \changes{v0.10}{2025-07-28}{add iso-date Option for \InsertZUGFeRDData}
 % This option enhances the \option{set-today} variant and will group the setting and convert the date to ISO format (YYYY-MM-DD).
 % In contrast to set-today this is creating the date as output and keeps the change local.
 % \end{documentation}
@@ -823,7 +823,7 @@
 %
 % \begin{documentation}
 %
-% \changes{v0.10-dev}{2025-07-01}{Add expandable interfaces to access data entries.}
+% \changes{v0.10}{2025-07-01}{Add expandable interfaces to access data entries.}
 % \begin{function}{\UseZUGFeRDElement}
 % For all simple entries it's possible to use this expandable interface to data items.
 % \begin{syntax}
@@ -1156,7 +1156,7 @@
 % \end{function}
 %
 % \begin{function}{\zugferd_write_AllowanceCharge:, \zugferd_write_AllowanceCharge:n}
-% \changes{v0.10-dev}{2025-09-08}{Add user interface for document level allowancaes and charges}
+% \changes{v0.10}{2025-09-08}{Add user interface for document level allowancaes and charges}
 % \begin{syntax}
 % \cs[no-index]{zugferd_write_AllowanceCharge:n} \marg{key-value settings to configure allowance/charge}
 % \end{syntax}
@@ -1830,7 +1830,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Allowances and Charges}
-% \changes{v0.10-dev}{2025-09-08}{add the options add-charge and add-allowance.}
+% \changes{v0.10}{2025-09-08}{add the options add-charge and add-allowance.}
 % \DescribeKeyOption[BT-92,BT-93,BT-94,BT-97,BT-98]{add-allowance=\marg{keyval-list}}{}
 % \DescribeKeyOption[BT-99,BT-100,BT-101,BT-104,BT-105]{add-charge=\marg{keyval-list}}{}
 % Allowances and charges can added using these options.
@@ -2365,7 +2365,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Buyer Accounting Reference}
-% \changes{v0.10-dev}{2025-07-01}{Add support for accounting-reference}
+% \changes{v0.10}{2025-07-01}{Add support for accounting-reference}
 % \DescribeKeyOption*[BT-19]{buyer/accounting-reference=\meta{Accounting reference}}{}
 % The reference field only exists for the |buyer| trade party.
 % Buyers will explicitly ask for this field.
@@ -2386,7 +2386,7 @@
 % \end{implementation}
 % \begin{documentation}
 % \subsubsection{Project Reference}
-% \changes{v0.10-dev}{2025-09-22}{Add support for project reference}
+% \changes{v0.10}{2025-09-22}{Add support for project reference}
 % \DescribeKeyOption*[BT-11]{project=\meta{Project ID}\string\\\meta{name}}{}
 % The project reference consits of two two entries |id| and |name|.
 % As both are required most implementations use \enquote{Project Reference} for the name entry.
@@ -2523,7 +2523,7 @@
 		#1 .tl_gset:c = {g_@@_payment_#1_tl}
 	}
 %    \end{macrocode}
-% \changes{v0.10-dev}{2025-07-28}{Add data access-keys for payment-means}
+% \changes{v0.10}{2025-07-28}{Add data access-keys for payment-means}
 %    \begin{macrocode}
   \keys_define:nn {zugferd/data} {
     payment-means / #1 .code:n = \_@@_access_data:c {g_@@_payment_#1_tl},
@@ -2656,7 +2656,7 @@
 	For~more~information~see~the~zugferd~documentation.
 }
 %    \end{macrocode}
-% \changes{v0.10-dev}{2025-07-01}{Add interface for configuration of auto-exemption-reason}
+% \changes{v0.10}{2025-07-01}{Add interface for configuration of auto-exemption-reason}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_configure_auto_exemption:nn {
 	\tl_if_in:nnTF {#2} {=} {
@@ -2756,7 +2756,7 @@
 		}
 	},
 %    \end{macrocode}
-% \changes{v0.10-dev}{2025-07-01}{Remove exemption reason for category Z}
+% \changes{v0.10}{2025-07-01}{Remove exemption reason for category Z}
 %    \begin{macrocode}
 	exemption-reason-auto / Z .code:n = {
 		\keys_set:nn {zugferd/tax}{
@@ -2838,7 +2838,7 @@
 % This element should be set as all the other dates (see \autoref{sec:dates}).
 % \end{documentation}
 % \begin{implementation}
-% \changes{v0.10-dev}{2025-09-22}{Bugfix: set start-date only locally}
+% \changes{v0.10}{2025-09-22}{Bugfix: set start-date only locally}
 % \optionenv{start-date,end-date}
 %    \begin{macrocode}
 \keys_define:nn { zugferd / item } {
@@ -3270,7 +3270,7 @@
 }
 %    \end{macrocode}
 % \end{macro}
-% \changes{v0.10-dev}{2025-09-08}{Add support for document level allowances and charges as requested by \issue{55}.}
+% \changes{v0.10}{2025-09-08}{Add support for document level allowances and charges as requested by \issue{55}.}
 % SpecifiedTradeAllowanceCharge
 %    \begin{macrocode}
 \seq_new:N \g_@@_AllowanceCharge_seq
