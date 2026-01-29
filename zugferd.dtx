@@ -918,6 +918,7 @@
 	\bool_if:NTF \g_@@_write_xml_bool {
 		\char_set_active_eq:nN {13} \_@@_xml_newline_indent:
 		\iow_open:Nn \_@@_xml_writer_iow {\g_@@_xml_file_tl}
+		\let\%\c_percent_str
 	}{
 		\msg_info:nn {zugferd} {no-xml-write}
 	}
@@ -1628,6 +1629,9 @@
 % This also applies to |<|, |>|, |"| and |'|.
 % It's technically possible to do this either via active characters or string replacements.
 % But since it's adjusting the content this feature would never be enabled by default (Issue \issue{9}).
+%
+% The percent sign can be used in data values by writing |\%| inside \cs{SetZUGFeRDData}.
+% This will correctly produce a literal |%| character in the \XML output.
 %
 % In most cases this functionality will be used to change the tax setting or unit for a single item.
 % \autoref{sec:xml-interfaces} also provided an example for this.
