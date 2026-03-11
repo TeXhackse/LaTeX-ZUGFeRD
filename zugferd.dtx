@@ -1495,8 +1495,11 @@
 	\let\hphantom\@gobble
 	\let\ding\HyPsd@ding
 	\let\Cube\HyPsd@DieFace
-	\def\begin##1{\csname##1\endcsname}%
-	\def\end##1{\csname end##1\endcsname}%
+%    \end{macrocode}
+% \changes{v0.11-dev}{2026-03-11}{Fix Grouping of environments in xml data}
+%    \begin{macrocode}
+	\def\begin##1{\begingroup\csname##1\endcsname}%
+	\def\end##1{\csname end##1\endcsname\endgroup}%
 	\def\textcolor##1##{\@secondoftwo}%
 	\def\TextOrMath{\ifmmode\expandafter\@secondoftwo\else\expandafter\@firstoftwo\fi}%
 	\let\foreignlanguage\@secondoftwo
