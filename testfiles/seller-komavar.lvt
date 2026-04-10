@@ -1,0 +1,68 @@
+\input regression-test.tex\relax
+% Use scrartcl so that scrletter's \setkomavar is available
+\documentclass{scrartcl}
+
+% Set KOMA-Script letter variables BEFORE loading zugferd to verify lazy evaluation
+\usepackage{scrletter}
+
+\usepackage[zugferd=false]{zugferd}
+
+% Set komavars after \usepackage to verify that lazy evaluation works
+% regardless of order relative to \SetZUGFeRDData
+\setkomavar{fromname}{peiTeX (Marei Peischl)}
+\setkomavar{fromemail}{kontakt@peitex.de}
+\setkomavar{fromphone}{+4900000000}
+
+\SetZUGFeRDData{
+	id=1337,
+	unit=hour,
+	seller/name=komavar,
+	seller/email=komavar,
+	seller/contact-name=komavar,
+	seller/contact-phone=komavar,
+	seller/contact-email=komavar,
+	seller/id={1123},
+	seller/postcode = {20253},
+	seller/city ={Hamburg},
+	seller/country = DE,
+	seller/address = {Address 1},
+	seller/taxid = {DE123456789},
+	buyer/reference = {buyer-reference},
+	buyer/name = {Buyer Name},
+	buyer/postcode = {20253},
+	buyer/city ={Hamburg},
+	buyer/country = DE,
+	buyer/email = {invoice@example.org},
+	due-date={20240118},
+	payment-means / type = 1,
+	tax/add-exemption-reason-auto={E={Kein Ausweis von Umsatzsteuer, da Kleinunternehmer*in gemaess Paragraph 19 UStG}}% avoid umlauts for testing as \SHOWFILE is annoying...
+}
+
+\begin{document}
+\ExplSyntaxOn
+	\begin{ZUGFeRD}
+	\zugferd_write_Item:nnnnnnn {tax/rate=0, tax/category=E} {loewe-1} {0} {Plushie ~ \TeX\ lion} {31.89} {2} {63.78}%special required for space in expl3-mode
+	\zugferd_startInvoiceSums:
+	\group_begin:
+	\zugferd_write_TaxEntry:nnnn {E} {0} {63.78} {0}
+	\group_end:
+	\zugferd_write_Summation:nnnnnnnn
+		{63.78}% LineTotalAmount
+		{0} %ChargeTotalAmount
+		{0} %AllowanceTotalAmount
+		{63.78} %TaxBasisTotalAmount
+		{0} %TaxTotalAmount
+		{63.78} %GrandTotalAmount
+		{0} % TotalPrepaidAmount
+		{63.78} %DuePayableAmount = GrandTotalAmount - TotalPrepaidAmount
+	\zugferd_stopInvoiceSums:
+	\end{ZUGFeRD}
+
+	test
+\endlinechar=10
+\char_set_catcode:nn {10}{12}%
+\START%
+\SHOWFILE{\jobname _zugferd.xml}%
+\END%
+\ExplSyntaxOff%
+\end{document}%

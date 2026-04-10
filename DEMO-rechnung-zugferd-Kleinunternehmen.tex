@@ -32,6 +32,11 @@
 \setkomavar{invoice}{2024:1337}
 \setkomavar{date}{{\InsertZUGFeRDData[set-today]{date}\today}}
 \setkomavar{title}{Rechnung}
+% Seller data is read from these KOMA-Script variables at XML-write time.
+% This avoids duplicating data already defined in a letter option file.
+\setkomavar{fromname}{Kleinunternehmer*in X}
+\setkomavar{fromemail}{kontakt@peitex.de}
+\setkomavar{fromphone}{+4900000000}
 
 \SetZUGFeRDData{
 %	document-type =  commercial-invoice, % commented as this setting matches the initial value
@@ -41,15 +46,17 @@
 	subject=komavar,
 	fromaddress=komavar,
 	unit=hour,
-	seller/vatid = {DE123456789},
-%	seller/id=1123,% If no VatID exists a seller/id is required. This might be an ID provided by the buyer
-	seller/name = {Kleinunternehmer*in X},
+%	seller/vatid = {DE123456789},% Kleinunternehmer*innen have no VAT ID; use seller/id instead (BR-CO-26)
+	seller/id=XXXXX,% required if no seller/vatid: use any unique seller identifier (e.g. tax number)
+	seller/name = komavar,% reads \setkomavar{fromname} above
 	seller/postcode = {20253},
 	seller/city ={Hamburg},
 	seller/country = DE,
 	seller/address = {Address 1},
-	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
-	seller/email = {kontakt@peitex.de},
+	seller/contact-name = komavar,% reads \setkomavar{fromname} above
+	seller/contact-phone = komavar,% reads \setkomavar{fromphone} above
+	seller/contact-email = komavar,% reads \setkomavar{fromemail} above
+	seller/email = komavar,% reads \setkomavar{fromemail} above
 	seller/taxid=XXXXX,
 	buyer/reference = {buyer-reference}, %oder Leitweg-ID
 	buyer/name = {Käufer Name},

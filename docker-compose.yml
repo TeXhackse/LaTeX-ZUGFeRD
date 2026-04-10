@@ -1,0 +1,7 @@
+services:
+  l3build:
+    image: texlive/texlive:latest
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: l3build check

@@ -1723,7 +1723,7 @@
 % \begin{implementation}
 %    \begin{macrocode}
 	id .choice:,
-	id / komavar .code:n = \tl_gset:Nf \g_@@_id_tl {\scr@invoice@var},
+	id / komavar .code:n = \tl_gset:Nn \g_@@_id_tl {\scr@invoice@var},
 	id / unknown .code:n = \tl_gset:Nn \g_@@_id_tl {#1},
 %    \end{macrocode}
 % \end{implementation}
@@ -1921,11 +1921,11 @@
 %    \begin{macrocode}
 	subject .choice:,
 	subject / komavar .code:n = {
-		\tl_gset:Nf \g_@@_subject_tl {\scr@subject@var}
+		\tl_gset:Nn \g_@@_subject_tl {\scr@subject@var}
 	},
 	subject / unknown .code:n = \tl_gset:Nn \g_@@_subject_tl {#1},
 	fromaddress .choice:,
-	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl
+	fromaddress / komavar .code:n = \tl_gset:Nn \g_@@_fromaddress_tl
 		{\scr@fromaddress@var},
 	fromaddress / unknown .code:n = \tl_gset:Nn \g_@@_fromaddress_tl {#1},
 	add-note .code:n = \seq_gput_right:Nn \g_@@_notes_seq {#1},
@@ -2109,6 +2109,73 @@
 	}
 }
 %    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Seller fields with KOMA-Script variable support}
+% \changes{v0.11}{2026-04-10}{Add komavar support for seller name, email and contact fields}
+% In addition to the generic party options, the \option{seller} party supports the value \value{komavar}
+% for the fields \option{name}, \option{email}, \option{contact-name}, \option{contact-email} and \option{contact-phone}.
+% This allows reading the corresponding data directly from KOMA-Script letter variables, avoiding
+% duplicate data entry when a letter option file already provides this information.
+%
+% \begin{examplecode}
+% \setkomavar{fromname}{Marei Peischl}
+% \setkomavar{fromemail}{kontakt@peitex.de}
+% \setkomavar{fromphone}{+4900000000}
+%
+% \SetZUGFeRDData{
+%   seller/name = komavar,
+%   seller/email = komavar,
+%   seller/contact-name = komavar,
+%   seller/contact-email = komavar,
+%   seller/contact-phone = komavar,
+% }
+% \end{examplecode}
+%
+% \noindent The KOMA-Script variables are read lazily at XML-write time, so the order of
+% \cs{setkomavar} and \cs{SetZUGFeRDData} does not matter.
+% The same lazy evaluation applies to \option{id}, \option{subject}, \option{fromaddress}
+% and \option{buyer/reference} when using \value{komavar}.
+%
+% \begin{tabular}{ll}
+% \textbf{Option} & \textbf{KOMA-Script variable} \\
+% \option{seller/name} & |fromname| \\
+% \option{seller/email} & |fromemail| \\
+% \option{seller/contact-name} & |fromname| \\
+% \option{seller/contact-email} & |fromemail| \\
+% \option{seller/contact-phone} & |fromphone| \\
+% \end{tabular}
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\keys_define:nn {zugferd/seller} {
+	name .choice:,
+	name / komavar .code:n =
+		\prop_gput:Nnn \g_@@_seller_AddressData_prop {name} {\scr@fromname@var},
+	name / unknown .code:n =
+		\prop_gput:Nne \g_@@_seller_AddressData_prop {name} {\tl_trim_spaces:n {#1}},
+	email .choice:,
+	email / komavar .code:n =
+		\prop_gput:Nnn \g_@@_seller_AddressData_prop {email} {\scr@fromemail@var},
+	email / unknown .code:n =
+		\prop_gput:Nne \g_@@_seller_AddressData_prop {email} {\tl_trim_spaces:n {#1}},
+	contact-name .choice:,
+	contact-name / komavar .code:n =
+		\prop_gput:Nnn \g_@@_seller_AddressData_prop {contact-name} {\scr@fromname@var},
+	contact-name / unknown .code:n =
+		\prop_gput:Nne \g_@@_seller_AddressData_prop {contact-name} {\tl_trim_spaces:n {#1}},
+	contact-email .choice:,
+	contact-email / komavar .code:n =
+		\prop_gput:Nnn \g_@@_seller_AddressData_prop {contact-email} {\scr@fromemail@var},
+	contact-email / unknown .code:n =
+		\prop_gput:Nne \g_@@_seller_AddressData_prop {contact-email} {\tl_trim_spaces:n {#1}},
+	contact-phone .choice:,
+	contact-phone / komavar .code:n =
+		\prop_gput:Nnn \g_@@_seller_AddressData_prop {contact-phone} {\scr@fromphone@var},
+	contact-phone / unknown .code:n =
+		\prop_gput:Nne \g_@@_seller_AddressData_prop {contact-phone} {\tl_trim_spaces:n {#1}},
+}
+%    \end{macrocode}
 % \begin{macro}{\_@@_TradePartyIdentity:N \_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
 % Wrappers to map the property list items to the writing macro.
 % \changes{v0.9c}{2024-12-08}{Add TradePartyName to support additional legal information.}
@@ -2265,10 +2332,7 @@
 \_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeAgreement: {
 	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}
 	\int_gincr:N \g_@@_indent_int
-	\bool_lazy_and:nnF
-		{\tl_if_blank_p:V \g_@@_buyer_reference_tl}
-		{\g_@@_minimum_bool}
-	{
+	\tl_if_blank:VF \g_@@_buyer_reference_tl {
 		\_@@_write_xml:e {
 			<ram:BuyerReference>\g_@@_buyer_reference_tl</ram:BuyerReference>
 		}
@@ -2364,7 +2428,7 @@
 \keys_define:nn {zugferd/buyer} {
 	reference .choice:,
 	reference / komavar .code:n = {
-		\tl_gset:Nf \g_@@_buyer_reference_tl {\scr@yourref@var}
+		\tl_gset:Nn \g_@@_buyer_reference_tl {\scr@yourref@var}
 	},
 	reference / unknown .code:n = {
 		\tl_gset:Nn \g_@@_buyer_reference_tl {#1}
