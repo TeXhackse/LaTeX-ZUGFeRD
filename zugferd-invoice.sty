@@ -1,5 +1,5 @@
 %
-% Copyright (C) 2024–2025 Marei Peischl <marei@peitex.de>
+% Copyright (C) 2024–2026 Marei Peischl <marei@peitex.de>
 % ---------------------------------------------------------
 %
 % This file may be distributed and/or modified under the
@@ -94,6 +94,15 @@
 \fp_new:N  \g__ptxcd_invoice_item_vat_fp
 \fp_new:N \g__ptxcd_invoice_sum_vat_fp
 
+\providecommand*\InvoiceTabularPosition{Pos.}
+\providecommand*\InvoiceTabularAmount{Std.}
+\providecommand*\InvoiceTabularDescription{Beschreibung}
+\providecommand*\InvoiceTabularUnitPrice{Einzelpreis}
+\providecommand*\InvoiceTabularLineTotal{Gesamtpreis}
+\providecommand*\InvoiceVATName{USt.}
+
+\newkomafont{tablehead}{\small\itshape}
+
 \newcommand*{\PrintInvoiceTabular}{
 \bool_gset_true:N \g_ptxcd_first_run_bool
 	\begin{ZUGFeRD}
@@ -110,7 +119,12 @@
 	@{}}
 	\toprule[\lightrulewidth]
 	\noalign{\global\let\PrintTableCurrency\relax}%
-	\small\emph{Pos.}&\small\emph{Std.}&\small\emph{Beschreibung}&\small\emph{Einzelpreis}&\small\emph{Gesamtpreis}\\\midrule[\heavyrulewidth]
+		{\usekomafont{tablehead}\InvoiceTabularPosition}&
+		{\usekomafont{tablehead}\InvoiceTabularAmount}&
+		{\usekomafont{tablehead}\InvoiceTabularDescription}&
+		{\usekomafont{tablehead}\InvoiceTabularUnitPrice}&
+		{\usekomafont{tablehead}\InvoiceTabularLineTotal}
+	\\\midrule[\heavyrulewidth]
 	\noalign{\global\let\PrintTableCurrency\TableCurrency}%
 	\endhead
 	\bottomrule[\lightrulewidth]\multicolumn{5}{@{}p{\textwidth}@{}}{\strut\hspace*{\fill}\footnotesize Fortsetzung~auf~der~nächsten~Seite}\endfoot
@@ -194,7 +208,7 @@
 			\zugferd_write_Item:ennnnnn {tax/rate=#1, tax/category=\use:c {__ptxcd_invoice_type_code#1:},#5} {\theinvoiceitem} {} {#3} {#4} {#2} {\fp_use:N \g__ptxcd_invoice_item_fp}
 			% content for visible PDF table
 			&#2% Anzahl
-			&#3\space(\printVAT{#1}~MwSt.)% Beschreibung mit Angabe der MwSt, in Klammern
+			&#3\space(\printVAT{#1}~\InvoiceVATName)% Beschreibung mit Angabe der MwSt, in Klammern
 			&\num{#4}%\num[round-mode=places,output-decimal-marker={,},round-pad = false]{#4}\tl_show:n {#4}%Einzelpreis
 			&\exp_args:Nx \num{\fp_use:N \g__ptxcd_invoice_item_fp}
 	}
@@ -211,7 +225,7 @@
 	\PrintSum{\invoicesumvatname[#1]{#2}}{#3}
 }
 
-\newcommand*{\invoicesumvatname}[2][]{MwSt.~\printVAT{#2}\tl_if_empty:nF {#1} {\space(\num[round-precision=2]{#1}\TableCurrency)}}
+\newcommand*{\invoicesumvatname}[2][]{\InvoiceVATName~\printVAT{#2}\tl_if_empty:nF {#1} {\space(\num[round-precision=2]{#1}\TableCurrency)}}
 \renewcommand*{\theinvoiceitem}{\int_compare:nNnT {\value{invoiceitem}}<{10}{0}\arabic{invoiceitem}}
 
 \newcommand*{\PrintSum}[2]{
