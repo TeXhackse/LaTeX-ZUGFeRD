@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mustang_version="2.21.0"
+mustang_version="2.23.0"
 mustang_jar="Mustang-CLI_$mustang_version.jar"
 
 # add scriptdir as a variable to also check support/ for the jar as it's the case on CI pipeline runs
