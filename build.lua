@@ -119,6 +119,7 @@ github_base_url="https://github.com/TeXhackse/LaTeX-ZUGFeRD"
 gitlab_base_url="https://gitlab.com/islandoftex/texmf/"..module
 
 ctanpkg=module
+ctanzip=ctanpkg.."-ctan_v"..packageversion
 uploadconfig = {
     author = "Marei Peischl",
     uploader = "Marei Peischl",
