@@ -430,7 +430,7 @@
 % \begin{implementation}
 % \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
 % \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
-% \changes{version}{date}{change format and profile options to .usage=general}
+% \changes{v0.11-dev}{2026-05-25}{change format and profile options to .usage=general}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
@@ -2194,7 +2194,9 @@
 	%%<!-- seller BT-27 | buyer BT-44 | shipto BT-70 -->
 	\_@@_write_inline:nn {ram:Name} {#2}
 	%%<!-- seller BT-33 -->
-	\_@@_write_inline:nn {ram:Description} {#3}
+	\str_if_eq:VnF \g_@@_conformance_level_str {BASIC} {%
+		\_@@_write_inline:nn {ram:Description} {#3}
+	}%
 	\tl_if_blank:eF {#4#5} {%
 	\_@@_xml_newline_indent:
 		<ram:SpecifiedLegalOrganization>
@@ -2286,7 +2288,10 @@
 	\int_gincr:N \g_@@_indent_int
 	\bool_lazy_and:nnF
 		{\tl_if_blank_p:V \g_@@_buyer_reference_tl}
-		{\g_@@_minimum_bool}
+%    \end{macrocode}
+% \changes{v0.11-dev}{2026-05-25}{BASIC does no longer require the buyer-reference}
+%    \begin{macrocode}
+		{ \g_@@_minimum_bool  || \str_if_eq_p:Vn \g_@@_conformance_level_str {BASIC} }
 	{
 		\_@@_write_xml:e {
 			<ram:BuyerReference>\g_@@_buyer_reference_tl</ram:BuyerReference>
