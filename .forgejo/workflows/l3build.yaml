@@ -1,0 +1,31 @@
+name: Build CTAN
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install TeX Live
+        uses: https://github.com/zauguin/install-texlive@v4
+        with:
+           package_file: .tl_packages
+      # download validate_zugferd.sh to support/ so it's not done multiple times later
+      - run: cd support && bash validate_zugferd.sh && cd -
+      - run: l3build check
+      - run: bash support/validate_zugferd.sh build/doc/DEMO*.pdf
+      - name: Upload build artifacts
+        # this specifc version is required as upload-artifact > v3 is not compatible to ghep/forgejo
+        uses: actions/upload-artifact@v3.2.2-node20
+        with:
+          name: zugferd-ctan
+          path: "build/distrib/ctan/zugferd/"
