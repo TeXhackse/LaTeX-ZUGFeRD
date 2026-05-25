@@ -397,6 +397,27 @@
 % The package supports a few fundamental settings.
 % These have to be set when the package is loaded as they are used internally to setup the scheme or activate the \XML mechanism.
 %
+% \end{documentation}
+% \begin{implementation}
+% \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
+%    \begin{macrocode}
+\char_set_catcode_other:N \#%
+\keys_define:nn {zugferd} {
+%    \end{macrocode}
+% The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
+% \begin{optionenv}{xrechnung}
+%    \begin{macrocode}
+	xrechnung .code:n = {
+		\bool_gset_true:N \g_@@_writeTradeContact_bool
+		\bool_gset_true:N \g_@@_writePaymentMeans_bool
+		\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}
+		\tl_gset:Nn \g_@@_xml_embedded_file_tl {xrechnung.xml}
+	},
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+%
+% \begin{documentation}
 % \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic/minimum}{xrechnung}
 % \option{format} selects the scheme to be used for the zugferd invoice.
 % Currently xrechnung3.0, xrechnung2.3, and the basic and minimum schemes are supported.
@@ -406,38 +427,10 @@
 % This option also adjusts the file name which is used for embedding the \XML.
 % It will be called |factur-x.xml| for all formats but the |xrechnung| ones.
 % In that case it will be |xrechnung.xml|.
-%
-% \DescribeKeyOption{zugferd=\meta{boolean}}{true}*
-% This option can be used to deactivate the \XML embedding.
-% It would also disable the the \option{write-xml} option.
-% This can be used to create a package which can use the same structure to also create invoices without \XML attachment.
-% It can also be used with older \LaTeX{} releases than this package requires.
-% There will be a warning, but the visible part should be okay.
-%
-% \DescribeKeyOption{write-xml=\meta{boolean}}{true}*
-% Disable the \XML output.
-% This can be used if you want to create the \XML attachment with different software than this package.
-%
-% In that case you can either rename your file to \meta{\cs[no-index]{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
-%
-% \DescribeKeyOption{xml-file=\meta{filename}}{\cs[no-index]{jobname}_zugferd.xml}*
-% Adjust the file name of the created or loaded \XMLfile.
-%
-% The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
-%
 % \end{documentation}
 % \begin{implementation}
-% \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
-% \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
+% \begin{optionenv}{format}
 %    \begin{macrocode}
-\char_set_catcode_other:N \#%
-\keys_define:nn {zugferd} {
-	xrechnung .code:n = {
-		\bool_gset_true:N \g_@@_writeTradeContact_bool
-		\bool_gset_true:N \g_@@_writePaymentMeans_bool
-		\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}
-		\tl_gset:Nn \g_@@_xml_embedded_file_tl {xrechnung.xml}
-	},
 	format .choice:,
 	format / xrechnung3.0 .code:n = {
 		\str_gset:Nx \g_@@_format_str {
@@ -475,19 +468,59 @@
 	},
 	format / xrechnung .meta:n = { format = xrechnung3.0 },
 	format .initial:n = xrechnung,
-	format .usage:n = load,
-	write-xml .bool_gset:N = \g_@@_write_xml_bool,
-	write-xml .initial:n = true,
-	write-xml .usage:n = load,
+	format .usage:n = general,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{zugferd=\meta{boolean}}{true}*
+% This option can be used to deactivate the \XML embedding.
+% It would also disable the the \option{write-xml} option.
+% This can be used to create a package which can use the same structure to also create invoices without \XML attachment.
+% It can also be used with older \LaTeX{} releases than this package requires.
+% There will be a warning, but the visible part should be okay.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{zugferd}
+%    \begin{macrocode}
 	zugferd .bool_gset:N = \g_@@_active_bool,
 	zugferd .initial:n = true,
 	zugferd .default:n = true,
-	zugferd .usage:n = load,
+	zugferd .usage:n = general,
 	ZUGFerD .meta:n = {zugferd = #1},
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{write-xml=\meta{boolean}}{true}*
+% Disable the \XML output.
+% This can be used if you want to create the \XML attachment with different software than this package.
+%
+% In that case you can either rename your file to \meta{\cs[no-index]{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{write-xml}
+%    \begin{macrocode}
+	write-xml .bool_gset:N = \g_@@_write_xml_bool,
+	write-xml .initial:n = true,
+	write-xml .usage:n = general,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{xml-file=\meta{filename}}{\cs[no-index]{jobname}_zugferd.xml}*
+% Adjust the file name of the created or loaded \XMLfile.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{xml-file}
+%    \begin{macrocode}
 	xml-file .tl_gset:N = \g_@@_xml_file_tl,
 	xml-file .initial:n = \jobname _zugferd.xml,
 	xml-file .usage:n = load,
 %    \end{macrocode}
+% \end{optionenv}
+%
+% \begin{optionenv}{testing}
 % Option to log variables for interface tests.
 %    \begin{macrocode}
 	testing .bool_gset:N = \g_@@_testing_bool,
@@ -549,84 +582,101 @@
 %
 % This part prepares the XMP metadata according to the required scheme.
 % \changes{v0.8a}{2024-09-17}{Use the new public interface for l3pdfmeta.}
+% \changes{v0.11-dev}{2026-05-25}{Use command to check for pdfmanagement is compatible in case it is activated later.}
 %    \begin{macrocode}
-\bool_if:NT \g_@@_active_bool {
-	\cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
-		\msg_new:nnnn {zugferd} {PDFmanagement-not-active} {
-			The~\LaTeX~PDF~management~is~not~active.\\
-			Activate~it~using~\string\DocumentMetadata.
-		} {
-			See~ZUGFeRD~or~PDFmanagement~documentation~for~more~information.
+\cs_new:Nn \_@@_check_for_pdfmanagement: {
+		\cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
+			\msg_new:nnnn {zugferd} {PDFmanagement-not-active} {
+				The~\LaTeX~PDF~management~is~not~active.\\
+				Activate~it~using~\string\DocumentMetadata.
+			} {
+				See~ZUGFeRD~or~PDFmanagement~documentation~for~more~information.
+			}
+			\msg_error:nn {zugferd} {PDFmanagement-not-active}
 		}
-		\msg_error:nn {zugferd} {PDFmanagement-not-active}
-	}
 %    \end{macrocode}
 % \changes{v0.9a}{2024-11-07}{Add error message if pdfmanagement is outdated.}
 % \changes{v0.9c}{2024-12-08}{Compatbility to show the error message in older formats versions.}
 %    \begin{macrocode}
-	\IfPackageAtLeastF{pdfmanagement}{2025-08-05}{
-		\IfPackageAtLeastF{pdfmanagement-testphase}{2024/09/13}{
-			\msg_new:nnnn {zugferd} {PDFmanagement-too-old} {
-				Your~version~of~\LaTeX's~PDF~management~is~too~old.
-			}{
-				You~need~to~update~your~LaTeX~distribution~to~be~able~
-				to~use~the~zugferd~package~correctly.
+		\IfPackageAtLeastF{pdfmanagement}{2025-08-05}{
+			\IfPackageAtLeastF{pdfmanagement-testphase}{2024/09/13}{
+				\msg_new:nnnn {zugferd} {PDFmanagement-too-old} {
+					Your~version~of~\LaTeX's~PDF~management~is~too~old.
+				}{
+					You~need~to~update~your~LaTeX~distribution~to~be~able~
+					to~use~the~zugferd~package~correctly.
+				}
+				\msg_error:nn{zugferd} {PDFmanagement-too-old}
 			}
-			\msg_error:nn{zugferd} {PDFmanagement-too-old}
 		}
-	}
-	%% based on experiments for l3pdfmeta by Ulrike Fischer
-	\pdfmeta_xmp_xmlns_new:nn {fx}{
-		urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str
-	}
+%    \end{macrocode}
+% Deactivate test, as this has to be done only once.
+%    \begin{macrocode}
+	\cs_gset_eq:NN \_@@_check_for_pdfmanagement: \prg_do_nothing:
+}
+\bool_if:NT \g_@@_active_bool {
+	\_@@_check_for_pdfmanagement:
+}
+%    \end{macrocode}
+% \changes{v0.11-dev}{2026-03-13}{Move metadata setup to enddocument}
+% As the PDF metadata is written at the end of a document it's not necessary to select the type at beginning.
+%    \begin{macrocode}
+\hook_gput_code:nnn {enddocument} {zugferd/set-metadata} {
+	\bool_if:NT \g_@@_active_bool {
+		\_@@_check_for_pdfmanagement:
+		%% based on experiments for l3pdfmeta by Ulrike Fischer
+		\pdfmeta_xmp_xmlns_new:nn {fx}{
+			urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str
+		}
 
-	\pdfmeta_xmp_schema_new:nnn
-		  {Factur-X~PDFA~Extension~Schema}
-		  {fx}
-		  {urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
+		\pdfmeta_xmp_schema_new:nnn
+			  {Factur-X~PDFA~Extension~Schema}
+			  {fx}
+			  {urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
 
-	\pdfmeta_xmp_property_new:nnnnn
-		  {fx}
-		  {DocumentFileName}
-		  {Text}
-		  {external}
-		  {name~of~the~embedded~XML~invoice~file}
+		\pdfmeta_xmp_property_new:nnnnn
+			  {fx}
+			  {DocumentFileName}
+			  {Text}
+			  {external}
+			  {name~of~the~embedded~XML~invoice~file}
 
-	\pdfmeta_xmp_property_new:nnnnn
-		  {fx}
-		  {DocumentType}
-		  {Text}
-		  {external}
-		  {INVOICE}
+		\pdfmeta_xmp_property_new:nnnnn
+			  {fx}
+			  {DocumentType}
+			  {Text}
+			  {external}
+			  {INVOICE}
 
-	\pdfmeta_xmp_property_new:nnnnn
-		  {fx}
-		  {Version}
-		  {Text}
-		  {external}
-		  {The~actual~version~of~the~factur-x~schema}
+		\pdfmeta_xmp_property_new:nnnnn
+			  {fx}
+			  {Version}
+			  {Text}
+			  {external}
+			  {The~actual~version~of~the~factur-x~schema}
 
-	\pdfmeta_xmp_property_new:nnnnn
-		  {fx}
-		  {ConformanceLevel}
-		  {Text}
-		  {external}
-		  {The~conformance~level~of~the~factur-x~data}
+		\pdfmeta_xmp_property_new:nnnnn
+			  {fx}
+			  {ConformanceLevel}
+			  {Text}
+			  {external}
+			  {The~conformance~level~of~the~factur-x~data}
 
-	\exp_args:Ne \pdfmeta_xmp_add:n {
-		% fix INVOICE
-		<fx:DocumentType>INVOICE</fx:DocumentType>
-		\iow_newline:
-		<fx:DocumentFileName>\g_@@_xml_embedded_file_tl</fx:DocumentFileName>
-		\iow_newline:
-		% fix schema version
-		<fx:Version>1.0</fx:Version>
-		\iow_newline:
-		% zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG
-		<fx:ConformanceLevel>\g_@@_conformance_level_str%
-			</fx:ConformanceLevel>%
-		\iow_newline:
-		%
+		\exp_args:Ne \pdfmeta_xmp_add:n {
+			% fix INVOICE
+			<fx:DocumentType>INVOICE</fx:DocumentType>
+			\iow_newline:
+			<fx:DocumentFileName>\g_@@_xml_embedded_file_tl</fx:DocumentFileName>
+			\iow_newline:
+			% fix schema version
+			<fx:Version>1.0</fx:Version>
+			\iow_newline:
+			% zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG
+			<fx:ConformanceLevel>\g_@@_conformance_level_str%
+				</fx:ConformanceLevel>%
+			\iow_newline:
+			%
+		}
 	}
 }
 %    \end{macrocode}
