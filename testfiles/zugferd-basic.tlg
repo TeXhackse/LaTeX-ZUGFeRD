@@ -46,7 +46,6 @@ Don't change this file in any respect.
       </ram:SpecifiedLineTradeSettlement>
     </ram:IncludedSupplyChainTradeLineItem>
     <ram:ApplicableHeaderTradeAgreement>
-      <ram:BuyerReference></ram:BuyerReference>
       <ram:SellerTradeParty>
         <ram:Name>peiTeX (Marei Peischl)</ram:Name>
         <ram:PostalTradeAddress>

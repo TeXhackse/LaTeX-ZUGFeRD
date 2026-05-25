@@ -1,7 +1,7 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
--------- kleinunternehmer*in_zugferd.xml (start) ---------
-(kleinunternehmer*in_zugferd.xml) <?xml version='1.0' encoding='UTF-8' ?>
+-------- kleinunternehmen_zugferd.xml (start) ---------
+(kleinunternehmen_zugferd.xml) <?xml version='1.0' encoding='UTF-8' ?>
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
   <rsm:ExchangedDocumentContext>
     <ram:BusinessProcessSpecifiedDocumentContextParameter>
@@ -135,6 +135,6 @@ Don't change this file in any respect.
     </ram:ApplicableHeaderTradeSettlement>
   </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>
--------- kleinunternehmer*in_zugferd.xml (end) -----------
+-------- kleinunternehmen_zugferd.xml (end) -----------
 ***************
 Compilation 1 of test file completed with exit status 0
