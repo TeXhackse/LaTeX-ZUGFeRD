@@ -21,7 +21,8 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
 %<package>\ProvidesExplPackage{zugferd}{2025-10-27}{0.11-dev}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
-\DocumentMetadata{
+\RequirePackage{pdfmanagement}
+\SetKeys[document/metadata]{
 	pdfstandard=a-3b,
 	pdfversion=1.7,
 	lang=en

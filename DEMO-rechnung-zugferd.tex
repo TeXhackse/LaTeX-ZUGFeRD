@@ -3,7 +3,7 @@
 % Demo file for the LaTeX-ZUGFeRD project
 % This file corresponds to version 0.11-dev (2025-10-27)
 %
-% Copyright (C) 2024 Marei Peischl <marei@peitex.de>
+% Copyright (C) 2024--2026 Marei Peischl <marei@peitex.de>
 % ---------------------------------------------------------
 %
 % This file may be distributed and/or modified under the
@@ -16,10 +16,9 @@
 % and version 1.3c or later is part of all distributions of LaTeX
 % version 2008-05-04 or later.
 %
-% alternatively use to not use the new tagging code in case you face error messages
-% \RequirePackage{pdfmanagement}
-% \SetKeys[document/metadata]{
-\DocumentMetadata{
+% We used \DocumentMetadata before, but since this also loads the new tagging code, we currently workaround this loading the pdfmanagement directly:
+\RequirePackage{pdfmanagement}
+\SetKeys[document/metadata]{
 	pdfversion=1.7, % necessary as it would be 2.0 by default for the current releas
 	pdfstandard=a-3b,
 	lang=de,	
