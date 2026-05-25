@@ -1,8 +1,8 @@
 # ZUGFeRD - Create ZUGFeRD and other kinds of E-invoices using LaTeX
 
-Copyright (C) 2023–2025 by Marei Peischl (peiTeX) <marei@peitex.de>
+Copyright (C) 2023–2026 by Marei Peischl (peiTeX) <marei@peitex.de>
 
-zugferd version 0.11-dev (2025-10-27)
+zugferd version 0.11 (2026-05-25)
 
 ***************************************************************************
 
@@ -23,6 +23,12 @@ This package does not provide any validation. Please be aware of you have to use
 
 ## Version History
 
+* 0.11 (2026-05-25)
+    - compatbility with current TeX Live
+    - add support for additional references
+    - extend flexibility of demo implementation
+    - allow to set pdf metadata later than package loading
+    - Bugfixes for format=basic
 * 0.10 (2025-09-22)
     - extend interfaces to simplify accessing ZUGFeRD data
     - add support for allowances and charges

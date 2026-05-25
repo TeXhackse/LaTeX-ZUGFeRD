@@ -2,7 +2,7 @@
 
 --[[
 	Build script for the LaTeX-ZUGFeRD project
-	Copyright (C) 2024–2025 Marei Peischl <marei@peitex.de>
+	Copyright (C) 2024–2026 Marei Peischl <marei@peitex.de>
 
 	This file is part of the build system of the zugferd package.
 
@@ -21,8 +21,8 @@ if options["target"] == "tag" then
 	excludefiles={"*~"}
 end
 
-packageversion = "0.11-dev"
-packagedate      = "2025-10-27"
+packageversion = "0.11"
+packagedate      = "2026-05-25"
 
 sourcefiles={"*.dtx","*.ins", "*.sty"}
 demofiles={"*.tex"}
