@@ -62,7 +62,7 @@ makeindex
 minted# dtx
 mptopdf# testfiles-pdf
 pdfescape# dtx
-pdfmanagement-testphase# DEMO dtx
+pdfmanagement# DEMO dtx
 pdftexcmds# DEMO dtx
 psnfss# dtx
 ragged2e# DEMO
