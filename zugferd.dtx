@@ -397,27 +397,6 @@
 % The package supports a few fundamental settings.
 % These have to be set when the package is loaded as they are used internally to setup the scheme or activate the \XML mechanism.
 %
-% \end{documentation}
-% \begin{implementation}
-% \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
-%    \begin{macrocode}
-\char_set_catcode_other:N \#%
-\keys_define:nn {zugferd} {
-%    \end{macrocode}
-% The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
-% \begin{optionenv}{xrechnung}
-%    \begin{macrocode}
-	xrechnung .code:n = {
-		\bool_gset_true:N \g_@@_writeTradeContact_bool
-		\bool_gset_true:N \g_@@_writePaymentMeans_bool
-		\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}
-		\tl_gset:Nn \g_@@_xml_embedded_file_tl {xrechnung.xml}
-	},
-%    \end{macrocode}
-% \end{optionenv}
-% \end{implementation}
-%
-% \begin{documentation}
 % \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic/minimum}{xrechnung}
 % \option{format} selects the scheme to be used for the zugferd invoice.
 % Currently xrechnung3.0, xrechnung2.3, and the basic and minimum schemes are supported.
@@ -427,10 +406,39 @@
 % This option also adjusts the file name which is used for embedding the \XML.
 % It will be called |factur-x.xml| for all formats but the |xrechnung| ones.
 % In that case it will be |xrechnung.xml|.
+%
+% \DescribeKeyOption{zugferd=\meta{boolean}}{true}*
+% This option can be used to deactivate the \XML embedding.
+% It would also disable the the \option{write-xml} option.
+% This can be used to create a package which can use the same structure to also create invoices without \XML attachment.
+% It can also be used with older \LaTeX{} releases than this package requires.
+% There will be a warning, but the visible part should be okay.
+%
+% \DescribeKeyOption{write-xml=\meta{boolean}}{true}*
+% Disable the \XML output.
+% This can be used if you want to create the \XML attachment with different software than this package.
+%
+% In that case you can either rename your file to \meta{\cs[no-index]{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
+%
+% \DescribeKeyOption{xml-file=\meta{filename}}{\cs[no-index]{jobname}_zugferd.xml}*
+% Adjust the file name of the created or loaded \XMLfile.
+%
+% The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
+%
 % \end{documentation}
 % \begin{implementation}
-% \begin{optionenv}{format}
+% \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
+% \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
+% \changes{version}{date}{change format and profile options to .usage=general}
 %    \begin{macrocode}
+\char_set_catcode_other:N \#%
+\keys_define:nn {zugferd} {
+	xrechnung .code:n = {
+		\bool_gset_true:N \g_@@_writeTradeContact_bool
+		\bool_gset_true:N \g_@@_writePaymentMeans_bool
+		\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}
+		\tl_gset:Nn \g_@@_xml_embedded_file_tl {xrechnung.xml}
+	},
 	format .choice:,
 	format / xrechnung3.0 .code:n = {
 		\str_gset:Nx \g_@@_format_str {
@@ -469,58 +477,18 @@
 	format / xrechnung .meta:n = { format = xrechnung3.0 },
 	format .initial:n = xrechnung,
 	format .usage:n = general,
-%    \end{macrocode}
-% \end{optionenv}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeKeyOption{zugferd=\meta{boolean}}{true}*
-% This option can be used to deactivate the \XML embedding.
-% It would also disable the the \option{write-xml} option.
-% This can be used to create a package which can use the same structure to also create invoices without \XML attachment.
-% It can also be used with older \LaTeX{} releases than this package requires.
-% There will be a warning, but the visible part should be okay.
-% \end{documentation}
-% \begin{implementation}
-% \begin{optionenv}{zugferd}
-%    \begin{macrocode}
+	write-xml .bool_gset:N = \g_@@_write_xml_bool,
+	write-xml .initial:n = true,
+	write-xml .usage:n = general,
 	zugferd .bool_gset:N = \g_@@_active_bool,
 	zugferd .initial:n = true,
 	zugferd .default:n = true,
 	zugferd .usage:n = general,
 	ZUGFerD .meta:n = {zugferd = #1},
-%    \end{macrocode}
-% \end{optionenv}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeKeyOption{write-xml=\meta{boolean}}{true}*
-% Disable the \XML output.
-% This can be used if you want to create the \XML attachment with different software than this package.
-%
-% In that case you can either rename your file to \meta{\cs[no-index]{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
-% \end{documentation}
-% \begin{implementation}
-% \begin{optionenv}{write-xml}
-%    \begin{macrocode}
-	write-xml .bool_gset:N = \g_@@_write_xml_bool,
-	write-xml .initial:n = true,
-	write-xml .usage:n = general,
-%    \end{macrocode}
-% \end{optionenv}
-% \end{implementation}
-% \begin{documentation}
-% \DescribeKeyOption{xml-file=\meta{filename}}{\cs[no-index]{jobname}_zugferd.xml}*
-% Adjust the file name of the created or loaded \XMLfile.
-% \end{documentation}
-% \begin{implementation}
-% \begin{optionenv}{xml-file}
-%    \begin{macrocode}
 	xml-file .tl_gset:N = \g_@@_xml_file_tl,
 	xml-file .initial:n = \jobname _zugferd.xml,
-	xml-file .usage:n = load,
+	xml-file .usage:n = general,
 %    \end{macrocode}
-% \end{optionenv}
-%
-% \begin{optionenv}{testing}
 % Option to log variables for interface tests.
 %    \begin{macrocode}
 	testing .bool_gset:N = \g_@@_testing_bool,
