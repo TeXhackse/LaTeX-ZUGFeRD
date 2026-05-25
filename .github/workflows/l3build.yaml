@@ -26,8 +26,8 @@ jobs:
       - run: l3build check
       - run: bash support/validate_zugferd.sh build/doc/DEMO*.pdf
       - name: Upload build artifacts
-        # this specifc version is required as upload-artifact > v3 is not compatible to ghep
-        uses: actions/upload-artifact@v3-node20
+        # this specifc version is required as upload-artifact > v3 is not compatible to ghep/forgejo
+        uses: actions/upload-artifact@v3.2.2-node20
         with:
           name: zugferd-ctan
           path: "build/distrib/ctan/zugferd/"
