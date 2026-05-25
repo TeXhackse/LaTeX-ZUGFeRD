@@ -2482,6 +2482,26 @@
 %    \end{macrocode}
 % \end{implementation}
 % \begin{documentation}
+% \paragraph{Referencing a specific item of an Order}
+% \DescribeKeyOption*[BT-132]{purchase-order-reference=\meta{date formatted as YYYYMMDD}}{}*
+% With version \version{version} it's possible to add references to positions of the specific order for an item.
+% The keys \option{buyerorder-reference} or \option{purchase-order-reference} are configured as alias for BT-132 and can be used to match the document reference keys.
+%
+% Please be aware that this is a local variable.
+% \end{documentation}
+% \begin{implementation}
+% \changes{version}{date}{Add support for BT-132}
+% \begin{optionenv}{BT-132}
+%    \begin{macrocode}
+\keys_define:nn {zugferd/item} {
+	BT-132 .tl_set:c = {l_@@_BT-132_tl},
+	buyerorder-reference .meta:n = {BT-132=#1},
+	purchase-order-reference .meta:n = {BT-132=#1},
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
 % \subsubsection{Payment Means}
 % \label{sec:PaymentMeans}
 % The payment means are selected by numeric codes.
@@ -2946,7 +2966,7 @@
 \_@@_define_xml_content:Nn \_@@_write_inline_wrapped_i:nnn {
 	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
 }
-\cs_generate_variant:Nn \_@@_write_inline_wrapped_i:nnn {nne}
+\cs_generate_variant:Nn \_@@_write_inline_wrapped_i:nnn {nne,nnv}
 
 \_@@_define_xml_content:Nn \_@@_write_wrapped:nnn {
 	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
@@ -3205,8 +3225,11 @@
 	\zugferd_disable_macros:
 	\_@@_write_xml:e {\_@@_SpecifiedTradeProduct:nn {#2} {#3}}
 	\endgroup
-
-	\_@@_write_xml:n {<ram:SpecifiedLineTradeAgreement>}
+	\_@@_write_xml:e {
+		<ram:SpecifiedLineTradeAgreement>
+		\_@@_write_inline_wrapped_i:nnv
+		{ram:BuyerOrderReferencedDocument} {ram:LineID} {l_@@_BT-132_tl}
+	}
 	\int_gincr:N \g_@@_indent_int%
 	\_@@_write_xml:e {\_@@_ProductTradePrice:nn {net} {#4}}
 	\int_gdecr:N \g_@@_indent_int%
