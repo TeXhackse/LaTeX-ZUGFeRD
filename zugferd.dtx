@@ -378,7 +378,7 @@
 % \fi
 % \begin{implementation}
 % \section{Implementation}
-% \changes{v0.11-dev}{2025-12-28}{Move definition of globa temporary tl}
+% \changes{v0.11}{2025-12-28}{Move definition of globa temporary tl}
 % \begin{variable}{\l_@@_tmp_tl,\g_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_minimum_bool,\g_@@_conformance_level_str,\g_@@_xml_embedded_file_tl}
 %    \begin{macrocode}
 \tl_new:N \l_@@_tmp_tl
@@ -430,7 +430,7 @@
 % \begin{implementation}
 % \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
 % \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
-% \changes{v0.11-dev}{2026-05-25}{change format and profile options to .usage=general}
+% \changes{v0.11}{2026-05-25}{change format and profile options to .usage=general}
 %    \begin{macrocode}
 \char_set_catcode_other:N \#%
 \keys_define:nn {zugferd} {
@@ -551,7 +551,7 @@
 %
 % This part prepares the XMP metadata according to the required scheme.
 % \changes{v0.8a}{2024-09-17}{Use the new public interface for l3pdfmeta.}
-% \changes{v0.11-dev}{2026-05-25}{Use command to check for pdfmanagement is compatible in case it is activated later.}
+% \changes{v0.11}{2026-05-25}{Use command to check for pdfmanagement is compatible in case it is activated later.}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_check_for_pdfmanagement: {
 		\cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
@@ -587,7 +587,7 @@
 	\_@@_check_for_pdfmanagement:
 }
 %    \end{macrocode}
-% \changes{v0.11-dev}{2026-03-13}{Move metadata setup to enddocument}
+% \changes{v0.11}{2026-03-13}{Move metadata setup to enddocument}
 % As the PDF metadata is written at the end of a document it's not necessary to select the type at beginning.
 %    \begin{macrocode}
 \hook_gput_code:nnn {enddocument} {zugferd/set-metadata} {
@@ -1327,7 +1327,7 @@
 \RequirePackage{siunitx}
 %    \end{macrocode}
 % \begin{macro}{\_@@_number_format:nNn,\_@@_number_format:nNe}
-% \changes{v0.11-dev}{2025-12-28}{Bugfix: Group the change of siunitx options to keep it local}
+% \changes{v0.11}{2025-12-28}{Bugfix: Group the change of siunitx options to keep it local}
 % \cs{\_@@_gset_formatted_number:nNn} does only exist as a global variant.
 % To keep the change local one can use \variable{\g_@@_tmp_tl } and use that value for a local assignment.
 %    \begin{macrocode}
@@ -1515,7 +1515,7 @@
 	\let\ding\HyPsd@ding
 	\let\Cube\HyPsd@DieFace
 %    \end{macrocode}
-% \changes{v0.11-dev}{2026-03-11}{Fix Grouping of environments in xml data}
+% \changes{v0.11}{2026-03-11}{Fix Grouping of environments in xml data}
 %    \begin{macrocode}
 	\def\begin##1{\begingroup\csname##1\endcsname}%
 	\def\end##1{\csname end##1\endcsname\endgroup}%
@@ -1632,7 +1632,7 @@
 % \end{documentation}
 % \begin{implementation}
 % \begin{macro}{\zugferd_fp_set_rounded:Nn, \zugferd_fp_gset_rounded:Nn}
-% \changes{v0.11-dev}{2025-12-28}{Bugfix: Group the change of siunitx options to keep it local}
+% \changes{v0.11}{2025-12-28}{Bugfix: Group the change of siunitx options to keep it local}
 %    \begin{macrocode}
 \cs_set:Nn \zugferd_fp_set_rounded:Nn {
 	\_@@_gset_formatted_number:nNn {2} \g_@@_tmp_tl {\fp_eval:n {#2}}
@@ -2289,7 +2289,7 @@
 	\bool_lazy_and:nnF
 		{\tl_if_blank_p:V \g_@@_buyer_reference_tl}
 %    \end{macrocode}
-% \changes{v0.11-dev}{2026-05-25}{BASIC does no longer require the buyer-reference}
+% \changes{v0.11}{2026-05-25}{BASIC does no longer require the buyer-reference}
 %    \begin{macrocode}
 		{ \g_@@_minimum_bool  || \str_if_eq_p:Vn \g_@@_conformance_level_str {BASIC} }
 	{
@@ -2490,7 +2490,7 @@
 % Please be aware that this is a local variable.
 % \end{documentation}
 % \begin{implementation}
-% \changes{v0.11-dev}{2026-05-25}{Add support for BT-132}
+% \changes{v0.11}{2026-05-25}{Add support for BT-132}
 % \begin{optionenv}{BT-132}
 %    \begin{macrocode}
 \keys_define:nn {zugferd/item} {

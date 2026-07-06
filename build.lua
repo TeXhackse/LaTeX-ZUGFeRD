@@ -66,9 +66,10 @@ function update_tag(file, content, tagname, tagdate)
 	if tagname == "dev" or string.match(tagname, "%-dev$") then
 		tagname, tag_only_changes = get_dev_tag(packageversion)
 	else
-    -- when a new tag is set all \changes{<old-dev-tag>} should be replaced as well
-		old_tagpattern = string.gsub(packageversion, "%.", "%%.")
+        -- when a new tag is set all \changes{<old-dev-tag>} should be replaced as well
+		old_tagpattern = string.gsub(packageversion, "%.", "%%.").."-dev"
 		old_tagpattern = string.gsub(old_tagpattern, "%-", "%%-")
+		content = string.gsub(content, old_tagpattern,tagname)
 	end
 	-- Copyright (C) 2018–2025 by uploadconfig["author"]>
 	-- maybe change to -- instead of –
