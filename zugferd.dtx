@@ -17,8 +17,9 @@
 % \iffalse
 %<*driver>
 \ProvidesFile{zugferd.dtx}[2026-05-25 v0.11 ZUGFerd Invoice and Faktur-X]
+% \changes{v0.11}{2026-07-06}{Require \LaTeX{} 2024-11-01 \issue{70}}
 %</driver>
-%<package>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
+%<package>\NeedsTeXFormat{LaTeX2e}[2024-11-01]
 %<package>\ProvidesExplPackage{zugferd}{2026-05-25}{0.11}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \RequirePackage{pdfmanagement}
@@ -554,7 +555,7 @@
 % \changes{v0.11}{2026-05-25}{Use command to check for pdfmanagement is compatible in case it is activated later.}
 %    \begin{macrocode}
 \cs_new:Nn \_@@_check_for_pdfmanagement: {
-		\cs_if_exist:NF \pdfmeta_xmp_xmlns_new:nn {
+	\IfPDFManagementActiveTF{}{
 			\msg_new:nnnn {zugferd} {PDFmanagement-not-active} {
 				The~\LaTeX~PDF~management~is~not~active.\\
 				Activate~it~using~\string\DocumentMetadata.
@@ -562,23 +563,11 @@
 				See~ZUGFeRD~or~PDFmanagement~documentation~for~more~information.
 			}
 			\msg_error:nn {zugferd} {PDFmanagement-not-active}
-		}
+	}
 %    \end{macrocode}
 % \changes{v0.9a}{2024-11-07}{Add error message if pdfmanagement is outdated.}
 % \changes{v0.9c}{2024-12-08}{Compatbility to show the error message in older formats versions.}
-%    \begin{macrocode}
-		\IfPackageAtLeastF{pdfmanagement}{2025-08-05}{
-			\IfPackageAtLeastF{pdfmanagement-testphase}{2024/09/13}{
-				\msg_new:nnnn {zugferd} {PDFmanagement-too-old} {
-					Your~version~of~\LaTeX's~PDF~management~is~too~old.
-				}{
-					You~need~to~update~your~LaTeX~distribution~to~be~able~
-					to~use~the~zugferd~package~correctly.
-				}
-				\msg_error:nn{zugferd} {PDFmanagement-too-old}
-			}
-		}
-%    \end{macrocode}
+% \changes{v0.12-dev}{2026-07-06}{Simplify Checks \issue{70}}
 % Deactivate test, as this has to be done only once.
 %    \begin{macrocode}
 	\cs_gset_eq:NN \_@@_check_for_pdfmanagement: \prg_do_nothing:
