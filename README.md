@@ -2,7 +2,7 @@
 
 Copyright (C) 2023–2026 by Marei Peischl (peiTeX) <marei@peitex.de>
 
-zugferd version 0.11 (2026-05-25)
+zugferd version 0.12 (2026-07-06)
 
 ***************************************************************************
 
@@ -23,6 +23,9 @@ This package does not provide any validation. Please be aware of you have to use
 
 ## Version History
 
+* 0.12 (2026-07-06) Bugfix Release
+    - Simplify checks for pdfmanagement
+    - Fix PDF Metadata Mechanism to also be written if document ends with a pagebreak
 * 0.11 (2026-05-25)
     - compatbility with current TeX Live
     - add support for additional references
