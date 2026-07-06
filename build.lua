@@ -30,9 +30,13 @@ demofiles={"*.tex"}
 -- demofiles should be typeset for testing but not for the ctan upload
 if options["target"] == "ctan" then
 	typesetcmds="\\def\\DoNotTypesetImplementation{don't typeset implementation for CTAN}"
+	typesetdemofiles={"DEMO*.tex"}
+	excludefiles={"*~","build.lua","config-*.lua","INSTALL.md"}
+	textfiles={"README.md","DEPENDS.txt"}
+else
+	typesetdemofiles={"*.tex"}
 end
 
-typesetdemofiles={"DEMO*.tex"}
 typesetexe="lualatex"
 typesetopts=""
 
