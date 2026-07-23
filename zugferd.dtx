@@ -16,11 +16,11 @@
 % \fi
 % \iffalse
 %<*driver>
-\ProvidesFile{zugferd.dtx}[2026-07-06 v0.12 ZUGFerd Invoice and Faktur-X]
+\ProvidesFile{zugferd.dtx}[2026-07-23 v0.13 ZUGFerd Invoice and Faktur-X]
 % \changes{v0.11}{2026-07-06}{Require \LaTeX{} 2024-11-01 \issue{70}}
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}[2024-11-01]
-%<package>\ProvidesExplPackage{zugferd}{2026-07-06}{0.12}{Create ZUGFerd invoices using LaTeX}
+%<package>\ProvidesExplPackage{zugferd}{2026-07-23}{0.13}{Create ZUGFerd invoices using LaTeX}
 %<*driver>
 \RequirePackage{pdfmanagement}
 \SetKeys[document/metadata]{
@@ -30,7 +30,7 @@
 }
 \documentclass[english,lm-default=false,cs-break-nohyphen]{l3doc}
 \usepackage{babel}
-\usepackage{zugferd}[2026-07-06]
+\usepackage{zugferd}[2026-07-23]
 \EnableCrossrefs
 %\CodelineIndex
 \RecordChanges
@@ -567,7 +567,7 @@
 %    \end{macrocode}
 % \changes{v0.9a}{2024-11-07}{Add error message if pdfmanagement is outdated.}
 % \changes{v0.9c}{2024-12-08}{Compatbility to show the error message in older formats versions.}
-% \changes{v0.12-dev}{2026-07-06}{Simplify Checks \issue{70}}
+% \changes{v0.12}{2026-07-06}{Simplify Checks \issue{70}}
 % Deactivate test, as this has to be done only once.
 %    \begin{macrocode}
 	\cs_gset_eq:NN \_@@_check_for_pdfmanagement: \prg_do_nothing:
