@@ -577,10 +577,11 @@
 }
 %    \end{macrocode}
 % \changes{v0.11}{2026-03-13}{Move metadata setup to enddocument}
-% \changes{v0.12-dev}{2026-07-06}{Move metadata setup to shipout/lastpage \issue{73}}}
+% \changes{v0.12}{2026-07-06}{Move metadata setup to shipout/lastpage \issue{73}}}
+% \changes{v0.13}{2026-07-23}{Move metadata setup to pdfmeta/xmp \issue{74}}}
 % As the PDF metadata is written at the end of a document it's not necessary to select the type at beginning.
 %    \begin{macrocode}
-\hook_gput_code:nnn {shipout/lastpage} {zugferd/set-metadata} {
+\hook_gput_code:nnn {pdfmeta/xmp} {zugferd/set-metadata} {
 	\bool_if:NT \g_@@_active_bool {
 		\_@@_check_for_pdfmanagement:
 		%% based on experiments for l3pdfmeta by Ulrike Fischer

@@ -23,6 +23,7 @@ This package does not provide any validation. Please be aware of you have to use
 
 ## Version History
 
+* 0.13 (2026-07-23) Bugfix for XMP Metadata
 * 0.12 (2026-07-06) Bugfix Release
     - Simplify checks for pdfmanagement
     - Fix PDF Metadata Mechanism to also be written if document ends with a pagebreak
